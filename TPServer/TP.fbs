@@ -1,0 +1,29 @@
+struct Vec3
+{
+	x:float;
+	y:float;
+	z:float;
+}
+
+table REQ_LOGIN
+{
+	UserId: string;
+	Password: string;
+}
+
+table RES_LOGIN
+{
+	CharacterId: int;
+	Pos: Vec3;
+}
+
+table REQ_MOVE
+{
+	CharacterId: int;
+	Pos: Vec3;
+}
+
+table TP_ERROR
+{
+	Message: string;
+}
