@@ -14,27 +14,32 @@ using namespace std;
 void PacketService::Process(const Packet& packet)
 {
 	auto header = packet.GetHeader();
-	Packet resultPacket;
+	TPResult* result = nullptr;
 	switch (header)
 	{
 	case PROTOCOL::REQ_LOGIN:
-		resultPacket = ReqLogin(packet);
+		result = ProcReqLogin(packet);
 		break;
 	default:
 		break;
 	}
 
-	if (resultPacket.IsValid())
+	if (result)
 	{
-		auto clntSock = packet.GetOwner().GetClntSock();
-		PacketProcessor::GetInstance().SendPacket(resultPacket, clntSock);
+		auto packetResult = result->GetPacket();
+		if (packetResult->IsValid())
+		{
+			auto clntSock = packet.GetOwner().GetClntSock();
+			PacketProcessor::GetInstance().SendPacket(*packetResult, clntSock);
+			delete result;
+		}
 	}	
 }
 
-Packet PacketService::ReqLogin(const Packet& packet)
+TPResult* PacketService::ProcReqLogin(const Packet& packet)
 {
 	auto body = packet.GetBody();
-	auto req = flatbuffers::GetRoot<REQ_LOGIN>(body);
+	auto req = flatbuffers::GetRoot<TB_ReqLogin>(body);
 	auto userId = req->UserId()->c_str();
 	auto password = req->Password()->c_str();
 	cout << "UserId:" << userId << " Password:" << password << endl;
@@ -43,36 +48,38 @@ Packet PacketService::ReqLogin(const Packet& packet)
 	TPUtil::GetInstance().CharToWChar(wUserId, SIZE_USER_USER_ID, userId);
 	TPUtil::GetInstance().CharToWChar(wPassword, SIZE_USER_PASSWORD, password);
 
-	auto resultLoginUser =  DBService::GetInstance().LoginUser(wUserId, wPassword);
+	auto resultLoginUser = DBService::GetInstance().LoginUser(wUserId, wPassword);
 	if (!resultLoginUser->GetFlag())
 	{
-		auto packet = PacketGenerator::GetInstance().CreateError(resultLoginUser->GetMsg());
-		delete resultLoginUser;
-		return packet;
+		auto packetError = PacketGenerator::GetInstance().CreateError(resultLoginUser->GetMsg());
+		resultLoginUser->SetPacket(packetError);
+		return resultLoginUser;
 	}
 
 	auto obj = resultLoginUser->GetObjectList().front();
-	auto objUser = static_cast<ObjUser*>(obj);
+	auto objUser = static_pointer_cast<ObjUser>(obj);
 	
-	delete resultLoginUser;
-
 	auto resultLoadUserInfo = DBService::GetInstance().LoadUserInfo(wUserId);
 	if (!resultLoadUserInfo->GetFlag())
 	{
-		auto packet = PacketGenerator::GetInstance().CreateError(resultLoadUserInfo->GetMsg());
-		delete resultLoadUserInfo;
-		return packet;
+		auto packetError = PacketGenerator::GetInstance().CreateError(resultLoadUserInfo->GetMsg());
+		resultLoadUserInfo->SetPacket(packetError);
+		resultLoadUserInfo->SetNextResult(resultLoginUser);
+		return resultLoadUserInfo;
 	}
 
 	auto comp = resultLoadUserInfo->GetCompList().front();
-	auto compUserLocation = static_cast<CompUserLocation*>(comp);	
+	auto compUserLocation = static_pointer_cast<CompUserLocation>(comp);
+	
+	objUser->SetCompUserLocation(compUserLocation);
+	auto packetResLogin = PacketGenerator::GetInstance().CreateResLogin(*objUser);
 
-	delete resultLoadUserInfo;
-
-	return Packet();
+	resultLoadUserInfo->SetPacket(packetResLogin);
+	resultLoadUserInfo->SetNextResult(resultLoginUser);
+	return resultLoadUserInfo;
 }
 
-void PacketService::ReqMove(const Packet& packet)
+TPResult* PacketService::ProcReqMove(const Packet& packet)
 {
-	/*PacketProcessor::GetInstance().SendPacket(packet);*/
+	return nullptr;
 }

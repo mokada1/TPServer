@@ -2,6 +2,7 @@
 
 #include "TSingleton.h"
 #include "Packet.h"
+#include "TPResult.h"
 
 class PacketService : public TSingleton<PacketService>
 {
@@ -9,6 +10,6 @@ public:
 	void Process(const Packet& packet);
 
 private:
-	Packet ReqLogin(const Packet& packet);
-	void ReqMove(const Packet& packet);
+	TPResult* ProcReqLogin(const Packet& packet);
+	TPResult* ProcReqMove(const Packet& packet);
 };

@@ -2,44 +2,45 @@
 
 bool CompUserLocation::IsValid() const
 {
-	return this->isValid;
+	return isValid;
+}
+
+flatbuffers::Offset<TB_CompUserLocation> CompUserLocation::Serialize(flatbuffers::FlatBufferBuilder& _fbb) const
+{
+	ST_Vec3 st_location(location.GetX(), location.GetY(), location.GetZ());	
+	TB_CompUserLocationBuilder builder(_fbb);
+	builder.add_Location(&st_location);
+	return builder.Finish();
 }
 
 CompUserLocation::CompUserLocation()
 {
-	this->isValid = false;
-	this->x = 0;
-	this->y = 0;
-	this->z = 0;
+	isValid = false;
 }
 
 CompUserLocation::CompUserLocation(const float _x, const float _y, const float _z)
 {
-	this->isValid = true;
-	this->x = _x;
-	this->y = _y;
-	this->z = _z;
+	isValid = true;
+	location.Set(_x, _y, _z);
 }
 
 CompUserLocation::CompUserLocation(const double _x, const double _y, const double _z)
 {
-	this->isValid = true;
-	this->x = static_cast<float>(_x);
-	this->y = static_cast<float>(_y);
-	this->z = static_cast<float>(_z);
+	isValid = true;
+	location.Set(_x, _y, _z);
 }
 
-float CompUserLocation::GetX() const
+CompUserLocation::CompUserLocation(const Vector3 _location)
 {
-	return x;
+	isValid = true;
+	location = _location;
 }
 
-float CompUserLocation::GetY() const
+CompUserLocation::~CompUserLocation()
 {
-	return y;
 }
 
-float CompUserLocation::GetZ() const
+Vector3 CompUserLocation::GetLocation() const
 {
-	return z;
+	return location;
 }

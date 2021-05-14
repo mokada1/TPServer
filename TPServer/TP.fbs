@@ -1,29 +1,40 @@
-struct Vec3
+struct ST_Vec3
 {
 	x:float;
 	y:float;
 	z:float;
 }
 
-table REQ_LOGIN
+table TB_CompUserLocation
+{
+	Location: ST_Vec3;
+}
+
+table TB_ObjUser
+{
+	UserId: string;
+	Password: string;
+	UserLocation: TB_CompUserLocation;
+}
+
+table TB_ReqLogin
 {
 	UserId: string;
 	Password: string;
 }
 
-table RES_LOGIN
+table TB_ResLogin
 {
-	CharacterId: int;
-	Pos: Vec3;
+	ObjUser: TB_ObjUser;
 }
 
-table REQ_MOVE
+table TB_ReqMove
 {
-	CharacterId: int;
-	Pos: Vec3;
+	UserId: string;
+	Location: ST_Vec3;
 }
 
-table TP_ERROR
+table TB_Error
 {
 	Message: string;
 }

@@ -1,5 +1,10 @@
 #pragma once
 
+#include "TP_generated.h"
+#include "TPUtil.h"
+
+using namespace std;
+
 class TPObject
 {
 public:
@@ -10,5 +15,8 @@ public:
 	virtual bool IsValid() const
 	{
 		return false;
+	}
+	virtual ~TPObject()
+	{
 	}
 };
