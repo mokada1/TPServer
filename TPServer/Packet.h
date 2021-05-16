@@ -13,7 +13,7 @@ public:
 	char* GetBuffer() const;
 	ULONG GetPacketSize() const;
 	const Session& GetOwner() const;	
-	void SetOwner(Session& owner);	
+	void SetOwner(const Session& owner);	
 	bool IsValid();
 private:	
 	PROTOCOL header;

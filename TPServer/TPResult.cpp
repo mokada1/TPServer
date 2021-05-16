@@ -101,14 +101,14 @@ vector<shared_ptr<TPComponent>> TPResult::GetCompList() const
 	return compList;
 }
 
-Packet* TPResult::GetPacket() const
+Packet& TPResult::GetPacket() const
 {
-	return packet;
+	return *packet;
 }
 
-TPResult* TPResult::GetNextResult() const
+TPResult& TPResult::GetNextResult() const
 {
-	return nextResult;
+	return *nextResult;
 }
 
 void TPResult::SetFlag(const bool _flag)

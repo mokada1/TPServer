@@ -2,7 +2,6 @@
 #include "PacketProcessor.h"
 #include "PacketService.h"
 #include <iostream>
-#include "SessionPool.h"
 #include "TPError.h"
 #include "TPDefine.h"
 
@@ -31,6 +30,16 @@ void PacketProcessor::SendPacketAll(const Packet& packet)
 		}
 		SendPacket(packet, session->GetClntSock());
 	}
+}
+
+void PacketProcessor::SendPacket(const Packet& packet)
+{
+	SendPacket(packet, packet.GetOwner());
+}
+
+void PacketProcessor::SendPacket(const Packet& packet, const Session& session)
+{
+	SendPacket(packet, session.GetClntSock());
 }
 
 void PacketProcessor::SendPacket(const Packet& packet, const SOCKET& clntSock)

@@ -27,10 +27,10 @@ void PacketService::Process(const Packet& packet)
 	if (result)
 	{
 		auto packetResult = result->GetPacket();
-		if (packetResult->IsValid())
+		if (packetResult.IsValid())
 		{
-			auto clntSock = packet.GetOwner().GetClntSock();
-			PacketProcessor::GetInstance().SendPacket(*packetResult, clntSock);
+			packetResult.SetOwner(packet.GetOwner());
+			PacketProcessor::GetInstance().SendPacket(packetResult);
 			delete result;
 		}
 	}	
@@ -56,9 +56,6 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 		return resultLoginUser;
 	}
 
-	auto obj = resultLoginUser->GetObjectList().front();
-	auto objUser = static_pointer_cast<ObjUser>(obj);
-	
 	auto resultLoadUserInfo = DBService::GetInstance().LoadUserInfo(wUserId);
 	if (!resultLoadUserInfo->GetFlag())
 	{
@@ -67,6 +64,9 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 		resultLoadUserInfo->SetNextResult(resultLoginUser);
 		return resultLoadUserInfo;
 	}
+
+	auto obj = resultLoginUser->GetObjectList().front();
+	auto objUser = static_pointer_cast<ObjUser>(obj);
 
 	auto comp = resultLoadUserInfo->GetCompList().front();
 	auto compUserLocation = static_pointer_cast<CompUserLocation>(comp);

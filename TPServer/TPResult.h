@@ -23,8 +23,8 @@ public:
 	int GetNumber() const;
 	vector<shared_ptr<TPObject>> GetObjectList() const;
 	vector<shared_ptr<TPComponent>> GetCompList() const;
-	Packet* GetPacket() const;
-	TPResult* GetNextResult() const;
+	Packet& GetPacket() const;
+	TPResult& GetNextResult() const;
 
 	void SetFlag(const bool _flag);
 	void SetMsg(const wchar_t* _message);

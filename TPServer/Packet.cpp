@@ -43,7 +43,7 @@ const Session& Packet::GetOwner() const
 	return *(this->owner);
 }
 
-void Packet::SetOwner(Session& owner)
+void Packet::SetOwner(const Session& owner)
 {
 	this->owner = &owner;
 }

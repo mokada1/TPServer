@@ -11,9 +11,10 @@ void TPServer::Play()
 {
     if (!DBServer::GetInstance().DBConnect())
     {
-        cout << "DBConnect:fail" << endl;
+        cout << "DBConnect:Fail" << endl;
         return;
     }
+    cout << "DBConnect:Success" << endl;
     Initialize();
     Start();
     Close();
@@ -54,6 +55,8 @@ void TPServer::Start()
 
     int RecvBytes;
     int Flags;
+
+    cout << "TPServer:Start" << endl;
 
     while (TRUE)
     {

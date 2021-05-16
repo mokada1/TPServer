@@ -48,13 +48,15 @@ void DBService::ENDStmt(const SQLHSTMT& hStmt)
 
 TPResult* DBService::LoginUser(const wchar_t* userId, const wchar_t* password)
 {
+	auto result = new TPResult();
+
 	SQLHSTMT hStmt = StartStmt();
 	if (hStmt == nullptr)
 	{
-		return new TPResult(FAIL_DBCONNECT_OR_ALLOC_HANDLE);
+		result->SetMsg(FAIL_DBCONNECT_OR_ALLOC_HANDLE);
+		return result;
 	}
 
-	auto result = new TPResult();
 	auto objUser = SQLServiceUser::GetInstance().GetUser(hStmt, userId);
 	if (objUser)
 	{
@@ -92,13 +94,15 @@ TPResult* DBService::LoginUser(const wchar_t* userId, const wchar_t* password)
 
 TPResult* DBService::LoadUserInfo(const wchar_t* userId)
 {
+	auto result = new TPResult();
+
 	SQLHSTMT hStmt = StartStmt();
 	if (hStmt == nullptr)
 	{
-		return new TPResult(FAIL_DBCONNECT_OR_ALLOC_HANDLE);
+		result->SetMsg(FAIL_DBCONNECT_OR_ALLOC_HANDLE);
+		return result;
 	}
 
-	auto result = new TPResult();
 	auto compUserLocation = SQLServiceUser::GetInstance().GetUserLocation(hStmt, userId);
 	if (compUserLocation)
 	{
