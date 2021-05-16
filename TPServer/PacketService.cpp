@@ -6,6 +6,7 @@
 #include "PacketGenerator.h"
 #include "TPUtil.h"
 #include "ObjUser.h"
+#include "GameRoomService.h"
 
 #include <iostream>
 
@@ -48,6 +49,7 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	TPUtil::GetInstance().CharToWChar(wUserId, SIZE_USER_USER_ID, userId);
 	TPUtil::GetInstance().CharToWChar(wPassword, SIZE_USER_PASSWORD, password);
 
+	// 유저 로그인 또는 등록
 	auto resultLoginUser = DBService::GetInstance().LoginUser(wUserId, wPassword);
 	if (!resultLoginUser->GetFlag())
 	{
@@ -56,12 +58,13 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 		return resultLoginUser;
 	}
 
+	// 유저 정보 조회
 	auto resultLoadUserInfo = DBService::GetInstance().LoadUserInfo(wUserId);
+	resultLoadUserInfo->SetNextResult(resultLoginUser);
 	if (!resultLoadUserInfo->GetFlag())
 	{
 		auto packetError = PacketGenerator::GetInstance().CreateError(resultLoadUserInfo->GetMsg());
 		resultLoadUserInfo->SetPacket(packetError);
-		resultLoadUserInfo->SetNextResult(resultLoginUser);
 		return resultLoadUserInfo;
 	}
 
@@ -72,10 +75,18 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	auto compUserLocation = static_pointer_cast<CompUserLocation>(comp);
 	
 	objUser->SetCompUserLocation(compUserLocation);
-	auto packetResLogin = PacketGenerator::GetInstance().CreateResLogin(*objUser);
 
+	// 유저 방 참가
+	if (!GameRoomService::GetInstance().AddObjUser(objUser))
+	{
+		auto packetError = PacketGenerator::GetInstance().CreateError(FAIL_ADD_OBJ_USER_GAME_ROOM);
+		resultLoadUserInfo->SetPacket(packetError);
+		return resultLoadUserInfo;
+	}
+	wcout << SUCCESS_ADD_OBJ_USER_GAME_ROOM << endl;
+
+	auto packetResLogin = PacketGenerator::GetInstance().CreateResLogin(*objUser);
 	resultLoadUserInfo->SetPacket(packetResLogin);
-	resultLoadUserInfo->SetNextResult(resultLoginUser);
 	return resultLoadUserInfo;
 }
 

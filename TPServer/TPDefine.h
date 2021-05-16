@@ -15,3 +15,5 @@ static const wchar_t* SUCCESS_INSERT_DATA = L"데이터 삽입 성공";
 static const wchar_t* FAIL_INSERT_DATA = L"데이터 삽입 실패";
 static const wchar_t* SUCCESS_GET_DATA = L"데이터 조회 성공";
 static const wchar_t* FAIL_GET_DATA = L"데이터 조회 실패";
+static const wchar_t* FAIL_ADD_OBJ_USER_GAME_ROOM = L"방 참가 실패";
+static const wchar_t* SUCCESS_ADD_OBJ_USER_GAME_ROOM = L"방 참가 성공";

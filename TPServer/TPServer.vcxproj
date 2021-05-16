@@ -151,6 +151,8 @@
     <ClCompile Include="PacketGenerator.cpp" />
     <ClCompile Include="PacketProcessor.cpp" />
     <ClCompile Include="PacketService.cpp" />
+    <ClCompile Include="GameRoom.cpp" />
+    <ClCompile Include="GameRoomService.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SessionPool.cpp" />
     <ClCompile Include="SQLServiceUser.cpp" />
@@ -164,6 +166,8 @@
     <ClInclude Include="DBService.h" />
     <ClInclude Include="ObjUser.h" />
     <ClInclude Include="PacketGenerator.h" />
+    <ClInclude Include="GameRoom.h" />
+    <ClInclude Include="GameRoomService.h" />
     <ClInclude Include="SQLServiceUser.h" />
     <ClInclude Include="TPComponent.h" />
     <ClInclude Include="TPDefine.h" />

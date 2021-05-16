@@ -11,11 +11,11 @@ TPResult::TPResult()
 
 TPResult::~TPResult()
 {
-	if (objectList.size() > 0)
+	if (!objectList.empty())
 	{
 		objectList.clear();
 	}	
-	if (compList.size() > 0)
+	if (!compList.empty())
 	{
 		compList.clear();
 	}
