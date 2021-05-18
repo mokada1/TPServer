@@ -1,4 +1,5 @@
 #include "SessionPool.h"
+#include "GameRoomService.h"
 
 Session* SessionPool::GetSession(const SOCKET clntSock) const
 {
@@ -10,14 +11,9 @@ Session* SessionPool::GetSession(const SOCKET clntSock) const
 	return it->second;
 }
 
-vector<Session*> SessionPool::GetSessionAll() const
+map<SOCKET, Session*> SessionPool::GetSessionMap() const
 {
-	vector<Session*> all;
-	for (auto it = sessionMap.begin(); it != sessionMap.end(); ++it)
-	{
-		all.push_back(it->second);
-	}
-	return all;
+	return sessionMap;
 }
 
 void SessionPool::CreateSession(const SOCKET clntSock, const SOCKADDR_IN& clntAddr)
@@ -31,7 +27,9 @@ void SessionPool::DeleteSession(const SOCKET clntSock)
 	auto it = sessionMap.find(clntSock);
 	if (it != sessionMap.end())
 	{
-		delete it->second;
+		auto session = it->second;
+		GameRoomService::GetInstance().DeleteObjUser(session->GetUserId());
+		delete session;
 		sessionMap.erase(it);		
 	}	
 }

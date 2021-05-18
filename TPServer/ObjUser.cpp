@@ -38,7 +38,7 @@ ObjUser::ObjUser()
 	this->userLocation = nullptr;
 }
 
-ObjUser::ObjUser(wchar_t* _userId, wchar_t* _password)
+ObjUser::ObjUser(wchar_t* const _userId, wchar_t* const _password)
 {
 	this->userId = new wchar_t[SIZE_USER_USER_ID];
 	this->password = new wchar_t[SIZE_USER_PASSWORD];

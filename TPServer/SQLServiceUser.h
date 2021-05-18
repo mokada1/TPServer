@@ -9,8 +9,8 @@
 class SQLServiceUser : public TSingleton<SQLServiceUser>
 {
 public:
-	ObjUser* GetUser(const SQLHSTMT& hStmt, const wchar_t* userId);
-	ObjUser* InsertUser(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* userId, const wchar_t* password);
-	CompUserLocation* GetUserLocation(const SQLHSTMT& hStmt, const wchar_t* userId);
-	CompUserLocation* InsertUserLocation(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* userId, const float x, const float y, const float z);
+	ObjUser* GetUser(const SQLHSTMT& hStmt, const wchar_t* const userId);
+	ObjUser* InsertUser(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const wchar_t* const password);
+	CompUserLocation* GetUserLocation(const SQLHSTMT& hStmt, const wchar_t* const userId);
+	CompUserLocation* InsertUserLocation(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const float x, const float y, const float z);
 };

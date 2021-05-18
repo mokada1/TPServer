@@ -24,8 +24,7 @@ table TB_ReqLogin
 }
 
 table TB_ResLogin
-{
-	ObjUser: TB_ObjUser;
+{	
 }
 
 table TB_ReqMove
@@ -37,4 +36,9 @@ table TB_ReqMove
 table TB_Error
 {
 	Message: string;
+}
+
+table TB_BCGameRoom
+{
+	ObjUserList: [TB_ObjUser];
 }

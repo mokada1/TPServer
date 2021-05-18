@@ -1,17 +1,16 @@
 #pragma once
 
+#pragma comment(lib, "ws2_32.lib")
+
 #include "TSingleton.h"
 #include <stdlib.h>
 #include <winsock2.h>
 #include <thread>
 #include <vector>
 #include "Packet.h"
+#include "TPDefine.h"
 
 using namespace std;
-
-#define BUFSIZE 1024
-#define OP_ServerToClient 1
-#define OP_ClientToServer 2
 
 class TPServer : public TSingleton<TPServer>
 {
@@ -20,6 +19,7 @@ public:
 
 private:
     const uint8_t SERVER_PORT = static_cast<uint8_t>(2738);
+    const int LISTEN_BACKLOG = 5;
 
     SOCKET hServSock;
     vector<thread*> worker_threads;

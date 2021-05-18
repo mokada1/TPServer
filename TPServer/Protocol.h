@@ -9,4 +9,5 @@ enum class PROTOCOL : uint16_t
 	RES_LOGIN = 101,
 	REQ_MOVE = 200,
 	RES_MOVE = 201,
+	BC_GAME_ROOM = 1000,
 };

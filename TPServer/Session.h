@@ -8,7 +8,7 @@ public:
 	Session(SOCKET clntSock, SOCKADDR_IN clntAddr);
 	~Session();
 
-	void SetUserId(const wchar_t* _userId);
+	void SetUserId(const wchar_t* const _userId);
 	SOCKET GetClntSock() const;	
 	wchar_t* GetUserId() const;
 

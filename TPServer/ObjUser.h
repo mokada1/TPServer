@@ -11,7 +11,7 @@ public:
 	flatbuffers::Offset<TB_ObjUser> Serialize(flatbuffers::FlatBufferBuilder& _fbb) const;
 
 	ObjUser();
-	ObjUser(wchar_t* _userId, wchar_t* _password);
+	ObjUser(wchar_t* const _userId, wchar_t* const _password);
 	~ObjUser();
 	wchar_t* GetUserId() const;
 	wchar_t* GetPassword() const;

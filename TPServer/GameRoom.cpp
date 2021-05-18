@@ -1,4 +1,7 @@
 #include "GameRoom.h"
+#include <iostream>
+
+using namespace std;
 
 GameRoom::GameRoom(int _roomId)
 {
@@ -18,12 +21,30 @@ int GameRoom::GetRoomId() const
 	return roomId;
 }
 
-void GameRoom::AddObjUser(shared_ptr<ObjUser> objUser)
+map<wstring, shared_ptr<ObjUser>> GameRoom::GetObjUserMap() const
+{
+	return objUserMap;
+}
+
+bool GameRoom::AddObjUser(shared_ptr<ObjUser> objUser)
 {	
 	auto userId = objUser->GetUserId();
 	auto it = objUserMap.find(userId);
 	if (it == objUserMap.end())
 	{
 		objUserMap.insert(pair<wchar_t*, shared_ptr<ObjUser>>(objUser->GetUserId(), objUser));
-	}	
+		return true;
+	}
+	return false;
+}
+
+bool GameRoom::DeleteObjUser(wchar_t* const userId)
+{
+	auto it = objUserMap.find(userId);
+	if (it != objUserMap.end())
+	{
+		objUserMap.erase(it);
+		return true;
+	}
+	return false;
 }

@@ -10,10 +10,12 @@ public:
 	~GameRoom();
 	
 	int GetRoomId() const;
+	map<wstring, shared_ptr<ObjUser>> GetObjUserMap() const;
 
-	void AddObjUser(shared_ptr<ObjUser> objUser);
+	bool AddObjUser(shared_ptr<ObjUser> objUser);
+	bool DeleteObjUser(wchar_t* const userId);
 
 private:
 	int roomId;
-	map<wchar_t*, shared_ptr<ObjUser>> objUserMap;
+	map<wstring, shared_ptr<ObjUser>> objUserMap;
 };

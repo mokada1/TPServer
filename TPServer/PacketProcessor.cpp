@@ -1,55 +1,51 @@
 #include "TPServer.h"
 #include "PacketProcessor.h"
 #include "PacketService.h"
-#include <iostream>
+#include "PacketGenerator.h"
 #include "TPError.h"
 #include "TPDefine.h"
 
+#include <iostream>
+
 using namespace std;
 
-void PacketProcessor::Process(Session& owner, const char* datas, const DWORD bytesTransferred)
+void PacketProcessor::Process(Session* const owner, char* const buffer, const DWORD bytesTransferred)
 {
-	auto packet = Parse(datas, bytesTransferred);	
-	auto header = packet.GetHeader();
-	auto body = packet.GetBuffer();
-	packet.SetOwner(owner);
+	auto packet = PacketGenerator::GetInstance().Parse(buffer, bytesTransferred, owner);
+	auto clntSock = packet->GetOwner()->GetClntSock();
+	auto header = packet->GetHeader();
 	
-	cout << "[" << packet.GetOwner().GetClntSock() << "]" << "Protocol:" << static_cast<uint16_t>(header) << endl;
+	cout << "[" << clntSock << "]" << "Protocol:" << static_cast<uint16_t>(header) << endl;
 
-	PacketService::GetInstance().Process(packet);
+	PacketService::GetInstance().Process(*packet);
+	delete packet;
 }
 
-void PacketProcessor::SendPacketAll(const Packet& packet)
-{
-	auto sessionList = SessionPool::GetInstance().GetSessionAll();
-	for (auto session : sessionList)
+void PacketProcessor::SendPacket(const Packet* const packet)
+{		
+	if (packet->GetIsBcast())
 	{
-		if (packet.GetOwner().GetClntSock() == session->GetClntSock())
-		{
-			continue;
-		}
-		SendPacket(packet, session->GetClntSock());
+		SendPacketAll(packet);
 	}
+	else
+	{
+		SendPacket(packet, packet->GetOwner());
+	}	
 }
 
-void PacketProcessor::SendPacket(const Packet& packet)
+void PacketProcessor::SendPacket(const Packet* const packet, const Session* const session)
 {
-	SendPacket(packet, packet.GetOwner());
+	SendPacket(packet, session->GetClntSock());
 }
 
-void PacketProcessor::SendPacket(const Packet& packet, const Session& session)
-{
-	SendPacket(packet, session.GetClntSock());
-}
-
-void PacketProcessor::SendPacket(const Packet& packet, const SOCKET& clntSock)
+void PacketProcessor::SendPacket(const Packet* const packet, const SOCKET& clntSock)
 {
 	LPPER_IO_DATA PerIoData = new PER_IO_DATA;
 	int sendBytes = 0;
 
 	memset(&(PerIoData->overlapped), 0, sizeof(OVERLAPPED));
-	PerIoData->wsaBuf.len = packet.GetPacketSize();
-	PerIoData->wsaBuf.buf = packet.GetBuffer();
+	PerIoData->wsaBuf.len = packet->GetPacketSize();
+	PerIoData->wsaBuf.buf = packet->GetBuffer();
 	PerIoData->operation = OP_ServerToClient;
 	if (WSASend(clntSock, &(PerIoData->wsaBuf), 1, (LPDWORD)&sendBytes, 0, &(PerIoData->overlapped), NULL) == SOCKET_ERROR)
 	{
@@ -58,11 +54,13 @@ void PacketProcessor::SendPacket(const Packet& packet, const SOCKET& clntSock)
 	}
 }
 
-Packet PacketProcessor::Parse(const char* datas, const DWORD bytesTransferred)
-{
-	uint16_t headerInt16 = datas[0] | static_cast<uint16_t>(datas[1]) << 8;
-	PROTOCOL header = static_cast<PROTOCOL>(headerInt16);
-	auto body = const_cast<char*>(&datas[HEAD_SIZE]);
-	auto buffer = const_cast<char*>(datas);
-	return Packet(buffer, bytesTransferred, header, body);
+void PacketProcessor::SendPacketAll(const Packet* const packet)
+{	
+	auto sessionMap = SessionPool::GetInstance().GetSessionMap();
+	for (auto p : sessionMap)
+	{
+		auto clntSock = p.first;
+
+		SendPacket(packet, clntSock);
+	}
 }

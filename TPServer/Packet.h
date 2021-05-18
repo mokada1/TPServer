@@ -2,23 +2,32 @@
 
 #include "Protocol.h"
 #include "Session.h"
+#include "Uncopyable.h"
 
-class Packet
+class Packet : public Uncopyable
 {
 public:
-	Packet();
-	Packet(char* buffer, ULONG _packetSize, PROTOCOL header, char* body);
+	Packet();	
+	Packet(char* const _buffer, ULONG _packetSize, PROTOCOL _header);
+	Packet(char* const _uffer, ULONG _packetSize, PROTOCOL _header, Session* const _owner);
+	Packet(char* const _buffer, ULONG _packetSize, PROTOCOL _header, Session* const _owner, bool _isBcast);
+	Packet(char* const _buffer, ULONG _packetSize, PROTOCOL _header, Session* const _owner, bool _isBcast, bool _isDAlloc);
+	~Packet();	
+	
 	PROTOCOL GetHeader() const;
 	char* GetBody() const;
 	char* GetBuffer() const;
 	ULONG GetPacketSize() const;
-	const Session& GetOwner() const;	
-	void SetOwner(const Session& owner);	
+	Session* GetOwner() const;	
+	bool GetIsBcast() const;
+
 	bool IsValid();
 private:	
 	PROTOCOL header;
 	char* body;
 	char* buffer;
 	ULONG packetSize;
-	const Session* owner;	
+	Session* owner;
+	bool isBcast;
+	bool isDAlloc;
 };

@@ -12,27 +12,23 @@ class TPResult
 public:
 	TPResult();
 	~TPResult();
-	TPResult(const bool _flag);
-	TPResult(const wchar_t* _message);
-	TPResult(const int _number);
-	TPResult(TPObject* _object);
-	TPResult(TPComponent* _comp);
+	TPResult(const wchar_t* const _message);
 		
 	bool GetFlag() const;
 	wchar_t* GetMsg() const;
 	int GetNumber() const;
 	vector<shared_ptr<TPObject>> GetObjectList() const;
 	vector<shared_ptr<TPComponent>> GetCompList() const;
-	Packet& GetPacket() const;
+	Packet* GetPacket() const;
 	TPResult& GetNextResult() const;
 
 	void SetFlag(const bool _flag);
-	void SetMsg(const wchar_t* _message);
+	void SetMsg(const wchar_t* const _message);
 	void SetNumber(const int _number);
-	void SetPacket(Packet* _packet);
-	void SetNextResult(TPResult* _nextResult);
-	void AddObject(TPObject* _object);
-	void AddComp(TPComponent* _comp);
+	void SetPacket(Packet* const _packet);
+	void SetNextResult(TPResult* const _nextResult);
+	void AddObject(TPObject* const _object);
+	void AddComp(TPComponent* const _comp);
 
 private:
 	bool flag;

@@ -46,7 +46,7 @@ void DBService::ENDStmt(const SQLHSTMT& hStmt)
 	}
 }
 
-TPResult* DBService::LoginUser(const wchar_t* userId, const wchar_t* password)
+TPResult* DBService::LoginUser(const wchar_t* const userId, const wchar_t* const password)
 {
 	auto result = new TPResult();
 
@@ -92,7 +92,7 @@ TPResult* DBService::LoginUser(const wchar_t* userId, const wchar_t* password)
 	return result;
 }
 
-TPResult* DBService::LoadUserInfo(const wchar_t* userId)
+TPResult* DBService::LoadUserInfo(const wchar_t* const userId)
 {
 	auto result = new TPResult();
 

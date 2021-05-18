@@ -26,6 +26,9 @@ struct TB_ReqMoveBuilder;
 struct TB_Error;
 struct TB_ErrorBuilder;
 
+struct TB_BCGameRoom;
+struct TB_BCGameRoomBuilder;
+
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) ST_Vec3 FLATBUFFERS_FINAL_CLASS {
  private:
   float x_;
@@ -242,16 +245,8 @@ inline flatbuffers::Offset<TB_ReqLogin> CreateTB_ReqLoginDirect(
 
 struct TB_ResLogin FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef TB_ResLoginBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_OBJUSER = 4
-  };
-  const TB_ObjUser *ObjUser() const {
-    return GetPointer<const TB_ObjUser *>(VT_OBJUSER);
-  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_OBJUSER) &&
-           verifier.VerifyTable(ObjUser()) &&
            verifier.EndTable();
   }
 };
@@ -260,9 +255,6 @@ struct TB_ResLoginBuilder {
   typedef TB_ResLogin Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_ObjUser(flatbuffers::Offset<TB_ObjUser> ObjUser) {
-    fbb_.AddOffset(TB_ResLogin::VT_OBJUSER, ObjUser);
-  }
   explicit TB_ResLoginBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -276,10 +268,8 @@ struct TB_ResLoginBuilder {
 };
 
 inline flatbuffers::Offset<TB_ResLogin> CreateTB_ResLogin(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<TB_ObjUser> ObjUser = 0) {
+    flatbuffers::FlatBufferBuilder &_fbb) {
   TB_ResLoginBuilder builder_(_fbb);
-  builder_.add_ObjUser(ObjUser);
   return builder_.Finish();
 }
 
@@ -397,6 +387,59 @@ inline flatbuffers::Offset<TB_Error> CreateTB_ErrorDirect(
   return CreateTB_Error(
       _fbb,
       Message__);
+}
+
+struct TB_BCGameRoom FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_BCGameRoomBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_OBJUSERLIST = 4
+  };
+  const flatbuffers::Vector<flatbuffers::Offset<TB_ObjUser>> *ObjUserList() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<TB_ObjUser>> *>(VT_OBJUSERLIST);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_OBJUSERLIST) &&
+           verifier.VerifyVector(ObjUserList()) &&
+           verifier.VerifyVectorOfTables(ObjUserList()) &&
+           verifier.EndTable();
+  }
+};
+
+struct TB_BCGameRoomBuilder {
+  typedef TB_BCGameRoom Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_ObjUserList(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<TB_ObjUser>>> ObjUserList) {
+    fbb_.AddOffset(TB_BCGameRoom::VT_OBJUSERLIST, ObjUserList);
+  }
+  explicit TB_BCGameRoomBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TB_BCGameRoomBuilder &operator=(const TB_BCGameRoomBuilder &);
+  flatbuffers::Offset<TB_BCGameRoom> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TB_BCGameRoom>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TB_BCGameRoom> CreateTB_BCGameRoom(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<TB_ObjUser>>> ObjUserList = 0) {
+  TB_BCGameRoomBuilder builder_(_fbb);
+  builder_.add_ObjUserList(ObjUserList);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<TB_BCGameRoom> CreateTB_BCGameRoomDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const std::vector<flatbuffers::Offset<TB_ObjUser>> *ObjUserList = nullptr) {
+  auto ObjUserList__ = ObjUserList ? _fbb.CreateVector<flatbuffers::Offset<TB_ObjUser>>(*ObjUserList) : 0;
+  return CreateTB_BCGameRoom(
+      _fbb,
+      ObjUserList__);
 }
 
 #endif  // FLATBUFFERS_GENERATED_TP_H_

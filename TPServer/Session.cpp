@@ -12,7 +12,7 @@ Session::Session()
 Session::Session(SOCKET clntSock, SOCKADDR_IN clntAddr)
 {
 	this->hClntSock = clntSock;
-	char buf[32] = { 0, };
+	char buf[BUFSIZE_IP] = { 0, };
 	this->ip = inet_ntop(AF_INET, &clntAddr.sin_addr, buf, sizeof(buf));
 	this->userId = nullptr;
 }
@@ -25,7 +25,7 @@ Session::~Session()
 	}
 }
 
-void Session::SetUserId(const wchar_t* _userId)
+void Session::SetUserId(const wchar_t* const _userId)
 {
 	this->userId = new wchar_t[SIZE_USER_USER_ID];
 	wcscpy_s(this->userId, SIZE_USER_USER_ID, _userId);
@@ -33,15 +33,15 @@ void Session::SetUserId(const wchar_t* _userId)
 
 SOCKET Session::GetClntSock() const
 {
-	return this->hClntSock;
+	return hClntSock;
 }
 
 wchar_t* Session::GetUserId() const
 {
-	return this->userId;
+	return userId;
 }
 
 bool Session::IsValid() const
 {
-	return this->hClntSock != 0 && this->ip != nullptr;
+	return hClntSock != 0 && ip != nullptr;
 }

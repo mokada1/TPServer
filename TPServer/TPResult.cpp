@@ -2,11 +2,7 @@
 
 TPResult::TPResult()
 {
-	this->flag = false;
-	this->message = nullptr;
-	this->number = 0;
-	this->packet = nullptr;
-	this->nextResult = nullptr;
+	this->TPResult::TPResult(nullptr);
 }
 
 TPResult::~TPResult()
@@ -29,49 +25,11 @@ TPResult::~TPResult()
 	}
 }
 
-TPResult::TPResult(const bool _flag)
-{
-	this->flag = _flag;
-	this->message = nullptr;
-	this->number = 0;
-	this->packet = nullptr;
-	this->nextResult = nullptr;
-}
-
-TPResult::TPResult(const wchar_t* _message)
+TPResult::TPResult(const wchar_t* const _message)
 {
 	this->flag = false;
-	this->message = const_cast<wchar_t*>(_message);
+	this->message = _message ? const_cast<wchar_t*>(_message) : nullptr;
 	this->number = 0;
-	this->packet = nullptr;
-	this->nextResult = nullptr;
-}
-
-TPResult::TPResult(const int _number)
-{
-	this->flag = false;
-	this->message = nullptr;
-	this->number = _number;
-	this->packet = nullptr;
-	this->nextResult = nullptr;
-}
-
-TPResult::TPResult(TPObject* _object)
-{
-	this->flag = true;
-	this->message = nullptr;
-	this->number = 0;
-	this->objectList.push_back(shared_ptr<TPObject>(_object));
-	this->packet = nullptr;
-	this->nextResult = nullptr;
-}
-
-TPResult::TPResult(TPComponent* _comp)
-{
-	this->flag = true;
-	this->message = nullptr;
-	this->number = 0;
-	this->compList.push_back(shared_ptr<TPComponent>(_comp));
 	this->packet = nullptr;
 	this->nextResult = nullptr;
 }
@@ -101,9 +59,9 @@ vector<shared_ptr<TPComponent>> TPResult::GetCompList() const
 	return compList;
 }
 
-Packet& TPResult::GetPacket() const
+Packet* TPResult::GetPacket() const
 {
-	return *packet;
+	return packet;
 }
 
 TPResult& TPResult::GetNextResult() const
@@ -116,7 +74,7 @@ void TPResult::SetFlag(const bool _flag)
 	this->flag = _flag;
 }
 
-void TPResult::SetMsg(const wchar_t* _message)
+void TPResult::SetMsg(const wchar_t* const _message)
 {
 	this->message = const_cast<wchar_t*>(_message);
 }
@@ -126,22 +84,22 @@ void TPResult::SetNumber(const int _number)
 	this->number = _number;
 }
 
-void TPResult::SetPacket(Packet* _packet)
+void TPResult::SetPacket(Packet* const _packet)
 {
 	this->packet = _packet;
 }
 
-void TPResult::SetNextResult(TPResult* _nextResult)
+void TPResult::SetNextResult(TPResult* const _nextResult)
 {
 	this->nextResult = _nextResult;
 }
 
-void TPResult::AddObject(TPObject* _object)
+void TPResult::AddObject(TPObject* const _object)
 {
 	objectList.push_back(shared_ptr<TPObject>(_object));
 }
 
-void TPResult::AddComp(TPComponent* _comp)
+void TPResult::AddComp(TPComponent* const _comp)
 {
 	compList.push_back(shared_ptr<TPComponent>(_comp));
 }

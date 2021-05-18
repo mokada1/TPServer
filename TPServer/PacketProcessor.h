@@ -8,12 +8,9 @@
 class PacketProcessor : public TSingleton<PacketProcessor>
 {
 public:
-	void Process(Session& owner, const char* datas, const DWORD bytesTransferred);
-	void SendPacketAll(const Packet& packet);
-	void SendPacket(const Packet& packet);
-	void SendPacket(const Packet& packet, const Session& session);
-	void SendPacket(const Packet& packet, const SOCKET& clntSock);
-
-private:	
-	Packet Parse(const char* datas, const DWORD bytesTransferred);
+	void Process(Session* const owner, char* const buffer, const DWORD bytesTransferred);	
+	void SendPacket(const Packet* const packet);
+	void SendPacket(const Packet* const packet, const Session* const session);
+	void SendPacket(const Packet* const packet, const SOCKET& clntSock);
+	void SendPacketAll(const Packet* const packet);
 };

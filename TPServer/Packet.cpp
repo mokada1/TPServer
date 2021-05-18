@@ -1,54 +1,76 @@
 #include "Packet.h"
+#include "TPDefine.h"
 
 Packet::Packet()
 {
-	this->header = static_cast<PROTOCOL>(0);
-	this->body = nullptr;
-	this->buffer = nullptr;
-	this->packetSize = 0;
-	this->owner = nullptr;
+	this->Packet::Packet(nullptr, 0, static_cast<PROTOCOL>(0), nullptr, false, false);
 }
 
-Packet::Packet(char* buffer, ULONG _packetSize, PROTOCOL header, char* body)
+Packet::Packet(char* const _buffer, ULONG _packetSize, PROTOCOL _header)
 {
-	this->header = header;
-	this->body = body;
-	this->buffer = buffer;
+	this->Packet::Packet(_buffer, _packetSize, _header, nullptr, false, true);
+}
+
+Packet::Packet(char* const _buffer, ULONG _packetSize, PROTOCOL _header, Session* const _owner)
+{
+	this->Packet::Packet(_buffer, _packetSize, _header, _owner, false, true);
+}
+
+Packet::Packet(char* const _buffer, ULONG _packetSize, PROTOCOL _header, Session* const _owner, bool _isBcast)
+{	
+	this->Packet::Packet(_buffer, _packetSize, _header, _owner, _isBcast, true);
+}
+
+Packet::Packet(char* const _buffer, ULONG _packetSize, PROTOCOL _header, Session* const _owner, bool _isBcast, bool _isDAlloc)
+{
+	this->header = _header;
+	this->body = &_buffer[PACKET_HEAD_SIZE];
+	this->buffer = _buffer;
 	this->packetSize = _packetSize;
-	this->owner = nullptr;	
+	this->owner = _owner;
+	this->isBcast = _isBcast;
+	this->isDAlloc = _isDAlloc;
+}
+
+Packet::~Packet()
+{	
+	if (isDAlloc && IsValid())
+	{
+		delete[] buffer;
+	}
 }
 
 PROTOCOL Packet::GetHeader() const
 {
-	return this->header;
+	return header;
 }
 
 char* Packet::GetBody() const
 {
-	return this->body;
+	return body;
 }
 
 char* Packet::GetBuffer() const
 {
-	return this->buffer;
+	return buffer;
 }
 
 ULONG Packet::GetPacketSize() const
 {
-	return this->packetSize;
+	return packetSize;
 }
 
-const Session& Packet::GetOwner() const
+Session* Packet::GetOwner() const
 {
-	return *(this->owner);
+	return owner;
 }
 
-void Packet::SetOwner(const Session& owner)
+bool Packet::GetIsBcast() const
 {
-	this->owner = &owner;
+	return isBcast;
 }
 
 bool Packet::IsValid()
 {
-	return packetSize > 0;
+	return packetSize > 0 && buffer != nullptr;
 }

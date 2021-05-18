@@ -28,9 +28,8 @@ void PacketService::Process(const Packet& packet)
 	if (result)
 	{
 		auto packetResult = result->GetPacket();
-		if (packetResult.IsValid())
+		if (packetResult->IsValid())
 		{
-			packetResult.SetOwner(packet.GetOwner());
 			PacketProcessor::GetInstance().SendPacket(packetResult);
 			delete result;
 		}
@@ -40,10 +39,13 @@ void PacketService::Process(const Packet& packet)
 TPResult* PacketService::ProcReqLogin(const Packet& packet)
 {
 	auto body = packet.GetBody();
+	auto owner = packet.GetOwner();
+
 	auto req = flatbuffers::GetRoot<TB_ReqLogin>(body);
 	auto userId = req->UserId()->c_str();
 	auto password = req->Password()->c_str();
-	cout << "UserId:" << userId << " Password:" << password << endl;
+
+	cout << "로그인 요청 - UserId:" << userId << " Password:" << password << endl;
 
 	wchar_t wUserId[SIZE_USER_USER_ID], wPassword[SIZE_USER_PASSWORD];
 	TPUtil::GetInstance().CharToWChar(wUserId, SIZE_USER_USER_ID, userId);
@@ -53,7 +55,7 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	auto resultLoginUser = DBService::GetInstance().LoginUser(wUserId, wPassword);
 	if (!resultLoginUser->GetFlag())
 	{
-		auto packetError = PacketGenerator::GetInstance().CreateError(resultLoginUser->GetMsg());
+		auto packetError = PacketGenerator::GetInstance().CreateError(owner, resultLoginUser->GetMsg());
 		resultLoginUser->SetPacket(packetError);
 		return resultLoginUser;
 	}
@@ -63,7 +65,7 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	resultLoadUserInfo->SetNextResult(resultLoginUser);
 	if (!resultLoadUserInfo->GetFlag())
 	{
-		auto packetError = PacketGenerator::GetInstance().CreateError(resultLoadUserInfo->GetMsg());
+		auto packetError = PacketGenerator::GetInstance().CreateError(owner, resultLoadUserInfo->GetMsg());
 		resultLoadUserInfo->SetPacket(packetError);
 		return resultLoadUserInfo;
 	}
@@ -74,19 +76,25 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	auto comp = resultLoadUserInfo->GetCompList().front();
 	auto compUserLocation = static_pointer_cast<CompUserLocation>(comp);
 	
+	// 유저 컴포넌트 설정
 	objUser->SetCompUserLocation(compUserLocation);
+
+	// 세션에 유저 아이디 설정
+	packet.GetOwner()->SetUserId(wUserId);
 
 	// 유저 방 참가
 	if (!GameRoomService::GetInstance().AddObjUser(objUser))
 	{
-		auto packetError = PacketGenerator::GetInstance().CreateError(FAIL_ADD_OBJ_USER_GAME_ROOM);
+		auto packetError = PacketGenerator::GetInstance().CreateError(owner, FAIL_ADD_OBJ_USER_GAME_ROOM);
 		resultLoadUserInfo->SetPacket(packetError);
 		return resultLoadUserInfo;
 	}
-	wcout << SUCCESS_ADD_OBJ_USER_GAME_ROOM << endl;
 
-	auto packetResLogin = PacketGenerator::GetInstance().CreateResLogin(*objUser);
-	resultLoadUserInfo->SetPacket(packetResLogin);
+	// 방 정보 전달용 패킷 생성
+	auto gameRoom = GameRoomService::GetInstance().GetGameRoom();
+	auto packetBCGameRoom = PacketGenerator::GetInstance().CreateBCGameRoom(owner, *gameRoom);	
+
+	resultLoadUserInfo->SetPacket(packetBCGameRoom);
 	return resultLoadUserInfo;
 }
 

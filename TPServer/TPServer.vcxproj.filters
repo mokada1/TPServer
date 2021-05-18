@@ -52,6 +52,12 @@
     <Filter Include="소스 파일\Component">
       <UniqueIdentifier>{f79e6f74-ec57-46a6-b346-288d32a4a5a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\GameRoom">
+      <UniqueIdentifier>{3d1375b0-241c-4e61-b0ba-89bfcf2a43b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\GameRoom">
+      <UniqueIdentifier>{dc12e9c6-1373-40e7-a059-58a7c06a3c1c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -100,10 +106,10 @@
       <Filter>소스 파일\Component</Filter>
     </ClCompile>
     <ClCompile Include="GameRoom.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\GameRoom</Filter>
     </ClCompile>
     <ClCompile Include="GameRoomService.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\GameRoom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,9 +219,12 @@
       <Filter>헤더 파일\Component</Filter>
     </ClInclude>
     <ClInclude Include="GameRoom.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\GameRoom</Filter>
     </ClInclude>
     <ClInclude Include="GameRoomService.h">
+      <Filter>헤더 파일\GameRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="Uncopyable.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
