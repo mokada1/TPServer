@@ -1,12 +1,10 @@
 #include "PacketService.h"
 #include "PacketProcessor.h"
-#include "TP_generated.h"
 #include "DBService.h"
-#include "TPDefine.h"
 #include "PacketGenerator.h"
-#include "TPUtil.h"
-#include "ObjUser.h"
 #include "GameRoomService.h"
+#include "Session.h"
+#include "TPResult.h"
 
 #include <iostream>
 
@@ -80,7 +78,7 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	objUser->SetCompUserLocation(compUserLocation);
 
 	// 세션에 유저 아이디 설정
-	packet.GetOwner()->SetUserId(wUserId);
+	owner->SetUserId(wUserId);
 
 	// 유저 방 참가
 	if (!GameRoomService::GetInstance().AddObjUser(objUser))
@@ -92,7 +90,13 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 
 	// 방 정보 전달용 패킷 생성
 	auto gameRoom = GameRoomService::GetInstance().GetGameRoom();
-	auto packetBCGameRoom = PacketGenerator::GetInstance().CreateBCGameRoom(owner, *gameRoom);	
+	auto packetBCGameRoom = PacketGenerator::GetInstance().CreateGameRoomObj(owner, *gameRoom);	
+
+	// 방 입장 패킷 전송
+	vector<Session*> packetCastGroup;
+	packetCastGroup.push_back(owner);
+	auto packetEnterGameRoom = PacketGenerator::GetInstance().CreateEnterGameRoom(objUser, packetCastGroup);
+	PacketProcessor::GetInstance().SendPacket(packetEnterGameRoom);
 
 	resultLoadUserInfo->SetPacket(packetBCGameRoom);
 	return resultLoadUserInfo;

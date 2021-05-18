@@ -15,10 +15,6 @@ TPResult::~TPResult()
 	{
 		compList.clear();
 	}
-	if (packet)
-	{
-		delete packet;
-	}
 	if (nextResult)
 	{
 		delete nextResult;

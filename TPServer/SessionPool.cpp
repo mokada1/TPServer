@@ -1,5 +1,8 @@
 #include "SessionPool.h"
 #include "GameRoomService.h"
+#include "PacketGenerator.h"
+#include "PacketProcessor.h"
+#include "TPDefine.h"
 
 Session* SessionPool::GetSession(const SOCKET clntSock) const
 {
@@ -24,14 +27,27 @@ void SessionPool::CreateSession(const SOCKET clntSock, const SOCKADDR_IN& clntAd
 
 void SessionPool::DeleteSession(const SOCKET clntSock)
 {
-	auto it = sessionMap.find(clntSock);
+	std::shared_ptr<ObjUser> objUser = nullptr;
+
+	auto it = sessionMap.find(clntSock);	
 	if (it != sessionMap.end())
 	{
 		auto session = it->second;
-		GameRoomService::GetInstance().DeleteObjUser(session->GetUserId());
+		auto userId = session->GetUserId();
+		if (userId)
+		{
+			objUser = GameRoomService::GetInstance().GetObjUser(userId);
+			GameRoomService::GetInstance().DeleteObjUser(userId);
+		}		
 		delete session;
-		sessionMap.erase(it);		
+		sessionMap.erase(it);
 	}	
+
+	if (objUser)
+	{
+		auto packetExitGameRoom = PacketGenerator::GetInstance().CreateExitGameRoom(objUser);
+		PacketProcessor::GetInstance().SendPacket(packetExitGameRoom);
+	}
 }
 
 void SessionPool::Destroy()

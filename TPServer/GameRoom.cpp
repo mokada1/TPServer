@@ -48,3 +48,13 @@ bool GameRoom::DeleteObjUser(wchar_t* const userId)
 	}
 	return false;
 }
+
+shared_ptr<ObjUser> GameRoom::GetObjUser(const wchar_t* const userId) const
+{
+	auto it = objUserMap.find(userId);
+	if (it != objUserMap.end())
+	{
+		return it->second;
+	}
+	return nullptr;
+}

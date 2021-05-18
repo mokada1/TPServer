@@ -1,7 +1,6 @@
 #pragma once
 
 #include "TPComponent.h"
-#include "TPUtil.h"
 
 class CompUserLocation : public TPComponent
 {

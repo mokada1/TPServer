@@ -3,7 +3,6 @@
 #include "TSingleton.h"
 #include "Session.h"
 #include <map>
-#include <vector>
 
 using namespace std;
 

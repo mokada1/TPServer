@@ -1,5 +1,8 @@
 #pragma once
 
+typedef unsigned long ULONG;
+typedef unsigned long DWORD;
+
 #define BUFSIZE 1024
 #define BUFSIZE_IP 32
 #define OP_ServerToClient 1

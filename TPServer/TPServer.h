@@ -8,7 +8,6 @@
 #include <thread>
 #include <vector>
 #include "Packet.h"
-#include "TPDefine.h"
 
 using namespace std;
 

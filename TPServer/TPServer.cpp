@@ -1,5 +1,4 @@
 #include "TPServer.h"
-#include <stdio.h>
 #include <iostream>
 #include <WS2tcpip.h>
 #include "DBServer.h"
@@ -136,7 +135,10 @@ void TPServer::CompletionThread()
             if (WSARecv(PerHandleData->hClntSock, &(PerIoData->wsaBuf), 1, NULL, &flags, &(PerIoData->overlapped), NULL) == SOCKET_ERROR)
             {
                 if (WSAGetLastError() != WSA_IO_PENDING)
-                    TPError::ErrorHandling("WSARecv() error");
+                {
+                    cout << "WSAGetLastError():" << WSAGetLastError() << endl;
+                    TPError::ErrorHandling("WSARecv() Error");
+                }
             }
         }
         else if (PerIoData->operation == OP_ServerToClient)

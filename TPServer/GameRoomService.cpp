@@ -70,7 +70,7 @@ bool GameRoomService::DeleteObjUser(wchar_t* const userId)
 	return false;
 }
 
-GameRoom* GameRoomService::GetGameRoom()
+GameRoom* GameRoomService::GetGameRoom() const
 {
 	if (roomList.empty())
 	{
@@ -81,7 +81,7 @@ GameRoom* GameRoomService::GetGameRoom()
 	return GetGameRoom(roomId);
 }
 
-GameRoom* GameRoomService::GetGameRoom(const int roomId)
+GameRoom* GameRoomService::GetGameRoom(const int roomId) const
 {
 	for (auto it = roomList.begin(); it != roomList.end(); ++it)
 	{
@@ -89,6 +89,19 @@ GameRoom* GameRoomService::GetGameRoom(const int roomId)
 		if (gameRoom->GetRoomId() == roomId)
 		{
 			return gameRoom;
+		}
+	}
+	return nullptr;
+}
+
+shared_ptr<ObjUser> GameRoomService::GetObjUser(const wchar_t* const userId) const
+{
+	for (auto& room : roomList)
+	{
+		auto objUser = room->GetObjUser(userId);
+		if (objUser)
+		{
+			return objUser;
 		}
 	}
 	return nullptr;

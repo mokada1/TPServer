@@ -38,7 +38,17 @@ table TB_Error
 	Message: string;
 }
 
-table TB_BCGameRoom
+table TB_GameRoomObj
 {
 	ObjUserList: [TB_ObjUser];
+}
+
+table TB_EnterGameRoom
+{
+	ObjUser: TB_ObjUser;
+}
+
+table TB_ExitGameRoom
+{
+	ObjUser: TB_ObjUser;
 }

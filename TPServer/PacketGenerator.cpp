@@ -1,6 +1,5 @@
 #include "PacketGenerator.h"
-#include "TPDefine.h"
-#include "TPUtil.h"
+#include "GameRoom.h"
 
 Packet* PacketGenerator::Parse(char* const buffer, DWORD bytesTransferred, Session* const owner)
 {
@@ -8,7 +7,9 @@ Packet* PacketGenerator::Parse(char* const buffer, DWORD bytesTransferred, Sessi
 	unsigned char byte2 = buffer[1];
 	uint16_t headerInt16 = byte1 | byte2 << 8;
 	PROTOCOL header = static_cast<PROTOCOL>(headerInt16);
-	return new Packet(buffer, bytesTransferred, header, owner, false, false);
+	auto packetInfo = PacketInfo(buffer, bytesTransferred, header);
+	auto packetSubInfo = PacketSubInfo(owner, PACKET_CAST_TYPE::UNICAST, vector<Session*>(), false);
+	return new Packet(packetInfo, packetSubInfo);
 }
 
 Packet* PacketGenerator::CreateError(Session* const owner, const wchar_t* const message)
@@ -27,15 +28,15 @@ Packet* PacketGenerator::CreateError(Session* const owner, const wchar_t* const 
 
 	fbb.Finish(CreateTB_Error(fbb, offsetMessage));
 
-	return CreatePacket(buffer, header, owner, false, fbb);
+	return CreatePacket(fbb, buffer, header, owner);
 }
 
-Packet* PacketGenerator::CreateBCGameRoom(Session* const owner, const GameRoom& gameRoom)
+Packet* PacketGenerator::CreateGameRoomObj(Session* const owner, const GameRoom& gameRoom)
 {
 	auto buffer = new char[MAX_DATA_SIZE];
 	memset(buffer, 0, MAX_DATA_SIZE);
 
-	PROTOCOL header = PROTOCOL::BC_GAME_ROOM;
+	PROTOCOL header = PROTOCOL::GAME_ROOM_OBJ;
 	SetHeaderOfBuff(buffer, header);
 
 	flatbuffers::FlatBufferBuilder fbb;
@@ -50,9 +51,39 @@ Packet* PacketGenerator::CreateBCGameRoom(Session* const owner, const GameRoom& 
 	}
 	auto offsetObjUserList = objUserMap.empty() ? 0 : fbb.CreateVector(offsetListObjUser);
 
-	fbb.Finish(CreateTB_BCGameRoom(fbb, offsetObjUserList));
+	fbb.Finish(CreateTB_GameRoomObj(fbb, offsetObjUserList));
 
-	return CreatePacket(buffer, header, owner, true, fbb);
+	return CreatePacket(fbb, buffer, header, owner);
+}
+
+Packet* PacketGenerator::CreateEnterGameRoom(const shared_ptr<ObjUser> objUser, vector<Session*> packetCastGroup)
+{
+	auto buffer = new char[MAX_DATA_SIZE];
+	memset(buffer, 0, MAX_DATA_SIZE);
+
+	PROTOCOL header = PROTOCOL::ENTER_GAME_ROOM;
+	SetHeaderOfBuff(buffer, header);
+
+	flatbuffers::FlatBufferBuilder fbb;
+
+	fbb.Finish(CreateTB_EnterGameRoom(fbb, objUser->Serialize(fbb)));
+
+	return CreatePacket(fbb, buffer, header, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
+}
+
+Packet* PacketGenerator::CreateExitGameRoom(const shared_ptr<ObjUser> objUser)
+{
+	auto buffer = new char[MAX_DATA_SIZE];
+	memset(buffer, 0, MAX_DATA_SIZE);
+
+	PROTOCOL header = PROTOCOL::EXIT_GAME_ROOM;
+	SetHeaderOfBuff(buffer, header);
+
+	flatbuffers::FlatBufferBuilder fbb;
+	
+	fbb.Finish(CreateTB_ExitGameRoom(fbb, objUser->Serialize(fbb)));
+
+	return CreatePacket(fbb, buffer, header, nullptr, PACKET_CAST_TYPE::BROADCAST);
 }
 
 void PacketGenerator::SetHeaderOfBuff(char* const buffer, PROTOCOL header)
@@ -64,11 +95,23 @@ void PacketGenerator::SetHeaderOfBuff(char* const buffer, PROTOCOL header)
 	buffer[1] = byte2;
 }
 
-Packet* PacketGenerator::CreatePacket(char* const buffer, PROTOCOL header, Session* const owner, bool isBcast, flatbuffers::FlatBufferBuilder& _fbb)
+Packet* PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner)
+{
+	return CreatePacket(_fbb, buffer, header, owner, PACKET_CAST_TYPE::UNICAST, vector<Session*>());
+}
+
+Packet* PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner, PACKET_CAST_TYPE packetCastType)
+{
+	return CreatePacket(_fbb, buffer, header, owner, packetCastType, vector<Session*>());
+}
+
+Packet* PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner, PACKET_CAST_TYPE packetCastType, vector<Session*> packetCastGroup)
 {
 	auto bp = _fbb.GetBufferPointer();
 	auto bSize = _fbb.GetSize();
 	memcpy(&buffer[PACKET_HEAD_SIZE], bp, bSize);
 	const int DATA_SIZE = PACKET_HEAD_SIZE + bSize;
-	return new Packet(buffer, DATA_SIZE, header, owner, isBcast);
+	auto packetInfo = PacketInfo(buffer, DATA_SIZE, header);
+	auto packetSubInfo = PacketSubInfo(owner, packetCastType, packetCastGroup);
+	return new Packet(packetInfo, packetSubInfo);
 }

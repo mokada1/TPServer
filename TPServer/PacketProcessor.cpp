@@ -3,7 +3,7 @@
 #include "PacketService.h"
 #include "PacketGenerator.h"
 #include "TPError.h"
-#include "TPDefine.h"
+#include "SessionPool.h"
 
 #include <iostream>
 
@@ -21,16 +21,23 @@ void PacketProcessor::Process(Session* const owner, char* const buffer, const DW
 	delete packet;
 }
 
-void PacketProcessor::SendPacket(const Packet* const packet)
+void PacketProcessor::SendPacket(const Packet* packet)
 {		
-	if (packet->GetIsBcast())
+	switch (packet->GetPacketCastType())
 	{
-		SendPacketAll(packet);
-	}
-	else
-	{
+	case PACKET_CAST_TYPE::UNICAST:
 		SendPacket(packet, packet->GetOwner());
-	}	
+		break;
+	case PACKET_CAST_TYPE::BROADCAST:
+		SendPacketAll(packet, true);
+		break;
+	case PACKET_CAST_TYPE::MULTICAST:
+		SendPacketAll(packet, false);
+		break;
+	default:
+		break;
+	}
+	delete packet;
 }
 
 void PacketProcessor::SendPacket(const Packet* const packet, const Session* const session)
@@ -48,19 +55,38 @@ void PacketProcessor::SendPacket(const Packet* const packet, const SOCKET& clntS
 	PerIoData->wsaBuf.buf = packet->GetBuffer();
 	PerIoData->operation = OP_ServerToClient;
 	if (WSASend(clntSock, &(PerIoData->wsaBuf), 1, (LPDWORD)&sendBytes, 0, &(PerIoData->overlapped), NULL) == SOCKET_ERROR)
-	{
+	{		
 		if (WSAGetLastError() != WSA_IO_PENDING)
-			TPError::ErrorHandling("WSASend() error");
+		{
+			cout << "WSAGetLastError():" << WSAGetLastError() << endl;
+			TPError::ErrorHandling("WSASend() Error");
+		}
 	}
 }
 
-void PacketProcessor::SendPacketAll(const Packet* const packet)
+void PacketProcessor::SendPacketAll(const Packet* const packet, bool isIgnoreCastGroup)
 {	
+	auto packetCastGroup = packet->GetPacketCastGroup();
 	auto sessionMap = SessionPool::GetInstance().GetSessionMap();
+
+	bool found = false;
+
 	for (auto p : sessionMap)
 	{
+		found = false;
+		for (auto session : packetCastGroup)
+		{
+			if (session->GetClntSock() == p.second->GetClntSock())
+			{
+				found = true;
+				break;
+			}
+		}
+		if (isIgnoreCastGroup ? found : !found)
+		{
+			continue;
+		}
 		auto clntSock = p.first;
-
 		SendPacket(packet, clntSock);
 	}
 }

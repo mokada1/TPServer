@@ -3,14 +3,17 @@
 #include "TSingleton.h"
 #include <WinSock2.h>
 #include "Packet.h"
-#include "SessionPool.h"
+
+class Session;
 
 class PacketProcessor : public TSingleton<PacketProcessor>
 {
 public:
 	void Process(Session* const owner, char* const buffer, const DWORD bytesTransferred);	
-	void SendPacket(const Packet* const packet);
+	void SendPacket(const Packet* packet);
 	void SendPacket(const Packet* const packet, const Session* const session);
 	void SendPacket(const Packet* const packet, const SOCKET& clntSock);
-	void SendPacketAll(const Packet* const packet);
+
+private:
+	void SendPacketAll(const Packet* const packet, bool isIgnoreCastGroup);
 };

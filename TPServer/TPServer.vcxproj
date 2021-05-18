@@ -165,6 +165,7 @@
     <ClInclude Include="CompUserLocation.h" />
     <ClInclude Include="DBServer.h" />
     <ClInclude Include="DBService.h" />
+    <ClInclude Include="Enums.h" />
     <ClInclude Include="ObjUser.h" />
     <ClInclude Include="PacketGenerator.h" />
     <ClInclude Include="GameRoom.h" />

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "TSingleton.h"
-#include "Packet.h"
-#include "TPResult.h"
+
+class Packet;
+class TPResult;
 
 class PacketService : public TSingleton<PacketService>
 {

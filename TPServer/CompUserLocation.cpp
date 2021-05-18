@@ -7,7 +7,7 @@ bool CompUserLocation::IsValid() const
 
 flatbuffers::Offset<TB_CompUserLocation> CompUserLocation::Serialize(flatbuffers::FlatBufferBuilder& _fbb) const
 {
-	ST_Vec3 st_location(location.GetX(), location.GetY(), location.GetZ());	
+	ST_Vec3 st_location(location.x, location.y, location.z);	
 	TB_CompUserLocationBuilder builder(_fbb);
 	builder.add_Location(&st_location);
 	return builder.Finish();
@@ -16,18 +16,19 @@ flatbuffers::Offset<TB_CompUserLocation> CompUserLocation::Serialize(flatbuffers
 CompUserLocation::CompUserLocation()
 {
 	isValid = false;
+	location = { 0.f, 0.f, 0.f };
 }
 
 CompUserLocation::CompUserLocation(const float _x, const float _y, const float _z)
 {
 	isValid = true;
-	location.Set(_x, _y, _z);
+	location = { _x, _y, _z };
 }
 
 CompUserLocation::CompUserLocation(const double _x, const double _y, const double _z)
 {
 	isValid = true;
-	location.Set(_x, _y, _z);
+	location = { static_cast<float>(_x), static_cast<float>(_y), static_cast<float>(_z) };
 }
 
 CompUserLocation::CompUserLocation(const Vector3 _location)

@@ -1,40 +1,21 @@
 #include "Packet.h"
-#include "TPDefine.h"
 
-Packet::Packet()
+Packet::Packet(const PacketInfo& packetInfo, const PacketSubInfo& packetSubInfo)
 {
-	this->Packet::Packet(nullptr, 0, static_cast<PROTOCOL>(0), nullptr, false, false);
-}
-
-Packet::Packet(char* const _buffer, ULONG _packetSize, PROTOCOL _header)
-{
-	this->Packet::Packet(_buffer, _packetSize, _header, nullptr, false, true);
-}
-
-Packet::Packet(char* const _buffer, ULONG _packetSize, PROTOCOL _header, Session* const _owner)
-{
-	this->Packet::Packet(_buffer, _packetSize, _header, _owner, false, true);
-}
-
-Packet::Packet(char* const _buffer, ULONG _packetSize, PROTOCOL _header, Session* const _owner, bool _isBcast)
-{	
-	this->Packet::Packet(_buffer, _packetSize, _header, _owner, _isBcast, true);
-}
-
-Packet::Packet(char* const _buffer, ULONG _packetSize, PROTOCOL _header, Session* const _owner, bool _isBcast, bool _isDAlloc)
-{
-	this->header = _header;
+	auto _buffer = packetInfo.GetBuffer();
+	this->header = packetInfo.GetHeader();
 	this->body = &_buffer[PACKET_HEAD_SIZE];
 	this->buffer = _buffer;
-	this->packetSize = _packetSize;
-	this->owner = _owner;
-	this->isBcast = _isBcast;
-	this->isDAlloc = _isDAlloc;
+	this->packetSize = packetInfo.GetPacketSize();
+	this->owner = packetSubInfo.GetOwner();
+	this->packetCastType = packetSubInfo.GetPacketCastType();
+	this->packetCastGroup = packetSubInfo.GetPacketCastGroup();
+	this->isDAllocBuf = packetSubInfo.GetIsDAllocBuf();
 }
 
 Packet::~Packet()
 {	
-	if (isDAlloc && IsValid())
+	if (isDAllocBuf && IsValid())
 	{
 		delete[] buffer;
 	}
@@ -65,12 +46,17 @@ Session* Packet::GetOwner() const
 	return owner;
 }
 
-bool Packet::GetIsBcast() const
+PACKET_CAST_TYPE Packet::GetPacketCastType() const
 {
-	return isBcast;
+	return packetCastType;
 }
 
-bool Packet::IsValid()
+vector<Session*> Packet::GetPacketCastGroup() const
+{
+	return packetCastGroup;
+}
+
+bool Packet::IsValid() const
 {
 	return packetSize > 0 && buffer != nullptr;
 }

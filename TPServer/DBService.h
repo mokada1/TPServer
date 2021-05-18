@@ -1,11 +1,12 @@
 #pragma once
 
 #include "TSingleton.h"
-#include "TPResult.h"
 #include <windows.h>
 
 #include <sql.h>
 #include <sqlext.h>
+
+class TPResult;
 
 class DBService : public TSingleton<DBService>
 {
