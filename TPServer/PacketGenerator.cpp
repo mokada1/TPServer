@@ -14,11 +14,11 @@ Packet* PacketGenerator::Parse(char* const buffer, DWORD bytesTransferred, Sessi
 
 Packet* PacketGenerator::CreateError(Session* const owner, const wchar_t* const message)
 {
-	char hMessage[MAX_DATA_SIZE];
-	TPUtil::GetInstance().WCharToChar(hMessage, MAX_DATA_SIZE, message);
+	char hMessage[BUFSIZE];
+	TPUtil::GetInstance().WCharToChar(hMessage, BUFSIZE, message);
 	
-	auto buffer = new char[MAX_DATA_SIZE];
-	memset(buffer, 0, MAX_DATA_SIZE);
+	auto buffer = new char[BUFSIZE];
+	memset(buffer, 0, BUFSIZE);
 
 	PROTOCOL header = PROTOCOL::TP_ERROR;
 	SetHeaderOfBuff(buffer, header);
@@ -33,8 +33,8 @@ Packet* PacketGenerator::CreateError(Session* const owner, const wchar_t* const 
 
 Packet* PacketGenerator::CreateGameRoomObj(Session* const owner, const GameRoom& gameRoom)
 {
-	auto buffer = new char[MAX_DATA_SIZE];
-	memset(buffer, 0, MAX_DATA_SIZE);
+	auto buffer = new char[BUFSIZE];
+	memset(buffer, 0, BUFSIZE);
 
 	PROTOCOL header = PROTOCOL::GAME_ROOM_OBJ;
 	SetHeaderOfBuff(buffer, header);
@@ -58,8 +58,8 @@ Packet* PacketGenerator::CreateGameRoomObj(Session* const owner, const GameRoom&
 
 Packet* PacketGenerator::CreateEnterGameRoom(const shared_ptr<ObjUser> objUser, vector<Session*> packetCastGroup)
 {
-	auto buffer = new char[MAX_DATA_SIZE];
-	memset(buffer, 0, MAX_DATA_SIZE);
+	auto buffer = new char[BUFSIZE];
+	memset(buffer, 0, BUFSIZE);
 
 	PROTOCOL header = PROTOCOL::ENTER_GAME_ROOM;
 	SetHeaderOfBuff(buffer, header);
@@ -73,8 +73,8 @@ Packet* PacketGenerator::CreateEnterGameRoom(const shared_ptr<ObjUser> objUser, 
 
 Packet* PacketGenerator::CreateExitGameRoom(const shared_ptr<ObjUser> objUser)
 {
-	auto buffer = new char[MAX_DATA_SIZE];
-	memset(buffer, 0, MAX_DATA_SIZE);
+	auto buffer = new char[BUFSIZE];
+	memset(buffer, 0, BUFSIZE);
 
 	PROTOCOL header = PROTOCOL::EXIT_GAME_ROOM;
 	SetHeaderOfBuff(buffer, header);
@@ -110,8 +110,8 @@ Packet* PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char
 	auto bp = _fbb.GetBufferPointer();
 	auto bSize = _fbb.GetSize();
 	memcpy(&buffer[PACKET_HEAD_SIZE], bp, bSize);
-	const int DATA_SIZE = PACKET_HEAD_SIZE + bSize;
-	auto packetInfo = PacketInfo(buffer, DATA_SIZE, header);
+	const int BUFFER_SIZE = PACKET_HEAD_SIZE + bSize;
+	auto packetInfo = PacketInfo(buffer, BUFFER_SIZE, header);
 	auto packetSubInfo = PacketSubInfo(owner, packetCastType, packetCastGroup);
 	return new Packet(packetInfo, packetSubInfo);
 }

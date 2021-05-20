@@ -27,6 +27,7 @@ public:
 	PACKET_CAST_TYPE GetPacketCastType() const;
 	vector<Session*> GetPacketCastGroup() const;
 	bool IsValid() const;
+
 private:	
 	PROTOCOL header;
 	char* body;

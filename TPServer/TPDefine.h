@@ -9,7 +9,6 @@ typedef unsigned long DWORD;
 #define OP_ClientToServer 2
 
 #define PACKET_HEAD_SIZE 2
-#define MAX_DATA_SIZE 1024
 
 #define SIZE_USER_USER_ID 45
 #define SIZE_USER_PASSWORD 45

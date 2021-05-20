@@ -1,15 +1,14 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "TSingleton.h"
 
-class TPError
+class TPError : public TSingleton<TPError>
 {
 public:
-	static void ErrorHandling(const char* message)
-	{
-		fputs(message, stderr);
-		fputc('\n', stderr);
-		exit(1);
-	}
+	void PrintError(const wchar_t* const message);	
+	void PrintError(const wchar_t* const message, const int code);	
+
+private:
+	void PrintError(const wchar_t* const message, bool isDAllocBuf);
+	const wchar_t* ConcatMessage(const wchar_t* const message, const int code);
 };

@@ -157,6 +157,7 @@
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SessionPool.cpp" />
     <ClCompile Include="SQLServiceUser.cpp" />
+    <ClCompile Include="TPError.cpp" />
     <ClCompile Include="TPResult.cpp" />
     <ClCompile Include="TPServer.cpp" />
     <ClCompile Include="TPUtil.cpp" />

@@ -111,6 +111,9 @@
     <ClCompile Include="GameRoomService.cpp">
       <Filter>소스 파일\GameRoom</Filter>
     </ClCompile>
+    <ClCompile Include="TPError.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Protocol.h">

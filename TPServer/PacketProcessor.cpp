@@ -56,10 +56,10 @@ void PacketProcessor::SendPacket(const Packet* const packet, const SOCKET& clntS
 	PerIoData->operation = OP_ServerToClient;
 	if (WSASend(clntSock, &(PerIoData->wsaBuf), 1, (LPDWORD)&sendBytes, 0, &(PerIoData->overlapped), NULL) == SOCKET_ERROR)
 	{		
-		if (WSAGetLastError() != WSA_IO_PENDING)
+		auto e = WSAGetLastError();
+		if (e != WSA_IO_PENDING)
 		{
-			cout << "WSAGetLastError():" << WSAGetLastError() << endl;
-			TPError::ErrorHandling("WSASend() Error");
+			TPError::GetInstance().PrintError(L"WSASend() Error", e);
 		}
 	}
 }

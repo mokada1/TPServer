@@ -24,7 +24,7 @@ void TPServer::Initialize()
 {
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-        TPError::ErrorHandling("WSAStartup() error!");
+        TPError::GetInstance().PrintError(L"WSAStartup() error!");
 
     hCompletionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 
@@ -134,10 +134,10 @@ void TPServer::CompletionThread()
             flags = 0;
             if (WSARecv(PerHandleData->hClntSock, &(PerIoData->wsaBuf), 1, NULL, &flags, &(PerIoData->overlapped), NULL) == SOCKET_ERROR)
             {
-                if (WSAGetLastError() != WSA_IO_PENDING)
+                auto e = WSAGetLastError();
+                if (e != WSA_IO_PENDING)
                 {
-                    cout << "WSAGetLastError():" << WSAGetLastError() << endl;
-                    TPError::ErrorHandling("WSARecv() Error");
+                    TPError::GetInstance().PrintError(L"WSARecv() Error", e);
                 }
             }
         }
