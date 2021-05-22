@@ -12,21 +12,20 @@ using namespace std;
 void PacketProcessor::Process(Session* const owner, char* const buffer, const DWORD bytesTransferred)
 {
 	auto packet = PacketGenerator::GetInstance().Parse(buffer, bytesTransferred, owner);
-	auto clntSock = packet->GetOwner()->GetClntSock();
-	auto header = packet->GetHeader();
+	auto clntSock = packet.GetOwner()->GetClntSock();
+	auto header = packet.GetHeader();
 	
 	cout << "[" << clntSock << "]" << "Protocol:" << static_cast<uint16_t>(header) << endl;
 
-	PacketService::GetInstance().Process(*packet);
-	delete packet;
+	PacketService::GetInstance().Process(packet);
 }
 
-void PacketProcessor::SendPacket(const Packet* packet)
+void PacketProcessor::SendPacket(const Packet& packet)
 {		
-	switch (packet->GetPacketCastType())
+	switch (packet.GetPacketCastType())
 	{
 	case PACKET_CAST_TYPE::UNICAST:
-		SendPacket(packet, packet->GetOwner());
+		SendPacket(packet, packet.GetOwner());
 		break;
 	case PACKET_CAST_TYPE::BROADCAST:
 		SendPacketAll(packet, true);
@@ -37,22 +36,21 @@ void PacketProcessor::SendPacket(const Packet* packet)
 	default:
 		break;
 	}
-	delete packet;
 }
 
-void PacketProcessor::SendPacket(const Packet* const packet, const Session* const session)
+void PacketProcessor::SendPacket(const Packet& packet, const Session* const session)
 {
 	SendPacket(packet, session->GetClntSock());
 }
 
-void PacketProcessor::SendPacket(const Packet* const packet, const SOCKET& clntSock)
+void PacketProcessor::SendPacket(const Packet& packet, const SOCKET& clntSock)
 {
 	LPPER_IO_DATA PerIoData = new PER_IO_DATA;
 	int sendBytes = 0;
 
 	memset(&(PerIoData->overlapped), 0, sizeof(OVERLAPPED));
-	PerIoData->wsaBuf.len = packet->GetPacketSize();
-	PerIoData->wsaBuf.buf = packet->GetBuffer();
+	PerIoData->wsaBuf.len = packet.GetPacketSize();
+	PerIoData->wsaBuf.buf = packet.GetBuffer();
 	PerIoData->operation = OP_ServerToClient;
 	if (WSASend(clntSock, &(PerIoData->wsaBuf), 1, (LPDWORD)&sendBytes, 0, &(PerIoData->overlapped), NULL) == SOCKET_ERROR)
 	{		
@@ -64,9 +62,9 @@ void PacketProcessor::SendPacket(const Packet* const packet, const SOCKET& clntS
 	}
 }
 
-void PacketProcessor::SendPacketAll(const Packet* const packet, bool isIgnoreCastGroup)
+void PacketProcessor::SendPacketAll(const Packet& packet, bool isIgnoreCastGroup)
 {	
-	auto packetCastGroup = packet->GetPacketCastGroup();
+	auto packetCastGroup = packet.GetPacketCastGroup();
 	auto sessionMap = SessionPool::GetInstance().GetSessionMap();
 
 	bool found = false;

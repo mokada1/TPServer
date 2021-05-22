@@ -1,7 +1,7 @@
 #include "PacketGenerator.h"
 #include "GameRoom.h"
 
-Packet* PacketGenerator::Parse(char* const buffer, DWORD bytesTransferred, Session* const owner)
+Packet PacketGenerator::Parse(char* const buffer, DWORD bytesTransferred, Session* const owner)
 {
 	unsigned char byte1 = buffer[0];
 	unsigned char byte2 = buffer[1];
@@ -9,13 +9,13 @@ Packet* PacketGenerator::Parse(char* const buffer, DWORD bytesTransferred, Sessi
 	PROTOCOL header = static_cast<PROTOCOL>(headerInt16);
 	auto packetInfo = PacketInfo(buffer, bytesTransferred, header);
 	auto packetSubInfo = PacketSubInfo(owner, PACKET_CAST_TYPE::UNICAST, vector<Session*>(), false);
-	return new Packet(packetInfo, packetSubInfo);
+	return Packet(packetInfo, packetSubInfo);
 }
 
-Packet* PacketGenerator::CreateError(Session* const owner, const wchar_t* const message)
+Packet PacketGenerator::CreateError(Session* const owner, const wchar_t* const message)
 {
-	char hMessage[BUFSIZE];
-	TPUtil::GetInstance().WCharToChar(hMessage, BUFSIZE, message);
+	char hMessage[ERR_MSG_SIZE];
+	TPUtil::GetInstance().WCharToChar(hMessage, ERR_MSG_SIZE, message);
 	
 	auto buffer = new char[BUFSIZE];
 	memset(buffer, 0, BUFSIZE);
@@ -31,7 +31,7 @@ Packet* PacketGenerator::CreateError(Session* const owner, const wchar_t* const 
 	return CreatePacket(fbb, buffer, header, owner);
 }
 
-Packet* PacketGenerator::CreateGameRoomObj(Session* const owner, const GameRoom& gameRoom)
+Packet PacketGenerator::CreateGameRoomObj(Session* const owner, const GameRoom& gameRoom)
 {
 	auto buffer = new char[BUFSIZE];
 	memset(buffer, 0, BUFSIZE);
@@ -56,7 +56,7 @@ Packet* PacketGenerator::CreateGameRoomObj(Session* const owner, const GameRoom&
 	return CreatePacket(fbb, buffer, header, owner);
 }
 
-Packet* PacketGenerator::CreateEnterGameRoom(const shared_ptr<ObjUser> objUser, vector<Session*> packetCastGroup)
+Packet PacketGenerator::CreateEnterGameRoom(const shared_ptr<ObjUser> objUser, vector<Session*> packetCastGroup)
 {
 	auto buffer = new char[BUFSIZE];
 	memset(buffer, 0, BUFSIZE);
@@ -71,7 +71,7 @@ Packet* PacketGenerator::CreateEnterGameRoom(const shared_ptr<ObjUser> objUser, 
 	return CreatePacket(fbb, buffer, header, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
 }
 
-Packet* PacketGenerator::CreateExitGameRoom(const shared_ptr<ObjUser> objUser)
+Packet PacketGenerator::CreateExitGameRoom(const shared_ptr<ObjUser> objUser)
 {
 	auto buffer = new char[BUFSIZE];
 	memset(buffer, 0, BUFSIZE);
@@ -95,17 +95,17 @@ void PacketGenerator::SetHeaderOfBuff(char* const buffer, PROTOCOL header)
 	buffer[1] = byte2;
 }
 
-Packet* PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner)
+Packet PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner)
 {
 	return CreatePacket(_fbb, buffer, header, owner, PACKET_CAST_TYPE::UNICAST, vector<Session*>());
 }
 
-Packet* PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner, PACKET_CAST_TYPE packetCastType)
+Packet PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner, PACKET_CAST_TYPE packetCastType)
 {
 	return CreatePacket(_fbb, buffer, header, owner, packetCastType, vector<Session*>());
 }
 
-Packet* PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner, PACKET_CAST_TYPE packetCastType, vector<Session*> packetCastGroup)
+Packet PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner, PACKET_CAST_TYPE packetCastType, vector<Session*> packetCastGroup)
 {
 	auto bp = _fbb.GetBufferPointer();
 	auto bSize = _fbb.GetSize();
@@ -113,5 +113,5 @@ Packet* PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char
 	const int BUFFER_SIZE = PACKET_HEAD_SIZE + bSize;
 	auto packetInfo = PacketInfo(buffer, BUFFER_SIZE, header);
 	auto packetSubInfo = PacketSubInfo(owner, packetCastType, packetCastGroup);
-	return new Packet(packetInfo, packetSubInfo);
+	return Packet(packetInfo, packetSubInfo);
 }

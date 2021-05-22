@@ -1,4 +1,34 @@
 #include "Packet.h"
+#include <iostream>
+
+Packet::Packet()
+{	
+	Clear();
+}
+
+Packet::Packet(const Packet& rhs)
+{
+	Alloc(rhs);
+}
+
+Packet& Packet::operator=(const Packet& rhs)
+{
+	Alloc(rhs);
+	return *this;
+}
+
+Packet::Packet(Packet&& rhs) noexcept
+{
+	Alloc(rhs);
+	rhs.Clear();
+}
+
+Packet& Packet::operator=(Packet&& rhs) noexcept
+{
+	Alloc(rhs);
+	rhs.Clear();
+	return *this;
+}
 
 Packet::Packet(const PacketInfo& packetInfo, const PacketSubInfo& packetSubInfo)
 {
@@ -59,4 +89,46 @@ vector<Session*> Packet::GetPacketCastGroup() const
 bool Packet::IsValid() const
 {
 	return packetSize > 0 && buffer != nullptr;
+}
+
+void Packet::Clear()
+{
+	header = PROTOCOL::TP_ERROR;
+	body = nullptr;
+	buffer = nullptr;
+	packetSize = 0;
+	owner = nullptr;
+	packetCastType = PACKET_CAST_TYPE::UNICAST;
+	if(!packetCastGroup.empty()) packetCastGroup.clear();
+	isDAllocBuf = false;
+}
+
+void Packet::Alloc(const Packet& rhs)
+{
+	if (!rhs.IsValid())
+	{
+		return;
+	}
+	if (isDAllocBuf && IsValid())
+	{
+		delete[] buffer;
+		buffer = nullptr;
+	}	
+	if (rhs.isDAllocBuf)
+	{
+		buffer = new char[BUFSIZE];
+		memcpy(buffer, rhs.buffer, BUFSIZE);
+		body = &buffer[PACKET_HEAD_SIZE];
+	}
+	else
+	{
+		buffer = rhs.buffer;
+		body = rhs.body;
+	}
+	header = rhs.header;
+	packetSize = rhs.packetSize;
+	owner = rhs.owner;
+	packetCastType = rhs.packetCastType;
+	packetCastGroup = rhs.packetCastGroup;
+	isDAllocBuf = rhs.isDAllocBuf;
 }

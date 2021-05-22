@@ -2,7 +2,12 @@
 
 TPResult::TPResult()
 {
-	this->TPResult::TPResult(nullptr);
+	init(nullptr);
+}
+
+TPResult::TPResult(const wchar_t* const _message)
+{
+	init(_message);
 }
 
 TPResult::~TPResult()
@@ -19,15 +24,6 @@ TPResult::~TPResult()
 	{
 		delete nextResult;
 	}
-}
-
-TPResult::TPResult(const wchar_t* const _message)
-{
-	this->flag = false;
-	this->message = _message ? const_cast<wchar_t*>(_message) : nullptr;
-	this->number = 0;
-	this->packet = nullptr;
-	this->nextResult = nullptr;
 }
 
 bool TPResult::GetFlag() const
@@ -55,7 +51,7 @@ vector<shared_ptr<TPComponent>> TPResult::GetCompList() const
 	return compList;
 }
 
-Packet* TPResult::GetPacket() const
+Packet TPResult::GetPacket() const
 {
 	return packet;
 }
@@ -80,7 +76,7 @@ void TPResult::SetNumber(const int _number)
 	this->number = _number;
 }
 
-void TPResult::SetPacket(Packet* const _packet)
+void TPResult::SetPacket(const Packet& _packet)
 {
 	this->packet = _packet;
 }
@@ -98,4 +94,12 @@ void TPResult::AddObject(TPObject* const _object)
 void TPResult::AddComp(TPComponent* const _comp)
 {
 	compList.push_back(shared_ptr<TPComponent>(_comp));
+}
+
+void TPResult::init(const wchar_t* const _message)
+{
+	this->flag = false;
+	this->message = _message ? const_cast<wchar_t*>(_message) : nullptr;
+	this->number = 0;
+	this->nextResult = nullptr;
 }

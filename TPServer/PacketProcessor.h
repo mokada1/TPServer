@@ -10,10 +10,10 @@ class PacketProcessor : public TSingleton<PacketProcessor>
 {
 public:
 	void Process(Session* const owner, char* const buffer, const DWORD bytesTransferred);	
-	void SendPacket(const Packet* packet);
-	void SendPacket(const Packet* const packet, const Session* const session);
-	void SendPacket(const Packet* const packet, const SOCKET& clntSock);
+	void SendPacket(const Packet& packet);
+	void SendPacket(const Packet& packet, const Session* const session);
+	void SendPacket(const Packet& packet, const SOCKET& clntSock);
 
 private:
-	void SendPacketAll(const Packet* const packet, bool isIgnoreCastGroup);
+	void SendPacketAll(const Packet& packet, bool isIgnoreCastGroup);
 };

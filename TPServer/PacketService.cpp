@@ -26,7 +26,7 @@ void PacketService::Process(const Packet& packet)
 	if (result)
 	{
 		auto packetResult = result->GetPacket();
-		if (packetResult->IsValid())
+		if (packetResult.IsValid())
 		{
 			PacketProcessor::GetInstance().SendPacket(packetResult);
 			delete result;

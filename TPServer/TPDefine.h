@@ -5,6 +5,7 @@ typedef unsigned long DWORD;
 
 #define BUFSIZE 1024
 #define BUFSIZE_IP 32
+#define ERR_MSG_SIZE 256
 #define OP_ServerToClient 1
 #define OP_ClientToServer 2
 
