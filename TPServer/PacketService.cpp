@@ -90,7 +90,7 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 
 	// 방 정보 전달용 패킷 생성
 	auto gameRoom = GameRoomService::GetInstance().GetGameRoom();
-	auto packetBCGameRoom = PacketGenerator::GetInstance().CreateGameRoomObj(owner, *gameRoom);	
+	auto packetGameRoomObj = PacketGenerator::GetInstance().CreateGameRoomObj(owner, *gameRoom);	
 
 	// 방 입장 패킷 전송
 	vector<Session*> packetCastGroup;
@@ -98,7 +98,7 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	auto packetEnterGameRoom = PacketGenerator::GetInstance().CreateEnterGameRoom(objUser, packetCastGroup);
 	PacketProcessor::GetInstance().SendPacket(packetEnterGameRoom);
 
-	resultLoadUserInfo->SetPacket(packetBCGameRoom);
+	resultLoadUserInfo->SetPacket(packetGameRoomObj);
 	return resultLoadUserInfo;
 }
 
