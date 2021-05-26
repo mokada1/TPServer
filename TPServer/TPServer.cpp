@@ -8,15 +8,22 @@
 
 void TPServer::Play()
 {
+    // DB 시작 처리
     if (!DBServer::GetInstance().DBConnect())
     {
-        cout << "DBConnect:Fail" << endl;
+        cout << "DB연결에 실패했습니다." << endl;
         return;
     }
-    cout << "DBConnect:Success" << endl;
+    cout << "DB연결에 성공했습니다." << endl;
+
+    // 서버 시작 처리
     Initialize();
     Start();
+
+    // 서버 종료 처리
     Close();
+
+    // DB 종료 처리
     DBServer::GetInstance().DBDisConnect();
 }
 
@@ -55,7 +62,7 @@ void TPServer::Start()
     int RecvBytes;
     int Flags;
 
-    cout << "TPServer:Start" << endl;
+    cout << "서버가 시작되었습니다." << endl;
 
     while (TRUE)
     {
@@ -105,7 +112,7 @@ void TPServer::CompletionThread()
     DWORD flags;
     int sendBytes = 0;
 
-    while (1) {
+    while (true) {
         if (!GetQueuedCompletionStatus(hCompletionPort, &BytesTransferred, (LPDWORD)&PerHandleData, (LPOVERLAPPED*)&PerIoData, INFINITE))
         {
             char buf[BUFSIZE_IP] = { 0, };
@@ -120,7 +127,6 @@ void TPServer::CompletionThread()
 
         if (PerIoData->operation == OP_ClientToServer)
         {
-            cout << "OP_ClientToServer" << endl;
             auto session = SessionPool::GetInstance().GetSession(PerHandleData->hClntSock);
             if (session != nullptr)
             {
@@ -143,7 +149,6 @@ void TPServer::CompletionThread()
         }
         else if (PerIoData->operation == OP_ServerToClient)
         {
-            cout << "OP_ServerToClient" << endl;
             delete PerIoData;
         }
     }
