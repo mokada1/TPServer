@@ -11,7 +11,7 @@ using namespace std;
 
 void PacketProcessor::Process(Session* const owner, char* const buffer, const DWORD bytesTransferred)
 {
-	auto packet = PacketGenerator::GetInstance().Parse(buffer, bytesTransferred, owner);
+	const auto& packet = PacketGenerator::GetInstance().Parse(buffer, bytesTransferred, owner);
 	auto clntSock = packet.GetOwner()->GetClntSock();
 	auto header = packet.GetHeader();
 	
