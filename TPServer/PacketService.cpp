@@ -19,6 +19,9 @@ void PacketService::Process(const Packet& packet)
 	case PROTOCOL::REQ_LOGIN:
 		result = ProcReqLogin(packet);
 		break;
+	case PROTOCOL::REQ_MOVE:
+		ProcReqMove(packet);
+		break;
 	default:
 		break;
 	}
@@ -93,16 +96,18 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	auto packetGameRoomObj = PacketGenerator::GetInstance().CreateGameRoomObj(owner, *gameRoom);	
 
 	// 방 입장 패킷 전송
-	vector<Session*> packetCastGroup;
-	packetCastGroup.push_back(owner);
-	auto packetEnterGameRoom = PacketGenerator::GetInstance().CreateEnterGameRoom(objUser, packetCastGroup);
+	auto packetEnterGameRoom = PacketGenerator::GetInstance().CreateEnterGameRoom(owner, objUser);
 	PacketProcessor::GetInstance().SendPacket(packetEnterGameRoom);
 
 	resultLoadUserInfo->SetPacket(packetGameRoomObj);
 	return resultLoadUserInfo;
 }
 
-TPResult* PacketService::ProcReqMove(const Packet& packet)
+void PacketService::ProcReqMove(const Packet& packet)
 {
-	return nullptr;
+	auto body = packet.GetBody();
+	auto req = flatbuffers::GetRoot<TB_ReqMove>(body);
+	auto userId = req->UserId()->c_str();
+	auto locationList = req->LocationList();
+
 }

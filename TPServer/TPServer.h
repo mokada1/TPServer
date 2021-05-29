@@ -39,7 +39,7 @@ typedef struct
 typedef struct
 {
     OVERLAPPED overlapped;
-    char buffer[BUFSIZE];
+    char buffer[BUFF_SIZE];
     WSABUF wsaBuf;
     int operation;
 } PER_IO_DATA, * LPPER_IO_DATA;

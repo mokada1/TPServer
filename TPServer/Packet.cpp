@@ -1,5 +1,4 @@
 #include "Packet.h"
-#include <iostream>
 
 Packet::Packet()
 {	
@@ -116,8 +115,8 @@ void Packet::Alloc(const Packet& rhs)
 	}	
 	if (rhs.isDAllocBuf)
 	{
-		buffer = new char[BUFSIZE];
-		memcpy(buffer, rhs.buffer, BUFSIZE);
+		buffer = new char[BUFF_SIZE];
+		memcpy(buffer, rhs.buffer, BUFF_SIZE);
 		body = &buffer[PACKET_HEAD_SIZE];
 	}
 	else

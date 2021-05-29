@@ -12,5 +12,5 @@ public:
 
 private:
 	TPResult* ProcReqLogin(const Packet& packet);
-	TPResult* ProcReqMove(const Packet& packet);
+	void ProcReqMove(const Packet& packet);
 };

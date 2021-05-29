@@ -11,8 +11,7 @@ void TPServer::Play()
     // DB 시작 처리
     if (!DBServer::GetInstance().DBConnect())
     {
-        cout << "DB연결에 실패했습니다." << endl;
-        return;
+        TPError::GetInstance().PrintError(L"DB연결에 실패했습니다.");
     }
     cout << "DB연결에 성공했습니다." << endl;
 
@@ -56,7 +55,6 @@ void TPServer::Start()
     bind(hServSock, (SOCKADDR*)&servAddr, sizeof(servAddr));
     listen(hServSock, LISTEN_BACKLOG);
 
-    LPPER_IO_DATA PerIoData;
     LPPER_HANDLE_DATA PerHandleData;
 
     int RecvBytes;
@@ -75,15 +73,15 @@ void TPServer::Start()
         PerHandleData->hClntSock = hClntSock;
         memcpy(&(PerHandleData->clntAddr), &clntAddr, addrLen);
 
-        char buf[BUFSIZE_IP] = { 0, };
+        char buf[BUFF_SIZE_IP] = { 0, };
         cout << "Connected[" << hClntSock << "]: " << inet_ntop(AF_INET, &clntAddr.sin_addr, buf, sizeof(buf)) << " " << endl;
         SessionPool::GetInstance().CreateSession(hClntSock, clntAddr);
 
         CreateIoCompletionPort((HANDLE)hClntSock, hCompletionPort, (DWORD)PerHandleData, 0);
 
-        PerIoData = new PER_IO_DATA;
+        LPPER_IO_DATA PerIoData = new PER_IO_DATA;
         memset(&(PerIoData->overlapped), 0, sizeof(OVERLAPPED));
-        PerIoData->wsaBuf.len = BUFSIZE;
+        PerIoData->wsaBuf.len = BUFF_SIZE;
         PerIoData->wsaBuf.buf = PerIoData->buffer;
         PerIoData->operation = OP_ClientToServer;
         Flags = 0;
@@ -115,7 +113,7 @@ void TPServer::CompletionThread()
     while (true) {
         if (!GetQueuedCompletionStatus(hCompletionPort, &BytesTransferred, (LPDWORD)&PerHandleData, (LPOVERLAPPED*)&PerIoData, INFINITE))
         {
-            char buf[BUFSIZE_IP] = { 0, };
+            char buf[BUFF_SIZE_IP] = { 0, };
             cout << "Disconnected[" << PerHandleData->hClntSock << "]: " << inet_ntop(AF_INET, &PerHandleData->clntAddr.sin_addr, buf, sizeof(buf)) << " " << endl;
             SessionPool::GetInstance().DeleteSession(PerHandleData->hClntSock);
 
@@ -132,9 +130,13 @@ void TPServer::CompletionThread()
             {
                 PacketProcessor::GetInstance().Process(session, PerIoData->wsaBuf.buf, BytesTransferred);
             }
+            else
+            {
+                cout << "Not found session!" << endl;
+            }
 
             memset(&(PerIoData->overlapped), 0, sizeof(OVERLAPPED));
-            PerIoData->wsaBuf.len = BUFSIZE;
+            PerIoData->wsaBuf.len = BUFF_SIZE;
             PerIoData->wsaBuf.buf = PerIoData->buffer;
             PerIoData->operation = OP_ClientToServer;
             flags = 0;

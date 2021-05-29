@@ -11,10 +11,15 @@ using namespace std;
 
 void PacketProcessor::Process(Session* const owner, char* const buffer, const DWORD bytesTransferred)
 {
-	const auto& packet = PacketGenerator::GetInstance().Parse(buffer, bytesTransferred, owner);
+	const auto& packet = PacketGenerator::GetInstance().Parse(owner, buffer, bytesTransferred);
+	if (!packet.IsValid())
+	{
+		return;
+	}
+
 	auto clntSock = packet.GetOwner()->GetClntSock();
 	auto header = packet.GetHeader();
-	
+
 	cout << "[" << clntSock << "]" << "Protocol:" << static_cast<uint16_t>(header) << endl;
 
 	PacketService::GetInstance().Process(packet);

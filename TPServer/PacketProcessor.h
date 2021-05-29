@@ -2,8 +2,8 @@
 
 #include "TSingleton.h"
 #include <WinSock2.h>
-#include "Packet.h"
 
+class Packet;
 class Session;
 
 class PacketProcessor : public TSingleton<PacketProcessor>

@@ -17,12 +17,6 @@ struct TB_ObjUserBuilder;
 struct TB_ReqLogin;
 struct TB_ReqLoginBuilder;
 
-struct TB_ResLogin;
-struct TB_ResLoginBuilder;
-
-struct TB_ReqMove;
-struct TB_ReqMoveBuilder;
-
 struct TB_Error;
 struct TB_ErrorBuilder;
 
@@ -34,6 +28,12 @@ struct TB_EnterGameRoomBuilder;
 
 struct TB_ExitGameRoom;
 struct TB_ExitGameRoomBuilder;
+
+struct TB_ReqMove;
+struct TB_ReqMoveBuilder;
+
+struct TB_MoveLocation;
+struct TB_MoveLocationBuilder;
 
 FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) ST_Vec3 FLATBUFFERS_FINAL_CLASS {
  private:
@@ -249,100 +249,6 @@ inline flatbuffers::Offset<TB_ReqLogin> CreateTB_ReqLoginDirect(
       Password__);
 }
 
-struct TB_ResLogin FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef TB_ResLoginBuilder Builder;
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           verifier.EndTable();
-  }
-};
-
-struct TB_ResLoginBuilder {
-  typedef TB_ResLogin Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  explicit TB_ResLoginBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  TB_ResLoginBuilder &operator=(const TB_ResLoginBuilder &);
-  flatbuffers::Offset<TB_ResLogin> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<TB_ResLogin>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<TB_ResLogin> CreateTB_ResLogin(
-    flatbuffers::FlatBufferBuilder &_fbb) {
-  TB_ResLoginBuilder builder_(_fbb);
-  return builder_.Finish();
-}
-
-struct TB_ReqMove FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef TB_ReqMoveBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_USERID = 4,
-    VT_LOCATION = 6
-  };
-  const flatbuffers::String *UserId() const {
-    return GetPointer<const flatbuffers::String *>(VT_USERID);
-  }
-  const ST_Vec3 *Location() const {
-    return GetStruct<const ST_Vec3 *>(VT_LOCATION);
-  }
-  bool Verify(flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_USERID) &&
-           verifier.VerifyString(UserId()) &&
-           VerifyField<ST_Vec3>(verifier, VT_LOCATION) &&
-           verifier.EndTable();
-  }
-};
-
-struct TB_ReqMoveBuilder {
-  typedef TB_ReqMove Table;
-  flatbuffers::FlatBufferBuilder &fbb_;
-  flatbuffers::uoffset_t start_;
-  void add_UserId(flatbuffers::Offset<flatbuffers::String> UserId) {
-    fbb_.AddOffset(TB_ReqMove::VT_USERID, UserId);
-  }
-  void add_Location(const ST_Vec3 *Location) {
-    fbb_.AddStruct(TB_ReqMove::VT_LOCATION, Location);
-  }
-  explicit TB_ReqMoveBuilder(flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  TB_ReqMoveBuilder &operator=(const TB_ReqMoveBuilder &);
-  flatbuffers::Offset<TB_ReqMove> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<TB_ReqMove>(end);
-    return o;
-  }
-};
-
-inline flatbuffers::Offset<TB_ReqMove> CreateTB_ReqMove(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<flatbuffers::String> UserId = 0,
-    const ST_Vec3 *Location = 0) {
-  TB_ReqMoveBuilder builder_(_fbb);
-  builder_.add_Location(Location);
-  builder_.add_UserId(UserId);
-  return builder_.Finish();
-}
-
-inline flatbuffers::Offset<TB_ReqMove> CreateTB_ReqMoveDirect(
-    flatbuffers::FlatBufferBuilder &_fbb,
-    const char *UserId = nullptr,
-    const ST_Vec3 *Location = 0) {
-  auto UserId__ = UserId ? _fbb.CreateString(UserId) : 0;
-  return CreateTB_ReqMove(
-      _fbb,
-      UserId__,
-      Location);
-}
-
 struct TB_Error FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef TB_ErrorBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -532,6 +438,138 @@ inline flatbuffers::Offset<TB_ExitGameRoom> CreateTB_ExitGameRoom(
   TB_ExitGameRoomBuilder builder_(_fbb);
   builder_.add_ObjUser(ObjUser);
   return builder_.Finish();
+}
+
+struct TB_ReqMove FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_ReqMoveBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_USERID = 4,
+    VT_LOCATIONLIST = 6
+  };
+  const flatbuffers::String *UserId() const {
+    return GetPointer<const flatbuffers::String *>(VT_USERID);
+  }
+  const flatbuffers::Vector<const ST_Vec3 *> *LocationList() const {
+    return GetPointer<const flatbuffers::Vector<const ST_Vec3 *> *>(VT_LOCATIONLIST);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_USERID) &&
+           verifier.VerifyString(UserId()) &&
+           VerifyOffset(verifier, VT_LOCATIONLIST) &&
+           verifier.VerifyVector(LocationList()) &&
+           verifier.EndTable();
+  }
+};
+
+struct TB_ReqMoveBuilder {
+  typedef TB_ReqMove Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_UserId(flatbuffers::Offset<flatbuffers::String> UserId) {
+    fbb_.AddOffset(TB_ReqMove::VT_USERID, UserId);
+  }
+  void add_LocationList(flatbuffers::Offset<flatbuffers::Vector<const ST_Vec3 *>> LocationList) {
+    fbb_.AddOffset(TB_ReqMove::VT_LOCATIONLIST, LocationList);
+  }
+  explicit TB_ReqMoveBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TB_ReqMoveBuilder &operator=(const TB_ReqMoveBuilder &);
+  flatbuffers::Offset<TB_ReqMove> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TB_ReqMove>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TB_ReqMove> CreateTB_ReqMove(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::String> UserId = 0,
+    flatbuffers::Offset<flatbuffers::Vector<const ST_Vec3 *>> LocationList = 0) {
+  TB_ReqMoveBuilder builder_(_fbb);
+  builder_.add_LocationList(LocationList);
+  builder_.add_UserId(UserId);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<TB_ReqMove> CreateTB_ReqMoveDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const char *UserId = nullptr,
+    const std::vector<ST_Vec3> *LocationList = nullptr) {
+  auto UserId__ = UserId ? _fbb.CreateString(UserId) : 0;
+  auto LocationList__ = LocationList ? _fbb.CreateVectorOfStructs<ST_Vec3>(*LocationList) : 0;
+  return CreateTB_ReqMove(
+      _fbb,
+      UserId__,
+      LocationList__);
+}
+
+struct TB_MoveLocation FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_MoveLocationBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_USERID = 4,
+    VT_LOCATIONLIST = 6
+  };
+  const flatbuffers::String *UserId() const {
+    return GetPointer<const flatbuffers::String *>(VT_USERID);
+  }
+  const flatbuffers::Vector<const ST_Vec3 *> *LocationList() const {
+    return GetPointer<const flatbuffers::Vector<const ST_Vec3 *> *>(VT_LOCATIONLIST);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_USERID) &&
+           verifier.VerifyString(UserId()) &&
+           VerifyOffset(verifier, VT_LOCATIONLIST) &&
+           verifier.VerifyVector(LocationList()) &&
+           verifier.EndTable();
+  }
+};
+
+struct TB_MoveLocationBuilder {
+  typedef TB_MoveLocation Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_UserId(flatbuffers::Offset<flatbuffers::String> UserId) {
+    fbb_.AddOffset(TB_MoveLocation::VT_USERID, UserId);
+  }
+  void add_LocationList(flatbuffers::Offset<flatbuffers::Vector<const ST_Vec3 *>> LocationList) {
+    fbb_.AddOffset(TB_MoveLocation::VT_LOCATIONLIST, LocationList);
+  }
+  explicit TB_MoveLocationBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TB_MoveLocationBuilder &operator=(const TB_MoveLocationBuilder &);
+  flatbuffers::Offset<TB_MoveLocation> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TB_MoveLocation>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TB_MoveLocation> CreateTB_MoveLocation(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::String> UserId = 0,
+    flatbuffers::Offset<flatbuffers::Vector<const ST_Vec3 *>> LocationList = 0) {
+  TB_MoveLocationBuilder builder_(_fbb);
+  builder_.add_LocationList(LocationList);
+  builder_.add_UserId(UserId);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<TB_MoveLocation> CreateTB_MoveLocationDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const char *UserId = nullptr,
+    const std::vector<ST_Vec3> *LocationList = nullptr) {
+  auto UserId__ = UserId ? _fbb.CreateString(UserId) : 0;
+  auto LocationList__ = LocationList ? _fbb.CreateVectorOfStructs<ST_Vec3>(*LocationList) : 0;
+  return CreateTB_MoveLocation(
+      _fbb,
+      UserId__,
+      LocationList__);
 }
 
 #endif  // FLATBUFFERS_GENERATED_TP_H_
