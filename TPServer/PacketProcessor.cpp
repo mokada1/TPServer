@@ -65,6 +65,7 @@ void PacketProcessor::SendPacket(const Packet& packet, const SOCKET& clntSock)
 			TPError::GetInstance().PrintError(L"WSASend() Error", e);
 		}
 	}
+	cout << "패킷 전송:" << static_cast<uint16_t>(packet.GetHeader()) << endl;
 }
 
 void PacketProcessor::SendPacketAll(const Packet& packet, bool isIgnoreCastGroup)

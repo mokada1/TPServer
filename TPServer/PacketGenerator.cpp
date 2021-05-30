@@ -48,6 +48,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, ULONG by
 				owner->ClearBuff();
 				return Packet();
 			}
+			cout << "패킷 조립중..." << endl;
 		}
 		else
 		{
@@ -55,6 +56,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, ULONG by
 			finishedBuffer = ownerBuff;
 			finishedPacketSize = ownerPacketSize;
 			owner->ClearBuff(false);
+			cout << "패킷 완성!" << endl;
 		}
 	}
 	else
@@ -62,6 +64,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, ULONG by
 		if (bytesTransferred < PACKET_HEAD_SIZE)
 		{
 			owner->AddToBuff(buffer, bytesTransferred);
+			cout << "패킷 조립중..." << endl;
 		}
 		else
 		{
@@ -83,12 +86,14 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, ULONG by
 					return Packet();
 				}
 				owner->AddToBuff(buffer, bytesTransferred);
+				cout << "패킷 조립중..." << endl;
 			}
 			else
 			{
 				// 패킷 완성
 				finishedBuffer = buffer;
 				finishedPacketSize = bytesTransferred;
+				cout << "패킷 완성!" << endl;
 			}
 		}
 	}

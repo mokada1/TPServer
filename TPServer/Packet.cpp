@@ -87,7 +87,7 @@ vector<Session*> Packet::GetPacketCastGroup() const
 
 bool Packet::IsValid() const
 {
-	return packetSize > 0 && buffer != nullptr;
+	return packetSize > 0 && buffer != nullptr && packetSize <= BUFF_SIZE;
 }
 
 void Packet::Clear()
