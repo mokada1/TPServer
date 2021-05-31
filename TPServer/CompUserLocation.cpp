@@ -7,9 +7,9 @@ bool CompUserLocation::IsValid() const
 
 flatbuffers::Offset<TB_CompUserLocation> CompUserLocation::Serialize(flatbuffers::FlatBufferBuilder& _fbb) const
 {
-	ST_Vec3 st_location(location.x, location.y, location.z);	
+	ST_Vec3 stLocation(location.x, location.y, location.z);	
 	TB_CompUserLocationBuilder builder(_fbb);
-	builder.add_Location(&st_location);
+	builder.add_Location(&stLocation);
 	return builder.Finish();
 }
 

@@ -89,11 +89,11 @@ CompUserLocation* SQLServiceUser::GetUserLocation(const SQLHSTMT& hStmt, const w
 		return nullptr;
 	}
 
-	SQLFLOAT bX = 0.0, bY = 0.0, bZ = 0.0;
+	SQLDOUBLE bX = 0.0, bY = 0.0, bZ = 0.0;
 	
-	SQLBindCol(hStmt, 1, SQL_FLOAT, &bX, 0, NULL);
-	SQLBindCol(hStmt, 2, SQL_FLOAT, &bY, 0, NULL);
-	SQLBindCol(hStmt, 3, SQL_FLOAT, &bZ, 0, NULL);
+	SQLBindCol(hStmt, 1, SQL_DOUBLE, &bX, 0, NULL);
+	SQLBindCol(hStmt, 2, SQL_DOUBLE, &bY, 0, NULL);
+	SQLBindCol(hStmt, 3, SQL_DOUBLE, &bZ, 0, NULL);
 
 	if (SQLFetch(hStmt) != SQL_NO_DATA)
 	{

@@ -195,7 +195,7 @@ Packet PacketGenerator::CreateExitGameRoom(const shared_ptr<ObjUser> objUser)
 Packet PacketGenerator::CreateMoveLocation(Session* const owner, const flatbuffers::Vector<const ST_Vec3*>& locationList)
 {
 	vector<Session*> packetCastGroup;
-	packetCastGroup.push_back(owner);
+	//packetCastGroup.push_back(owner);
 
 	auto buffer = new char[BUFF_SIZE];
 	memset(buffer, 0, BUFF_SIZE);
@@ -212,12 +212,12 @@ Packet PacketGenerator::CreateMoveLocation(Session* const owner, const flatbuffe
 	flatbuffers::Offset<flatbuffers::Vector<const ST_Vec3*>> offsetLocationList = 0;
 	if (locationList.size() > 0)
 	{
-		vector<const ST_Vec3*> offsetListLocation;
+		vector<ST_Vec3> offsetListLocation;
 		for (auto it = locationList.begin(); it != locationList.end(); ++it)
 		{
-			offsetListLocation.push_back(*it);
+			offsetListLocation.push_back(*(*it));
 		}
-		offsetLocationList = fbb.CreateVector(offsetListLocation);
+		offsetLocationList = fbb.CreateVectorOfStructs(offsetListLocation);
 	}	
 
 	fbb.Finish(CreateTB_MoveLocation(fbb, offsetUserId, offsetLocationList));

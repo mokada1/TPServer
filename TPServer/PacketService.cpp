@@ -106,8 +106,17 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 void PacketService::ProcReqMove(const Packet& packet)
 {
 	auto body = packet.GetBody();
+	auto owner = packet.GetOwner();
+
 	auto req = flatbuffers::GetRoot<TB_ReqMove>(body);
 	auto userId = req->UserId()->c_str();
 	auto locationList = req->LocationList();
 
+	if (!locationList || locationList->size() == 0)
+	{
+		return;
+	}
+
+	auto packetMoveLocation = PacketGenerator::GetInstance().CreateMoveLocation(owner, *locationList);
+	PacketProcessor::GetInstance().SendPacket(packetMoveLocation);
 }
