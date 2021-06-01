@@ -19,7 +19,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, ULONG by
 	if (ownerBuff)
 	{
 		// 최대 버퍼 크기를 넘는 경우 패킷 처리 안함
-		if (owner->GetPacketSize() + bytesTransferred > BUFF_SIZE)
+		if (owner->GetPacketSize() + bytesTransferred > MAX_BUFF_SIZE)
 		{
 			cout << "Error:Invalid PacketSize" << endl;
 			owner->ClearBuff();
@@ -42,7 +42,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, ULONG by
 		if (!IsValidEndOfPacket(endOfPacket))
 		{
 			// 잘못된 EndOfPacket일 경우 패킷 처리 안함
-			if (ownerPacketSize == BUFF_SIZE)
+			if (ownerPacketSize == MAX_BUFF_SIZE)
 			{
 				cout << "Error:Invalid EndOfPacket" << endl;
 				owner->ClearBuff();
@@ -80,7 +80,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, ULONG by
 			if (!IsValidEndOfPacket(endOfPacket))
 			{
 				// 잘못된 EndOfPacket일 경우 패킷 처리 안함
-				if (bytesTransferred == BUFF_SIZE)
+				if (bytesTransferred == MAX_BUFF_SIZE)
 				{
 					cout << "Error:Invalid EndOfPacket" << endl;
 					return Packet();
@@ -116,28 +116,16 @@ Packet PacketGenerator::CreateError(Session* const owner, const wchar_t* const m
 	char hMessage[ERR_MSG_SIZE];
 	TPUtil::GetInstance().WCharToChar(hMessage, ERR_MSG_SIZE, message);
 	
-	auto buffer = new char[BUFF_SIZE];
-	memset(buffer, 0, BUFF_SIZE);
-
-	PROTOCOL header = PROTOCOL::TP_ERROR;
-	SetHeaderOfBuff(buffer, header);
-
 	flatbuffers::FlatBufferBuilder fbb;
 	auto offsetMessage = fbb.CreateString(hMessage);
 
 	fbb.Finish(CreateTB_Error(fbb, offsetMessage));
 
-	return CreatePacket(fbb, buffer, header, owner);
+	return CreatePacket(PROTOCOL::TP_ERROR, fbb, owner);
 }
 
 Packet PacketGenerator::CreateGameRoomObj(Session* const owner, const GameRoom& gameRoom)
 {
-	auto buffer = new char[BUFF_SIZE];
-	memset(buffer, 0, BUFF_SIZE);
-
-	PROTOCOL header = PROTOCOL::GAME_ROOM_OBJ;
-	SetHeaderOfBuff(buffer, header);
-
 	flatbuffers::FlatBufferBuilder fbb;
 
 	flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<TB_ObjUser>>> offsetObjUserList = 0;	
@@ -156,7 +144,7 @@ Packet PacketGenerator::CreateGameRoomObj(Session* const owner, const GameRoom& 
 
 	fbb.Finish(CreateTB_GameRoomObj(fbb, offsetObjUserList));
 
-	return CreatePacket(fbb, buffer, header, owner);
+	return CreatePacket(PROTOCOL::GAME_ROOM_OBJ, fbb, owner);
 }
 
 Packet PacketGenerator::CreateEnterGameRoom(Session* const owner, const shared_ptr<ObjUser> objUser)
@@ -164,44 +152,26 @@ Packet PacketGenerator::CreateEnterGameRoom(Session* const owner, const shared_p
 	vector<Session*> packetCastGroup;
 	packetCastGroup.push_back(owner);
 
-	auto buffer = new char[BUFF_SIZE];
-	memset(buffer, 0, BUFF_SIZE);
-
-	PROTOCOL header = PROTOCOL::ENTER_GAME_ROOM;
-	SetHeaderOfBuff(buffer, header);
-
 	flatbuffers::FlatBufferBuilder fbb;
 
 	fbb.Finish(CreateTB_EnterGameRoom(fbb, objUser->Serialize(fbb)));
 
-	return CreatePacket(fbb, buffer, header, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
+	return CreatePacket(PROTOCOL::ENTER_GAME_ROOM, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
 }
 
 Packet PacketGenerator::CreateExitGameRoom(const shared_ptr<ObjUser> objUser)
 {
-	auto buffer = new char[BUFF_SIZE];
-	memset(buffer, 0, BUFF_SIZE);
-
-	PROTOCOL header = PROTOCOL::EXIT_GAME_ROOM;
-	SetHeaderOfBuff(buffer, header);
-
 	flatbuffers::FlatBufferBuilder fbb;
 	
 	fbb.Finish(CreateTB_ExitGameRoom(fbb, objUser->Serialize(fbb)));
 
-	return CreatePacket(fbb, buffer, header, nullptr, PACKET_CAST_TYPE::BROADCAST);
+	return CreatePacket(PROTOCOL::EXIT_GAME_ROOM, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST);
 }
 
 Packet PacketGenerator::CreateMoveLocation(Session* const owner, const flatbuffers::Vector<const ST_Vec3*>& locationList)
 {
 	vector<Session*> packetCastGroup;
-	//packetCastGroup.push_back(owner);
-
-	auto buffer = new char[BUFF_SIZE];
-	memset(buffer, 0, BUFF_SIZE);
-
-	PROTOCOL header = PROTOCOL::MOVE_LOCATION;
-	SetHeaderOfBuff(buffer, header);
+	packetCastGroup.push_back(owner);
 
 	flatbuffers::FlatBufferBuilder fbb;
 
@@ -222,31 +192,35 @@ Packet PacketGenerator::CreateMoveLocation(Session* const owner, const flatbuffe
 
 	fbb.Finish(CreateTB_MoveLocation(fbb, offsetUserId, offsetLocationList));
 
-	return CreatePacket(fbb, buffer, header, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
+	return CreatePacket(PROTOCOL::MOVE_LOCATION, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
 }
 
-Packet PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner)
+Packet PacketGenerator::CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner)
 {
-	return CreatePacket(_fbb, buffer, header, owner, PACKET_CAST_TYPE::UNICAST, vector<Session*>());
+	return CreatePacket(header, _fbb, owner, PACKET_CAST_TYPE::UNICAST, vector<Session*>());
 }
 
-Packet PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner, PACKET_CAST_TYPE packetCastType)
+Packet PacketGenerator::CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner, PACKET_CAST_TYPE packetCastType)
 {
-	return CreatePacket(_fbb, buffer, header, owner, packetCastType, vector<Session*>());
+	return CreatePacket(header, _fbb, owner, packetCastType, vector<Session*>());
 }
 
-Packet PacketGenerator::CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner, PACKET_CAST_TYPE packetCastType, vector<Session*> packetCastGroup)
+Packet PacketGenerator::CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner, PACKET_CAST_TYPE packetCastType, vector<Session*> packetCastGroup)
 {
 	auto bp = _fbb.GetBufferPointer();
 	auto bSize = _fbb.GetSize();
+
+	const int INTER_BUFF_DATA_SIZE = PACKET_HEAD_SIZE + bSize;
+	const int BUFF_DATA_SIZE = PACKET_HEAD_SIZE + bSize + PACKET_END_SIZE;
+
+	auto buffer = new char[BUFF_DATA_SIZE];
+	memset(buffer, 0, BUFF_DATA_SIZE);
+
+	SetHeaderOfBuff(buffer, header);
 	memcpy(&buffer[PACKET_HEAD_SIZE], bp, bSize);
+	SetEndOfBuff(buffer, INTER_BUFF_DATA_SIZE);
 
-	const int INTER_BUFFER_SIZE = PACKET_HEAD_SIZE + bSize;
-	SetEndOfBuff(buffer, INTER_BUFFER_SIZE);
-
-	const int BUFFER_SIZE = PACKET_HEAD_SIZE + bSize + PACKET_END_SIZE;
-
-	auto packetInfo = PacketInfo(buffer, BUFFER_SIZE, header);
+	auto packetInfo = PacketInfo(buffer, BUFF_DATA_SIZE, header);
 	auto packetSubInfo = PacketSubInfo(owner, packetCastType, packetCastGroup);
 	return Packet(packetInfo, packetSubInfo);
 }

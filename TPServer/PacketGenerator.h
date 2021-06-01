@@ -18,9 +18,9 @@ public:
 	Packet CreateMoveLocation(Session* const owner, const flatbuffers::Vector<const ST_Vec3*>& locationList);
 	
 private:	
-	Packet CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner);
-	Packet CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner, PACKET_CAST_TYPE packetCastType);
-	Packet CreatePacket(flatbuffers::FlatBufferBuilder& _fbb, char* const buffer, PROTOCOL header, Session* const owner, PACKET_CAST_TYPE packetCastType, vector<Session*> packetCastGroup);
+	Packet CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner, PACKET_CAST_TYPE packetCastType);
+	Packet CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner);
+	Packet CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner, PACKET_CAST_TYPE packetCastType, vector<Session*> packetCastGroup);
 	PROTOCOL GetHeaderByBuff(char* const buffer);
 	PROTOCOL GetEndOfPacket(char* const buffer, const ULONG packetSize);
 	void SetHeaderOfBuff(char* const buffer, PROTOCOL header);

@@ -87,7 +87,7 @@ vector<Session*> Packet::GetPacketCastGroup() const
 
 bool Packet::IsValid() const
 {
-	return packetSize > 0 && buffer != nullptr && packetSize <= BUFF_SIZE;
+	return packetSize > 0 && buffer != nullptr && packetSize <= MAX_BUFF_SIZE;
 }
 
 void Packet::Clear()
@@ -115,8 +115,9 @@ void Packet::Alloc(const Packet& rhs)
 	}	
 	if (rhs.isDAllocBuf)
 	{
-		buffer = new char[BUFF_SIZE];
-		memcpy(buffer, rhs.buffer, BUFF_SIZE);
+		const auto packetSizeRhs = rhs.GetPacketSize();
+		buffer = new char[packetSizeRhs];
+		memcpy(buffer, rhs.buffer, packetSizeRhs);
 		body = &buffer[PACKET_HEAD_SIZE];
 	}
 	else

@@ -55,7 +55,7 @@ void Session::AddToBuff(char* const _buffer, const ULONG _packetSize)
 {
 	if (!buffer)
 	{
-		buffer = new char[BUFF_SIZE];
+		buffer = new char[_packetSize];
 		memcpy(buffer, _buffer, _packetSize);
 		packetSize = _packetSize;
 	}

@@ -5,7 +5,7 @@ typedef unsigned long DWORD;
 
 #define PACKET_HEAD_SIZE 2
 #define PACKET_END_SIZE 2
-#define BUFF_SIZE 1024
+#define MAX_BUFF_SIZE 4096
 #define BUFF_SIZE_IP 32
 #define ERR_MSG_SIZE 256
 #define SERVER_IP_SIZE 15

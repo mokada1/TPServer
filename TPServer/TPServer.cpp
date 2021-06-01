@@ -81,7 +81,7 @@ void TPServer::Start()
 
         LPPER_IO_DATA PerIoData = new PER_IO_DATA;
         memset(&(PerIoData->overlapped), 0, sizeof(OVERLAPPED));
-        PerIoData->wsaBuf.len = BUFF_SIZE;
+        PerIoData->wsaBuf.len = MAX_BUFF_SIZE;
         PerIoData->wsaBuf.buf = PerIoData->buffer;
         PerIoData->operation = OP_ClientToServer;
         Flags = 0;
@@ -136,7 +136,7 @@ void TPServer::CompletionThread()
             }
 
             memset(&(PerIoData->overlapped), 0, sizeof(OVERLAPPED));
-            PerIoData->wsaBuf.len = BUFF_SIZE;
+            PerIoData->wsaBuf.len = MAX_BUFF_SIZE;
             PerIoData->wsaBuf.buf = PerIoData->buffer;
             PerIoData->operation = OP_ClientToServer;
             flags = 0;
