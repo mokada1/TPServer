@@ -26,7 +26,7 @@ public:
 	PROTOCOL GetHeader() const;
 	char* GetBody() const;
 	char* GetBuffer() const;
-	ULONG GetPacketSize() const;
+	size_t GetPacketSize() const;
 	Session* GetOwner() const;	
 	PACKET_CAST_TYPE GetPacketCastType() const;
 	vector<Session*> GetPacketCastGroup() const;
@@ -39,7 +39,7 @@ private:
 	PROTOCOL header;
 	char* body;
 	char* buffer;
-	ULONG packetSize;
+	size_t packetSize;
 	Session* owner;
 	PACKET_CAST_TYPE packetCastType;
 	vector<Session*> packetCastGroup;
@@ -49,7 +49,7 @@ private:
 class PacketInfo
 {
 public:
-	PacketInfo(char* const _buffer, ULONG _packetSize, PROTOCOL _header)
+	PacketInfo(char* const _buffer, size_t _packetSize, PROTOCOL _header)
 	{
 		buffer = _buffer;
 		packetSize = _packetSize;
@@ -57,12 +57,12 @@ public:
 	}
 	
 	char* GetBuffer() const { return buffer; }
-	ULONG GetPacketSize() const { return packetSize; }
+	size_t GetPacketSize() const { return packetSize; }
 	PROTOCOL GetHeader() const { return header; }
 
 private:
 	char* buffer;
-	ULONG packetSize;
+	size_t packetSize;
 	PROTOCOL header;
 };
 

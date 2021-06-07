@@ -4,9 +4,8 @@
 ObjUser* SQLServiceUser::GetUser(const SQLHSTMT& hStmt, const wchar_t* const userId)
 {
 	auto sql = L"SELECT user_id, password FROM user WHERE user_id = ?";
-	auto sqlLen = lstrlen(sql);
-
-	if (SQLPrepare(hStmt, (SQLWCHAR*)sql, sqlLen) != SQL_SUCCESS)
+	
+	if (SQLPrepare(hStmt, (SQLWCHAR*)sql, SQL_NTS) != SQL_SUCCESS)
 	{
 		return nullptr;
 	}
@@ -22,7 +21,7 @@ ObjUser* SQLServiceUser::GetUser(const SQLHSTMT& hStmt, const wchar_t* const use
 	}
 
 	SQLWCHAR bUserId[SIZE_USER_USER_ID] = L"", bPassword[SIZE_USER_PASSWORD] = L"";
-	SQLINTEGER _bUserId = 0, _bPassword = 0;
+	SQLLEN _bUserId = 0, _bPassword = 0;
 
 	SQLBindCol(hStmt, 1, SQL_WCHAR, bUserId, SIZE_USER_USER_ID, &_bUserId);
 	SQLBindCol(hStmt, 2, SQL_WCHAR, bPassword, SIZE_USER_PASSWORD, &_bPassword);
@@ -40,9 +39,8 @@ ObjUser* SQLServiceUser::GetUser(const SQLHSTMT& hStmt, const wchar_t* const use
 ObjUser* SQLServiceUser::InsertUser(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const wchar_t* const password)
 {
 	auto sql = L"INSERT INTO user (user_id, password) VALUES (?, ?)";
-	auto sqlLen = lstrlen(sql);
 
-	if (SQLPrepare(hStmt, (SQLWCHAR*)sql, sqlLen) != SQL_SUCCESS)
+	if (SQLPrepare(hStmt, (SQLWCHAR*)sql, SQL_NTS) != SQL_SUCCESS)
 	{
 		return nullptr;
 	}
@@ -72,9 +70,8 @@ ObjUser* SQLServiceUser::InsertUser(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, 
 CompUserLocation* SQLServiceUser::GetUserLocation(const SQLHSTMT& hStmt, const wchar_t* const userId)
 {
 	auto sql = L"SELECT x, y, z FROM user_location WHERE user_id = ?";
-	auto sqlLen = lstrlen(sql);
 
-	if (SQLPrepare(hStmt, (SQLWCHAR*)sql, sqlLen) != SQL_SUCCESS)
+	if (SQLPrepare(hStmt, (SQLWCHAR*)sql, SQL_NTS) != SQL_SUCCESS)
 	{
 		return nullptr;
 	}
@@ -102,18 +99,17 @@ CompUserLocation* SQLServiceUser::GetUserLocation(const SQLHSTMT& hStmt, const w
 	return nullptr;
 }
 
-CompUserLocation* SQLServiceUser::InsertUserLocation(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const float x, const float y, const float z)
+CompUserLocation* SQLServiceUser::InsertUserLocation(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const Vector3 location)
 {
 	auto sql = L"INSERT INTO user_location (user_id, x, y, z) VALUES (?, ?, ?, ?)";
-	auto sqlLen = lstrlen(sql);
 
-	if (SQLPrepare(hStmt, (SQLWCHAR*)sql, sqlLen) != SQL_SUCCESS)
+	if (SQLPrepare(hStmt, (SQLWCHAR*)sql, SQL_NTS) != SQL_SUCCESS)
 	{
 		return nullptr;
 	}
 
 	SQLWCHAR pUserId[SIZE_USER_USER_ID] = L"";
-	SQLFLOAT pX = 0.0, pY = 0.0, pZ = 0.0;
+	SQLFLOAT pX = location.x, pY = location.y, pZ = location.z;
 
 	SQLBindParameter(hStmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, SIZE_USER_USER_ID, 0, pUserId, 0, NULL);
 	wcscpy_s(reinterpret_cast<wchar_t*>(pUserId), SIZE_USER_USER_ID, userId);

@@ -9,7 +9,7 @@ class GameRoom;
 class PacketGenerator : public TSingleton<PacketGenerator>
 {
 public:
-	Packet Parse(Session* const owner, char* const buffer, ULONG bytesTransferred);
+	Packet Parse(Session* const owner, char* const buffer, size_t bytesTransferred);
 
 	Packet CreateError(Session* const owner, const wchar_t* const message);
 	Packet CreateGameRoomObj(Session* const owner, const GameRoom& gameRoom);
@@ -22,9 +22,9 @@ private:
 	Packet CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner);
 	Packet CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner, PACKET_CAST_TYPE packetCastType, vector<Session*> packetCastGroup);
 	PROTOCOL GetHeaderByBuff(char* const buffer);
-	PROTOCOL GetEndOfPacket(char* const buffer, const ULONG packetSize);
+	PROTOCOL GetEndOfPacket(char* const buffer, const size_t packetSize);
 	void SetHeaderOfBuff(char* const buffer, PROTOCOL header);
-	void SetEndOfBuff(char* const buffer, const int buffSize);
+	void SetEndOfBuff(char* const buffer, const size_t buffSize);
 	bool IsValidHeader(const PROTOCOL protocol);
 	bool IsValidEndOfPacket(const PROTOCOL protocol);
 };

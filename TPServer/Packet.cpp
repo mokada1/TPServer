@@ -65,7 +65,7 @@ char* Packet::GetBuffer() const
 	return buffer;
 }
 
-ULONG Packet::GetPacketSize() const
+size_t Packet::GetPacketSize() const
 {
 	return packetSize;
 }

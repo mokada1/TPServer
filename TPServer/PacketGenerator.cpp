@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Packet PacketGenerator::Parse(Session* const owner, char* const buffer, ULONG bytesTransferred)
+Packet PacketGenerator::Parse(Session* const owner, char* const buffer, size_t bytesTransferred)
 {	
 	if (bytesTransferred == 0)
 	{
@@ -13,9 +13,10 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, ULONG by
 	}
 
 	char* finishedBuffer = nullptr;
-	ULONG finishedPacketSize = 0;
+	size_t finishedPacketSize = 0;
+	bool isDAllocBuf = false;
 
-	auto const ownerBuff = owner->GetBuffer();
+	auto ownerBuff = owner->GetBuffer();
 	if (ownerBuff)
 	{
 		// 최대 버퍼 크기를 넘는 경우 패킷 처리 안함
@@ -27,6 +28,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, ULONG by
 		}
 
 		owner->AddToBuff(buffer, bytesTransferred);
+		ownerBuff = owner->GetBuffer();
 		const auto ownerPacketSize = owner->GetPacketSize();
 
 		const auto header = PacketGenerator::GetInstance().GetHeaderByBuff(ownerBuff);
@@ -56,6 +58,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, ULONG by
 			finishedBuffer = ownerBuff;
 			finishedPacketSize = ownerPacketSize;
 			owner->ClearBuff(false);
+			isDAllocBuf = true;
 			cout << "패킷 완성!" << endl;
 		}
 	}
@@ -107,7 +110,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, ULONG by
 	// 완성된 패킷 리턴
 	PROTOCOL header = GetHeaderByBuff(finishedBuffer);
 	auto packetInfo = PacketInfo(finishedBuffer, finishedPacketSize, header);
-	auto packetSubInfo = PacketSubInfo(owner, PACKET_CAST_TYPE::UNICAST, vector<Session*>(), false);
+	auto packetSubInfo = PacketSubInfo(owner, PACKET_CAST_TYPE::UNICAST, vector<Session*>(), isDAllocBuf);
 	return Packet(packetInfo, packetSubInfo);
 }
 
@@ -208,10 +211,10 @@ Packet PacketGenerator::CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBui
 Packet PacketGenerator::CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner, PACKET_CAST_TYPE packetCastType, vector<Session*> packetCastGroup)
 {
 	auto bp = _fbb.GetBufferPointer();
-	auto bSize = _fbb.GetSize();
+	auto bSize = static_cast<size_t>(_fbb.GetSize());
 
-	const int INTER_BUFF_DATA_SIZE = PACKET_HEAD_SIZE + bSize;
-	const int BUFF_DATA_SIZE = PACKET_HEAD_SIZE + bSize + PACKET_END_SIZE;
+	const size_t INTER_BUFF_DATA_SIZE = PACKET_HEAD_SIZE + bSize;
+	const size_t BUFF_DATA_SIZE = PACKET_HEAD_SIZE + bSize + PACKET_END_SIZE;
 
 	auto buffer = new char[BUFF_DATA_SIZE];
 	memset(buffer, 0, BUFF_DATA_SIZE);
@@ -233,7 +236,7 @@ PROTOCOL PacketGenerator::GetHeaderByBuff(char* const buffer)
 	return static_cast<PROTOCOL>(headerInt16);
 }
 
-PROTOCOL PacketGenerator::GetEndOfPacket(char* const buffer, const ULONG packetSize)
+PROTOCOL PacketGenerator::GetEndOfPacket(char* const buffer, const size_t packetSize)
 {
 	unsigned char byte1 = buffer[packetSize - 2];
 	unsigned char byte2 = buffer[packetSize - 1];
@@ -250,7 +253,7 @@ void PacketGenerator::SetHeaderOfBuff(char* const buffer, PROTOCOL header)
 	buffer[1] = byte2;
 }
 
-void PacketGenerator::SetEndOfBuff(char* const buffer, const int buffSize)
+void PacketGenerator::SetEndOfBuff(char* const buffer, const size_t buffSize)
 {
 	uint16_t protoInt16 = static_cast<uint16_t>(PROTOCOL::END_OF_PACKET);
 	unsigned char byte1 = protoInt16 & 0xFF;

@@ -34,10 +34,10 @@ void TPServer::Initialize()
 
     hCompletionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 
-    SYSTEM_INFO SystemInfo;
-    GetSystemInfo(&SystemInfo);
+    SYSTEM_INFO systemInfo;
+    GetSystemInfo(&systemInfo);
     
-    for (unsigned int i = 0; i < SystemInfo.dwNumberOfProcessors; ++i)
+    for (unsigned int i = 0; i < systemInfo.dwNumberOfProcessors; ++i)
     {
         worker_threads.push_back(new thread([&](){ CompletionThread(); }));
     }
@@ -55,38 +55,39 @@ void TPServer::Start()
     bind(hServSock, (SOCKADDR*)&servAddr, sizeof(servAddr));
     listen(hServSock, LISTEN_BACKLOG);
 
-    LPPER_HANDLE_DATA PerHandleData;
+    LPPER_HANDLE_DATA perHandleData;
 
-    int RecvBytes;
-    int Flags;
+    DWORD recvBytes;
+    DWORD flags;
 
     cout << "서버가 시작되었습니다." << endl;
 
     while (TRUE)
     {
         SOCKADDR_IN clntAddr;
-        int addrLen = sizeof(clntAddr);
+        auto addrLen = sizeof(clntAddr);
+        auto addrLenInt = static_cast<int>(addrLen);
 
-        SOCKET hClntSock = accept(hServSock, (SOCKADDR*)&clntAddr, &addrLen);
+        SOCKET hClntSock = accept(hServSock, (SOCKADDR*)&clntAddr, &addrLenInt);
 
-        PerHandleData = new PER_HANDLE_DATA;
-        PerHandleData->hClntSock = hClntSock;
-        memcpy(&(PerHandleData->clntAddr), &clntAddr, addrLen);
+        perHandleData = new PER_HANDLE_DATA;
+        perHandleData->hClntSock = hClntSock;
+        memcpy(&(perHandleData->clntAddr), &clntAddr, addrLen);
 
         char buf[BUFF_SIZE_IP] = { 0, };
         cout << "Connected[" << hClntSock << "]: " << inet_ntop(AF_INET, &clntAddr.sin_addr, buf, sizeof(buf)) << " " << endl;
         SessionPool::GetInstance().CreateSession(hClntSock, clntAddr);
 
-        CreateIoCompletionPort((HANDLE)hClntSock, hCompletionPort, (DWORD)PerHandleData, 0);
+        CreateIoCompletionPort((HANDLE)hClntSock, hCompletionPort, (ULONG_PTR)perHandleData, 0);
 
         LPPER_IO_DATA PerIoData = new PER_IO_DATA;
         memset(&(PerIoData->overlapped), 0, sizeof(OVERLAPPED));
         PerIoData->wsaBuf.len = MAX_BUFF_SIZE;
         PerIoData->wsaBuf.buf = PerIoData->buffer;
         PerIoData->operation = OP_ClientToServer;
-        Flags = 0;
+        flags = 0;
 
-        WSARecv(PerHandleData->hClntSock, &(PerIoData->wsaBuf), 1, (LPDWORD)&RecvBytes, (LPDWORD)&Flags, &(PerIoData->overlapped), NULL);
+        WSARecv(perHandleData->hClntSock, &(PerIoData->wsaBuf), 1, &recvBytes, &flags, &(PerIoData->overlapped), NULL);
     }
 }
 
@@ -104,43 +105,42 @@ void TPServer::Close()
 
 void TPServer::CompletionThread()
 {
-    DWORD BytesTransferred;
-    LPPER_HANDLE_DATA PerHandleData;
-    LPPER_IO_DATA PerIoData;
+    DWORD bytesTransferred;
+    LPPER_HANDLE_DATA perHandleData;
+    LPPER_IO_DATA perIoData;
     DWORD flags;
-    int sendBytes = 0;
 
     while (true) {
-        if (!GetQueuedCompletionStatus(hCompletionPort, &BytesTransferred, (LPDWORD)&PerHandleData, (LPOVERLAPPED*)&PerIoData, INFINITE))
+        if (!GetQueuedCompletionStatus(hCompletionPort, &bytesTransferred, (PULONG_PTR)&perHandleData, (LPOVERLAPPED*)&perIoData, INFINITE))
         {
             char buf[BUFF_SIZE_IP] = { 0, };
-            cout << "Disconnected[" << PerHandleData->hClntSock << "]: " << inet_ntop(AF_INET, &PerHandleData->clntAddr.sin_addr, buf, sizeof(buf)) << " " << endl;
-            SessionPool::GetInstance().DeleteSession(PerHandleData->hClntSock);
+            cout << "Disconnected[" << perHandleData->hClntSock << "]: " << inet_ntop(AF_INET, &perHandleData->clntAddr.sin_addr, buf, sizeof(buf)) << " " << endl;
+            SessionPool::GetInstance().DeleteSession(perHandleData->hClntSock);
 
-            closesocket(PerHandleData->hClntSock);
-            delete PerHandleData;
-            delete PerIoData;
+            closesocket(perHandleData->hClntSock);
+            delete perHandleData;
+            delete perIoData;
             continue;
         }
 
-        if (PerIoData->operation == OP_ClientToServer)
+        if (perIoData->operation == OP_ClientToServer)
         {
-            auto session = SessionPool::GetInstance().GetSession(PerHandleData->hClntSock);
+            auto session = SessionPool::GetInstance().GetSession(perHandleData->hClntSock);
             if (session != nullptr)
             {
-                PacketProcessor::GetInstance().Process(session, PerIoData->wsaBuf.buf, BytesTransferred);
+                PacketProcessor::GetInstance().Process(session, perIoData->wsaBuf.buf, static_cast<size_t>(bytesTransferred));
             }
             else
             {
                 cout << "Not found session!" << endl;
             }
 
-            memset(&(PerIoData->overlapped), 0, sizeof(OVERLAPPED));
-            PerIoData->wsaBuf.len = MAX_BUFF_SIZE;
-            PerIoData->wsaBuf.buf = PerIoData->buffer;
-            PerIoData->operation = OP_ClientToServer;
+            memset(&(perIoData->overlapped), 0, sizeof(OVERLAPPED));
+            perIoData->wsaBuf.len = MAX_BUFF_SIZE;
+            perIoData->wsaBuf.buf = perIoData->buffer;
+            perIoData->operation = OP_ClientToServer;
             flags = 0;
-            if (WSARecv(PerHandleData->hClntSock, &(PerIoData->wsaBuf), 1, NULL, &flags, &(PerIoData->overlapped), NULL) == SOCKET_ERROR)
+            if (WSARecv(perHandleData->hClntSock, &(perIoData->wsaBuf), 1, NULL, &flags, &(perIoData->overlapped), NULL) == SOCKET_ERROR)
             {
                 auto e = WSAGetLastError();
                 if (e != WSA_IO_PENDING)
@@ -149,9 +149,9 @@ void TPServer::CompletionThread()
                 }
             }
         }
-        else if (PerIoData->operation == OP_ServerToClient)
+        else if (perIoData->operation == OP_ServerToClient)
         {
-            delete PerIoData;
+            delete perIoData;
         }
     }
 }

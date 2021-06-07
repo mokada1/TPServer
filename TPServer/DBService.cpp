@@ -114,7 +114,7 @@ TPResult* DBService::LoadUserInfo(const wchar_t* const userId)
 	}
 	else
 	{
-		compUserLocation = SQLServiceUser::GetInstance().InsertUserLocation(hDbc, hStmt, userId, 0.f, 0.f, 0.f);
+		compUserLocation = SQLServiceUser::GetInstance().InsertUserLocation(hDbc, hStmt, userId, { 0.f, 0.f, 0.f });
 		if (compUserLocation)
 		{
 			wcout << SUCCESS_INSERT_DATA << endl;

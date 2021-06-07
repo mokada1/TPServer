@@ -51,18 +51,24 @@ void Session::ClearBuff(bool isDeleteBuff)
 	}
 }
 
-void Session::AddToBuff(char* const _buffer, const ULONG _packetSize)
+void Session::AddToBuff(char* const _buffer, const size_t _packetSize)
 {
 	if (!buffer)
 	{
-		buffer = new char[_packetSize];
+		buffer = new char[_packetSize];		
 		memcpy(buffer, _buffer, _packetSize);
 		packetSize = _packetSize;
 	}
 	else
 	{
-		memcpy(&buffer[packetSize], _buffer, _packetSize);
-		packetSize += _packetSize;
+		const auto newPacketSize = packetSize + _packetSize;
+		auto newBuff = new char[newPacketSize];
+		memcpy(newBuff, buffer, packetSize);
+		memcpy(&newBuff[packetSize], _buffer, _packetSize);
+
+		delete[] buffer;
+		buffer = newBuff;
+		packetSize = newPacketSize;
 	}
 }
 
@@ -77,7 +83,7 @@ void Session::SetBuffer(char* const _buffer)
 	this->buffer = _buffer;
 }
 
-void Session::SetPacketSize(const ULONG _packetSize)
+void Session::SetPacketSize(const size_t _packetSize)
 {
 	this->packetSize = _packetSize;
 }
@@ -97,7 +103,7 @@ char* Session::GetBuffer() const
 	return buffer;
 }
 
-ULONG Session::GetPacketSize() const
+size_t Session::GetPacketSize() const
 {
 	return packetSize;
 }

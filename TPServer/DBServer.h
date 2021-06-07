@@ -20,7 +20,7 @@ private:
 	SQLHENV hEnv = nullptr;
 	SQLHDBC hDbc = nullptr;
 
-	SQLWCHAR* ODBC_Name = (SQLWCHAR*)L"mysql_odbc";
+	SQLWCHAR* ODBC_Name = (SQLWCHAR*)L"mysql_odbc_64";
 	SQLWCHAR* ODBC_ID = (SQLWCHAR*)L"root";
 	SQLWCHAR* ODBC_PW = (SQLWCHAR*)L"1234";
 };

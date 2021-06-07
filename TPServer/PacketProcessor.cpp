@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void PacketProcessor::Process(Session* const owner, char* const buffer, const DWORD bytesTransferred)
+void PacketProcessor::Process(Session* const owner, char* const buffer, const size_t bytesTransferred)
 {
 	const auto& packet = PacketGenerator::GetInstance().Parse(owner, buffer, bytesTransferred);
 	if (!packet.IsValid())
@@ -51,13 +51,13 @@ void PacketProcessor::SendPacket(const Packet& packet, const Session* const sess
 void PacketProcessor::SendPacket(const Packet& packet, const SOCKET& clntSock)
 {
 	LPPER_IO_DATA PerIoData = new PER_IO_DATA;
-	int sendBytes = 0;
+	DWORD sendBytes = 0;
 
 	memset(&(PerIoData->overlapped), 0, sizeof(OVERLAPPED));
-	PerIoData->wsaBuf.len = packet.GetPacketSize();
+	PerIoData->wsaBuf.len = static_cast<ULONG>(packet.GetPacketSize());
 	PerIoData->wsaBuf.buf = packet.GetBuffer();
 	PerIoData->operation = OP_ServerToClient;
-	if (WSASend(clntSock, &(PerIoData->wsaBuf), 1, (LPDWORD)&sendBytes, 0, &(PerIoData->overlapped), NULL) == SOCKET_ERROR)
+	if (WSASend(clntSock, &(PerIoData->wsaBuf), 1, &sendBytes, 0, &(PerIoData->overlapped), NULL) == SOCKET_ERROR)
 	{		
 		auto e = WSAGetLastError();
 		if (e != WSA_IO_PENDING)

@@ -12,5 +12,5 @@ public:
 	ObjUser* GetUser(const SQLHSTMT& hStmt, const wchar_t* const userId);
 	ObjUser* InsertUser(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const wchar_t* const password);
 	CompUserLocation* GetUserLocation(const SQLHSTMT& hStmt, const wchar_t* const userId);
-	CompUserLocation* InsertUserLocation(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const float x, const float y, const float z);
+	CompUserLocation* InsertUserLocation(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const Vector3 location);
 };
