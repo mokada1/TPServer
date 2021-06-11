@@ -1,242 +1,192 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
+    <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="헤더 파일">
+    <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="리소스 파일">
+    <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="헤더 파일\flatbuffers">
-      <UniqueIdentifier>{be973b52-fbee-482b-92ca-dd492f2962a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\Object">
-      <UniqueIdentifier>{696a36f8-1217-4e8e-8ffb-09ff42426bdc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Object">
-      <UniqueIdentifier>{ee7b2fd1-7bec-4b30-81d9-0ca1176a1878}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\SQLService">
-      <UniqueIdentifier>{8d409618-2a21-4ac5-8d1c-3e7a3d65e631}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\SQLService">
-      <UniqueIdentifier>{bebc5259-b95b-4005-b48a-57efd96d4c9c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Packet">
-      <UniqueIdentifier>{b12d362f-856c-41ed-8cdf-659afb087c77}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\DB">
-      <UniqueIdentifier>{3496fe58-cad5-4d7e-b236-d4a7b6c603f2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Session">
-      <UniqueIdentifier>{2d82d08e-b46f-46f2-9bd0-694c373d11b0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\DB">
-      <UniqueIdentifier>{52e9d5dc-5092-4bbe-b576-334e3ddcc45e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\Packet">
-      <UniqueIdentifier>{4fb4bd1b-f586-46d6-bead-12637e7cdb23}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\Session">
-      <UniqueIdentifier>{eea2c516-ca5c-446f-b9ee-a15ce06b2e91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\Component">
-      <UniqueIdentifier>{e4d2d3bb-671e-45ec-b8e6-823b074e3ca1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Component">
-      <UniqueIdentifier>{f79e6f74-ec57-46a6-b346-288d32a4a5a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\GameRoom">
-      <UniqueIdentifier>{3d1375b0-241c-4e61-b0ba-89bfcf2a43b2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\GameRoom">
-      <UniqueIdentifier>{dc12e9c6-1373-40e7-a059-58a7c06a3c1c}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TPServer.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="component\CompUserLocation.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TPUtil.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="core\TPServer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ObjUser.cpp">
-      <Filter>소스 파일\Object</Filter>
+    <ClCompile Include="db\DBServer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SQLServiceUser.cpp">
-      <Filter>소스 파일\SQLService</Filter>
+    <ClCompile Include="db\DBService.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TPResult.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="gameroom\GameRoom.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DBServer.cpp">
-      <Filter>소스 파일\DB</Filter>
+    <ClCompile Include="gameroom\GameRoomService.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DBService.cpp">
-      <Filter>소스 파일\DB</Filter>
+    <ClCompile Include="object\ObjUser.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Packet.cpp">
-      <Filter>소스 파일\Packet</Filter>
+    <ClCompile Include="packet\Packet.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PacketGenerator.cpp">
-      <Filter>소스 파일\Packet</Filter>
+    <ClCompile Include="packet\PacketGenerator.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PacketProcessor.cpp">
-      <Filter>소스 파일\Packet</Filter>
+    <ClCompile Include="packet\PacketProcessor.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PacketService.cpp">
-      <Filter>소스 파일\Packet</Filter>
+    <ClCompile Include="packet\PacketService.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Session.cpp">
-      <Filter>소스 파일\Session</Filter>
+    <ClCompile Include="session\Session.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SessionPool.cpp">
-      <Filter>소스 파일\Session</Filter>
+    <ClCompile Include="session\SessionPool.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CompUserLocation.cpp">
-      <Filter>소스 파일\Component</Filter>
+    <ClCompile Include="sqlservice\SQLServiceUser.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameRoom.cpp">
-      <Filter>소스 파일\GameRoom</Filter>
+    <ClCompile Include="util\TPError.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameRoomService.cpp">
-      <Filter>소스 파일\GameRoom</Filter>
+    <ClCompile Include="util\TPResult.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TPError.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="util\TPUtil.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Protocol.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="TPServer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="TP_generated.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="component\CompUserLocation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="component\TPComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\TPServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="db\DBServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="db\DBService.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\base.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\code_generators.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\flatbuffers.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\flatc.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\flexbuffers.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\grpc.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\hash.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\idl.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\minireflect.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\reflection.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\reflection_generated.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\registry.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\stl_emulation.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\util.h">
-      <Filter>헤더 파일\flatbuffers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TSingleton.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="gameroom\GameRoom.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TPError.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="gameroom\GameRoomService.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TPUtil.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="object\ObjUser.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TPObject.h">
-      <Filter>헤더 파일\Object</Filter>
+    <ClInclude Include="object\TPObject.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjUser.h">
-      <Filter>헤더 파일\Object</Filter>
+    <ClInclude Include="packet\Packet.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SQLServiceUser.h">
-      <Filter>헤더 파일\SQLService</Filter>
+    <ClInclude Include="packet\PacketGenerator.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TPDefine.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="packet\PacketProcessor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TPResult.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="packet\PacketService.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DBService.h">
-      <Filter>헤더 파일\DB</Filter>
+    <ClInclude Include="packet\Protocol.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DBServer.h">
-      <Filter>헤더 파일\DB</Filter>
+    <ClInclude Include="session\Session.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Packet.h">
-      <Filter>헤더 파일\Packet</Filter>
+    <ClInclude Include="session\SessionPool.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PacketGenerator.h">
-      <Filter>헤더 파일\Packet</Filter>
+    <ClInclude Include="sqlservice\SQLServiceUser.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PacketProcessor.h">
-      <Filter>헤더 파일\Packet</Filter>
+    <ClInclude Include="util\Enums.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PacketService.h">
-      <Filter>헤더 파일\Packet</Filter>
+    <ClInclude Include="util\TPDefine.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Session.h">
-      <Filter>헤더 파일\Session</Filter>
+    <ClInclude Include="util\TPError.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SessionPool.h">
-      <Filter>헤더 파일\Session</Filter>
+    <ClInclude Include="util\TPResult.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CompUserLocation.h">
-      <Filter>헤더 파일\Component</Filter>
+    <ClInclude Include="util\TPUtil.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TPComponent.h">
-      <Filter>헤더 파일\Component</Filter>
+    <ClInclude Include="util\TSingleton.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameRoom.h">
-      <Filter>헤더 파일\GameRoom</Filter>
+    <ClInclude Include="util\Uncopyable.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameRoomService.h">
-      <Filter>헤더 파일\GameRoom</Filter>
-    </ClInclude>
-    <ClInclude Include="Uncopyable.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Enums.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TP.fbs">
-      <Filter>소스 파일</Filter>
-    </None>
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 #include "DBServer.h"
-#include "TPError.h"
+#include "../Util/TPError.h"
 #include <iostream>
 
 using namespace std;

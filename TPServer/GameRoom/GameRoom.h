@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ObjUser.h"
+#include "../Object/ObjUser.h"
 #include <map> 
 
 class GameRoom

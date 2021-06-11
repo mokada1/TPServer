@@ -1,10 +1,10 @@
 #include "TPServer.h"
 #include <iostream>
 #include <WS2tcpip.h>
-#include "DBServer.h"
-#include "PacketProcessor.h"
-#include "SessionPool.h"
-#include "TPError.h"
+#include "../DB/DBServer.h"
+#include "../Packet/PacketProcessor.h"
+#include "../Session/SessionPool.h"
+#include "../Util/TPError.h"
 
 void TPServer::Play()
 {

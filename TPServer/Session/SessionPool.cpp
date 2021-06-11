@@ -1,8 +1,8 @@
 #include "SessionPool.h"
-#include "GameRoomService.h"
-#include "PacketGenerator.h"
-#include "PacketProcessor.h"
-#include "TPDefine.h"
+#include "../GameRoom/GameRoomService.h"
+#include "../Packet/PacketGenerator.h"
+#include "../Packet/PacketProcessor.h"
+#include "../Util/TPDefine.h"
 
 Session* SessionPool::GetSession(const SOCKET clntSock) const
 {

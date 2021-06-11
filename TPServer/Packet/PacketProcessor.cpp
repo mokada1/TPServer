@@ -1,9 +1,9 @@
-#include "TPServer.h"
+#include "../Core/TPServer.h"
 #include "PacketProcessor.h"
 #include "PacketService.h"
 #include "PacketGenerator.h"
-#include "TPError.h"
-#include "SessionPool.h"
+#include "../Util/TPError.h"
+#include "../Session/SessionPool.h"
 
 #include <iostream>
 

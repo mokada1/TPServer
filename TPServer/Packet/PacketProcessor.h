@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TSingleton.h"
+#include "../Util/TSingleton.h"
 #include <WinSock2.h>
 
 class Packet;

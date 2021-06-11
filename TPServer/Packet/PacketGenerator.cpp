@@ -1,11 +1,11 @@
 #include "PacketGenerator.h"
-#include "GameRoom.h"
-#include "Session.h"
+#include "../GameRoom/GameRoom.h"
+#include "../Session/Session.h"
 #include <iostream>
 
 using namespace std;
 
-Packet PacketGenerator::Parse(Session* const owner, char* const buffer, size_t bytesTransferred)
+Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const size_t bytesTransferred)
 {	
 	if (bytesTransferred == 0)
 	{

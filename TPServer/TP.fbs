@@ -43,14 +43,23 @@ table TB_ExitGameRoom
 	ObjUser: TB_ObjUser;
 }
 
+table TB_InputMove
+{
+	Location: ST_Vec3;
+	ForwardVector: ST_Vec3;
+	RightVector: ST_Vec3;
+	MoveForward: float;
+	MoveRight: float;
+}
+
 table TB_ReqMove
 {
 	UserId: string;
-	LocationList: [ST_Vec3];
+	InputMove: TB_InputMove;
 }
 
 table TB_MoveLocation
 {
 	UserId: string;
-	LocationList: [ST_Vec3];
+	InputMove: TB_InputMove;
 }

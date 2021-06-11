@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TSingleton.h"
+#include "../Util/TSingleton.h"
 
 class Packet;
 class TPResult;

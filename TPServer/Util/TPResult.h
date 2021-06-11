@@ -1,9 +1,9 @@
 #pragma once
 
-#include "TPObject.h"
-#include "TPComponent.h"
+#include "../Object/TPObject.h"
+#include "../Component/TPComponent.h"
 #include <vector>
-#include "Packet.h"
+#include "../Packet/Packet.h"
 
 using namespace std;
 

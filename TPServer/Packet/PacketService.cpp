@@ -1,10 +1,10 @@
 #include "PacketService.h"
 #include "PacketProcessor.h"
-#include "DBService.h"
+#include "../DB/DBService.h"
 #include "PacketGenerator.h"
-#include "GameRoomService.h"
-#include "Session.h"
-#include "TPResult.h"
+#include "../GameRoom/GameRoomService.h"
+#include "../Session/Session.h"
+#include "../Util/TPResult.h"
 
 #include <iostream>
 

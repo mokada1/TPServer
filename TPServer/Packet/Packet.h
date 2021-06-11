@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Protocol.h"
-#include "TPDefine.h"
-#include "Enums.h"
+#include "../Util/TPDefine.h"
+#include "../Util/Enums.h"
 
 #include <vector>
 

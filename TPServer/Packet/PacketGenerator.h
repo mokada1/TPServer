@@ -1,15 +1,15 @@
 #pragma once
 
-#include "TSingleton.h"
+#include "../Util/TSingleton.h"
 #include "Packet.h"
-#include "ObjUser.h"
+#include "../Object/ObjUser.h"
 
 class GameRoom;
 
 class PacketGenerator : public TSingleton<PacketGenerator>
 {
 public:
-	Packet Parse(Session* const owner, char* const buffer, size_t bytesTransferred);
+	Packet Parse(Session* const owner, char* const buffer, const size_t bytesTransferred);
 
 	Packet CreateError(Session* const owner, const wchar_t* const message);
 	Packet CreateGameRoomObj(Session* const owner, const GameRoom& gameRoom);

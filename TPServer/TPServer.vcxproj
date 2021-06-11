@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -20,37 +20,29 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{944B0FA3-A981-467C-A260-531ADD224731}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{ed720115-080a-430b-accc-514b5a103edf}</ProjectGuid>
-    <RootNamespace>TPServer</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -72,109 +64,65 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CompUserLocation.cpp" />
-    <ClCompile Include="DBService.cpp" />
-    <ClCompile Include="DBServer.cpp" />
+    <ClCompile Include="component\CompUserLocation.cpp" />
+    <ClCompile Include="core\TPServer.cpp" />
+    <ClCompile Include="db\DBServer.cpp" />
+    <ClCompile Include="db\DBService.cpp" />
+    <ClCompile Include="gameroom\GameRoom.cpp" />
+    <ClCompile Include="gameroom\GameRoomService.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ObjUser.cpp" />
-    <ClCompile Include="Packet.cpp" />
-    <ClCompile Include="PacketGenerator.cpp" />
-    <ClCompile Include="PacketProcessor.cpp" />
-    <ClCompile Include="PacketService.cpp" />
-    <ClCompile Include="GameRoom.cpp" />
-    <ClCompile Include="GameRoomService.cpp" />
-    <ClCompile Include="Session.cpp" />
-    <ClCompile Include="SessionPool.cpp" />
-    <ClCompile Include="SQLServiceUser.cpp" />
-    <ClCompile Include="TPError.cpp" />
-    <ClCompile Include="TPResult.cpp" />
-    <ClCompile Include="TPServer.cpp" />
-    <ClCompile Include="TPUtil.cpp" />
+    <ClCompile Include="object\ObjUser.cpp" />
+    <ClCompile Include="packet\Packet.cpp" />
+    <ClCompile Include="packet\PacketGenerator.cpp" />
+    <ClCompile Include="packet\PacketProcessor.cpp" />
+    <ClCompile Include="packet\PacketService.cpp" />
+    <ClCompile Include="session\Session.cpp" />
+    <ClCompile Include="session\SessionPool.cpp" />
+    <ClCompile Include="sqlservice\SQLServiceUser.cpp" />
+    <ClCompile Include="util\TPError.cpp" />
+    <ClCompile Include="util\TPResult.cpp" />
+    <ClCompile Include="util\TPUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CompUserLocation.h" />
-    <ClInclude Include="DBServer.h" />
-    <ClInclude Include="DBService.h" />
-    <ClInclude Include="Enums.h" />
-    <ClInclude Include="ObjUser.h" />
-    <ClInclude Include="PacketGenerator.h" />
-    <ClInclude Include="GameRoom.h" />
-    <ClInclude Include="GameRoomService.h" />
-    <ClInclude Include="SQLServiceUser.h" />
-    <ClInclude Include="TPComponent.h" />
-    <ClInclude Include="TPDefine.h" />
-    <ClInclude Include="TPError.h" />
+    <ClInclude Include="component\CompUserLocation.h" />
+    <ClInclude Include="component\TPComponent.h" />
+    <ClInclude Include="core\TPServer.h" />
+    <ClInclude Include="db\DBServer.h" />
+    <ClInclude Include="db\DBService.h" />
     <ClInclude Include="flatbuffers\base.h" />
     <ClInclude Include="flatbuffers\code_generators.h" />
     <ClInclude Include="flatbuffers\flatbuffers.h" />
@@ -189,22 +137,26 @@
     <ClInclude Include="flatbuffers\registry.h" />
     <ClInclude Include="flatbuffers\stl_emulation.h" />
     <ClInclude Include="flatbuffers\util.h" />
-    <ClInclude Include="Packet.h" />
-    <ClInclude Include="PacketProcessor.h" />
-    <ClInclude Include="PacketService.h" />
-    <ClInclude Include="Protocol.h" />
-    <ClInclude Include="Session.h" />
-    <ClInclude Include="SessionPool.h" />
-    <ClInclude Include="TPObject.h" />
-    <ClInclude Include="TPResult.h" />
-    <ClInclude Include="TPServer.h" />
-    <ClInclude Include="TPUtil.h" />
+    <ClInclude Include="gameroom\GameRoom.h" />
+    <ClInclude Include="gameroom\GameRoomService.h" />
+    <ClInclude Include="object\ObjUser.h" />
+    <ClInclude Include="object\TPObject.h" />
+    <ClInclude Include="packet\Packet.h" />
+    <ClInclude Include="packet\PacketGenerator.h" />
+    <ClInclude Include="packet\PacketProcessor.h" />
+    <ClInclude Include="packet\PacketService.h" />
+    <ClInclude Include="packet\Protocol.h" />
+    <ClInclude Include="session\Session.h" />
+    <ClInclude Include="session\SessionPool.h" />
+    <ClInclude Include="sqlservice\SQLServiceUser.h" />
     <ClInclude Include="TP_generated.h" />
-    <ClInclude Include="TSingleton.h" />
-    <ClInclude Include="Uncopyable.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TP.fbs" />
+    <ClInclude Include="util\Enums.h" />
+    <ClInclude Include="util\TPDefine.h" />
+    <ClInclude Include="util\TPError.h" />
+    <ClInclude Include="util\TPResult.h" />
+    <ClInclude Include="util\TPUtil.h" />
+    <ClInclude Include="util\TSingleton.h" />
+    <ClInclude Include="util\Uncopyable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

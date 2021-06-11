@@ -1,8 +1,8 @@
 #include "DBService.h"
 #include "DBServer.h"
-#include "SQLServiceUser.h"
-#include "TPDefine.h"
-#include "TPResult.h"
+#include "../SQLService/SQLServiceUser.h"
+#include "../Util/TPDefine.h"
+#include "../Util/TPResult.h"
 
 #include <iostream>
 #include <string>

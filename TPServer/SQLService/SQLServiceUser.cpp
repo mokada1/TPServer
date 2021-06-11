@@ -1,11 +1,11 @@
 #include "SQLServiceUser.h"
-#include "TPDefine.h"
+#include "../Util/TPDefine.h"
 
 ObjUser* SQLServiceUser::GetUser(const SQLHSTMT& hStmt, const wchar_t* const userId)
 {
-	auto sql = L"SELECT user_id, password FROM user WHERE user_id = ?";
+	auto sql = "SELECT user_id, password FROM user WHERE user_id = ?";
 	
-	if (SQLPrepare(hStmt, (SQLWCHAR*)sql, SQL_NTS) != SQL_SUCCESS)
+	if (SQLPrepare(hStmt, (SQLCHAR*)sql, SQL_NTS) != SQL_SUCCESS)
 	{
 		return nullptr;
 	}
@@ -38,9 +38,9 @@ ObjUser* SQLServiceUser::GetUser(const SQLHSTMT& hStmt, const wchar_t* const use
 
 ObjUser* SQLServiceUser::InsertUser(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const wchar_t* const password)
 {
-	auto sql = L"INSERT INTO user (user_id, password) VALUES (?, ?)";
+	auto sql = "INSERT INTO user (user_id, password) VALUES (?, ?)";
 
-	if (SQLPrepare(hStmt, (SQLWCHAR*)sql, SQL_NTS) != SQL_SUCCESS)
+	if (SQLPrepare(hStmt, (SQLCHAR*)sql, SQL_NTS) != SQL_SUCCESS)
 	{
 		return nullptr;
 	}
@@ -69,9 +69,9 @@ ObjUser* SQLServiceUser::InsertUser(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, 
 
 CompUserLocation* SQLServiceUser::GetUserLocation(const SQLHSTMT& hStmt, const wchar_t* const userId)
 {
-	auto sql = L"SELECT x, y, z FROM user_location WHERE user_id = ?";
+	auto sql = "SELECT x, y, z FROM user_location WHERE user_id = ?";
 
-	if (SQLPrepare(hStmt, (SQLWCHAR*)sql, SQL_NTS) != SQL_SUCCESS)
+	if (SQLPrepare(hStmt, (SQLCHAR*)sql, SQL_NTS) != SQL_SUCCESS)
 	{
 		return nullptr;
 	}
@@ -101,9 +101,9 @@ CompUserLocation* SQLServiceUser::GetUserLocation(const SQLHSTMT& hStmt, const w
 
 CompUserLocation* SQLServiceUser::InsertUserLocation(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const Vector3 location)
 {
-	auto sql = L"INSERT INTO user_location (user_id, x, y, z) VALUES (?, ?, ?, ?)";
+	auto sql = "INSERT INTO user_location (user_id, x, y, z) VALUES (?, ?, ?, ?)";
 
-	if (SQLPrepare(hStmt, (SQLWCHAR*)sql, SQL_NTS) != SQL_SUCCESS)
+	if (SQLPrepare(hStmt, (SQLCHAR*)sql, SQL_NTS) != SQL_SUCCESS)
 	{
 		return nullptr;
 	}

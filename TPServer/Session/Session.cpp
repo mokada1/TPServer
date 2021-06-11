@@ -1,6 +1,6 @@
 #include "Session.h"
 #include <WS2tcpip.h>
-#include "TPDefine.h"
+#include "../Util/TPDefine.h"
 
 Session::Session()
 {

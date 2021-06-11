@@ -1,7 +1,7 @@
 #pragma once
 
-#include "TP_generated.h"
-#include "TPUtil.h"
+#include "../TP_generated.h"
+#include "../Util/TPUtil.h"
 
 using namespace std;
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "TSingleton.h"
-#include "ObjUser.h"
+#include "../Util/TSingleton.h"
+#include "../Object/ObjUser.h"
 #include <windows.h>
 #include <sql.h>
 #include <sqlext.h>

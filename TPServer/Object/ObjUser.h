@@ -1,7 +1,7 @@
 #pragma once
 
 #include "TPObject.h"
-#include "CompUserLocation.h"
+#include "../Component/CompUserLocation.h"
 
 class ObjUser : public TPObject
 {

@@ -1,4 +1,4 @@
-#include "TPServer.h"
+#include "Core/TPServer.h"
 #include <locale.h>
 
 int main(int argc, char** argv)
