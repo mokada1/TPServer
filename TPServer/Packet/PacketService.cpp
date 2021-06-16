@@ -22,6 +22,8 @@ void PacketService::Process(const Packet& packet)
 	case PROTOCOL::REQ_MOVE:
 		ProcReqMove(packet);
 		break;
+	case PROTOCOL::REQ_LOCATION_SYNC:
+		ProcReqLocationSync(packet);
 	default:
 		break;
 	}
@@ -93,13 +95,13 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 
 	// 방 정보 전달용 패킷 생성
 	auto gameRoom = GameRoomService::GetInstance().GetGameRoom();
-	auto packetGameRoomObj = PacketGenerator::GetInstance().CreateGameRoomObj(owner, *gameRoom);	
+	auto packetResLogin = PacketGenerator::GetInstance().CreateResLogin(owner, *gameRoom);
 
 	// 방 입장 패킷 전송
-	auto packetEnterGameRoom = PacketGenerator::GetInstance().CreateEnterGameRoom(owner, objUser);
-	PacketProcessor::GetInstance().SendPacket(packetEnterGameRoom);
+	auto packetBcastEnterGameRoom = PacketGenerator::GetInstance().CreateBcastEnterGameRoom(owner, objUser);
+	PacketProcessor::GetInstance().SendPacket(packetBcastEnterGameRoom);
 
-	resultLoadUserInfo->SetPacket(packetGameRoomObj);
+	resultLoadUserInfo->SetPacket(packetResLogin);
 	return resultLoadUserInfo;
 }
 
@@ -109,14 +111,16 @@ void PacketService::ProcReqMove(const Packet& packet)
 	auto owner = packet.GetOwner();
 
 	auto req = flatbuffers::GetRoot<TB_ReqMove>(body);
-	auto userId = req->UserId()->c_str();
-	auto locationList = req->LocationList();
+	auto packetBcastMove = PacketGenerator::GetInstance().CreateBcastMove(owner, *req);
+	PacketProcessor::GetInstance().SendPacket(packetBcastMove);
+}
 
-	if (!locationList || locationList->size() == 0)
-	{
-		return;
-	}
+void PacketService::ProcReqLocationSync(const Packet& packet)
+{
+	auto body = packet.GetBody();
+	auto owner = packet.GetOwner();
 
-	auto packetMoveLocation = PacketGenerator::GetInstance().CreateMoveLocation(owner, *locationList);
-	PacketProcessor::GetInstance().SendPacket(packetMoveLocation);
+	auto req = flatbuffers::GetRoot<TB_ReqLocationSync>(body);
+	auto packetBcastLocationSync = PacketGenerator::GetInstance().CreateBcastLocationSync(owner, *req);
+	PacketProcessor::GetInstance().SendPacket(packetBcastLocationSync);
 }

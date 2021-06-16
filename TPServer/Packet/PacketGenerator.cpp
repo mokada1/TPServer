@@ -50,7 +50,6 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 				owner->ClearBuff();
 				return Packet();
 			}
-			cout << "패킷 조립중..." << endl;
 		}
 		else
 		{
@@ -59,7 +58,6 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 			finishedPacketSize = ownerPacketSize;
 			owner->ClearBuff(false);
 			isDAllocBuf = true;
-			cout << "패킷 완성!" << endl;
 		}
 	}
 	else
@@ -67,7 +65,6 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 		if (bytesTransferred < PACKET_HEAD_SIZE)
 		{
 			owner->AddToBuff(buffer, bytesTransferred);
-			cout << "패킷 조립중..." << endl;
 		}
 		else
 		{
@@ -89,14 +86,12 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 					return Packet();
 				}
 				owner->AddToBuff(buffer, bytesTransferred);
-				cout << "패킷 조립중..." << endl;
 			}
 			else
 			{
 				// 패킷 완성
 				finishedBuffer = buffer;
 				finishedPacketSize = bytesTransferred;
-				cout << "패킷 완성!" << endl;
 			}
 		}
 	}
@@ -127,7 +122,7 @@ Packet PacketGenerator::CreateError(Session* const owner, const wchar_t* const m
 	return CreatePacket(PROTOCOL::TP_ERROR, fbb, owner);
 }
 
-Packet PacketGenerator::CreateGameRoomObj(Session* const owner, const GameRoom& gameRoom)
+Packet PacketGenerator::CreateResLogin(Session* const owner, const GameRoom& gameRoom)
 {
 	flatbuffers::FlatBufferBuilder fbb;
 
@@ -145,57 +140,67 @@ Packet PacketGenerator::CreateGameRoomObj(Session* const owner, const GameRoom& 
 		offsetObjUserList = fbb.CreateVector(offsetListObjUser);
 	}
 
-	fbb.Finish(CreateTB_GameRoomObj(fbb, offsetObjUserList));
+	fbb.Finish(CreateTB_ResLogin(fbb, offsetObjUserList));
 
-	return CreatePacket(PROTOCOL::GAME_ROOM_OBJ, fbb, owner);
+	return CreatePacket(PROTOCOL::RES_LOGIN, fbb, owner);
 }
 
-Packet PacketGenerator::CreateEnterGameRoom(Session* const owner, const shared_ptr<ObjUser> objUser)
+Packet PacketGenerator::CreateBcastEnterGameRoom(Session* const owner, const shared_ptr<ObjUser> objUser)
 {
 	vector<Session*> packetCastGroup;
 	packetCastGroup.push_back(owner);
 
 	flatbuffers::FlatBufferBuilder fbb;
 
-	fbb.Finish(CreateTB_EnterGameRoom(fbb, objUser->Serialize(fbb)));
+	fbb.Finish(CreateTB_BcastEnterGameRoom(fbb, objUser->Serialize(fbb)));
 
-	return CreatePacket(PROTOCOL::ENTER_GAME_ROOM, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
+	return CreatePacket(PROTOCOL::BCAST_ENTER_GAME_ROOM, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
 }
 
-Packet PacketGenerator::CreateExitGameRoom(const shared_ptr<ObjUser> objUser)
+Packet PacketGenerator::CreateBcastExitGameRoom(const shared_ptr<ObjUser> objUser)
 {
 	flatbuffers::FlatBufferBuilder fbb;
 	
-	fbb.Finish(CreateTB_ExitGameRoom(fbb, objUser->Serialize(fbb)));
+	fbb.Finish(CreateTB_BcastExitGameRoom(fbb, objUser->Serialize(fbb)));
 
-	return CreatePacket(PROTOCOL::EXIT_GAME_ROOM, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST);
+	return CreatePacket(PROTOCOL::BCAST_EXIT_GAME_ROOM, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST);
 }
 
-Packet PacketGenerator::CreateMoveLocation(Session* const owner, const flatbuffers::Vector<const ST_Vec3*>& locationList)
+Packet PacketGenerator::CreateBcastMove(Session* const owner, const TB_ReqMove& reqMove)
 {
 	vector<Session*> packetCastGroup;
 	packetCastGroup.push_back(owner);
 
 	flatbuffers::FlatBufferBuilder fbb;
 
-	char hUserId[SIZE_USER_USER_ID];
-	TPUtil::GetInstance().WCharToChar(hUserId, SIZE_USER_USER_ID, owner->GetUserId());
-	auto offsetUserId = fbb.CreateString(hUserId);
+	auto offsetUserId = fbb.CreateString(reqMove.UserId()->c_str());
+	auto inputMove = reqMove.InputMove();
+	auto offsetOperation = reqMove.Operation();
+	auto offsetInputMove = CreateTB_InputMove(fbb,
+		inputMove->ForwardVector(),
+		inputMove->RightVector(),
+		inputMove->MoveForward(),
+		inputMove->MoveRight()
+	);
 
-	flatbuffers::Offset<flatbuffers::Vector<const ST_Vec3*>> offsetLocationList = 0;
-	if (locationList.size() > 0)
-	{
-		vector<ST_Vec3> offsetListLocation;
-		for (auto it = locationList.begin(); it != locationList.end(); ++it)
-		{
-			offsetListLocation.push_back(*(*it));
-		}
-		offsetLocationList = fbb.CreateVectorOfStructs(offsetListLocation);
-	}	
+	fbb.Finish(CreateTB_BcastMove(fbb, offsetUserId, offsetOperation, offsetInputMove));
 
-	fbb.Finish(CreateTB_MoveLocation(fbb, offsetUserId, offsetLocationList));
+	return CreatePacket(PROTOCOL::BCAST_MOVE, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
+}
 
-	return CreatePacket(PROTOCOL::MOVE_LOCATION, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
+Packet PacketGenerator::CreateBcastLocationSync(Session* const owner, const TB_ReqLocationSync& reqLocationSync)
+{
+	vector<Session*> packetCastGroup;
+	packetCastGroup.push_back(owner);
+
+	flatbuffers::FlatBufferBuilder fbb;
+
+	auto offsetUserId = fbb.CreateString(reqLocationSync.UserId()->c_str());
+	auto offsetLocation = reqLocationSync.Location();
+	
+	fbb.Finish(CreateTB_BcastLocationSync(fbb, offsetUserId, offsetLocation));
+
+	return CreatePacket(PROTOCOL::BCAST_LOCATION_SYNC, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
 }
 
 Packet PacketGenerator::CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner)
@@ -269,10 +274,11 @@ bool PacketGenerator::IsValidHeader(const PROTOCOL protocol)
 	case PROTOCOL::TP_ERROR:
 	case PROTOCOL::REQ_LOGIN:
 	case PROTOCOL::REQ_MOVE:
-	case PROTOCOL::GAME_ROOM_OBJ:
-	case PROTOCOL::ENTER_GAME_ROOM:
-	case PROTOCOL::EXIT_GAME_ROOM:
-	case PROTOCOL::MOVE_LOCATION:
+	case PROTOCOL::RES_LOGIN:
+	case PROTOCOL::BCAST_ENTER_GAME_ROOM:
+	case PROTOCOL::BCAST_EXIT_GAME_ROOM:
+	case PROTOCOL::BCAST_MOVE:
+	case PROTOCOL::BCAST_LOCATION_SYNC:
 		return true;
 	}
 	return false;

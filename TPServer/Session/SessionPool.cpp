@@ -45,8 +45,8 @@ void SessionPool::DeleteSession(const SOCKET clntSock)
 
 	if (objUser)
 	{
-		auto packetExitGameRoom = PacketGenerator::GetInstance().CreateExitGameRoom(objUser);
-		PacketProcessor::GetInstance().SendPacket(packetExitGameRoom);
+		auto packetBcastExitGameRoom = PacketGenerator::GetInstance().CreateBcastExitGameRoom(objUser);
+		PacketProcessor::GetInstance().SendPacket(packetBcastExitGameRoom);
 	}
 }
 
