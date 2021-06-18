@@ -274,11 +274,7 @@ bool PacketGenerator::IsValidHeader(const PROTOCOL protocol)
 	case PROTOCOL::TP_ERROR:
 	case PROTOCOL::REQ_LOGIN:
 	case PROTOCOL::REQ_MOVE:
-	case PROTOCOL::RES_LOGIN:
-	case PROTOCOL::BCAST_ENTER_GAME_ROOM:
-	case PROTOCOL::BCAST_EXIT_GAME_ROOM:
-	case PROTOCOL::BCAST_MOVE:
-	case PROTOCOL::BCAST_LOCATION_SYNC:
+	case PROTOCOL::REQ_LOCATION_SYNC:
 		return true;
 	}
 	return false;

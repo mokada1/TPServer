@@ -1,192 +1,206 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="flatbuffers">
+      <UniqueIdentifier>{525348c0-237b-4929-af3d-6b10e5b8b0cc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Component">
+      <UniqueIdentifier>{bb5d6d4b-3c1f-47fa-8908-433f8d2f9ec4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    <Filter Include="Core">
+      <UniqueIdentifier>{a15f27ee-ffb7-43ff-8e96-d25a2b5d440d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DB">
+      <UniqueIdentifier>{327c36bf-1c34-48a6-b354-b5e61a24411f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameRoom">
+      <UniqueIdentifier>{d1d45dc7-3bbd-4cdc-a0c3-d86fb60efb16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{e5597919-1c7b-45cb-9279-4e7e4a41228e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Packet">
+      <UniqueIdentifier>{af8300ec-48fa-4bcc-a8df-ea202f970e32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Session">
+      <UniqueIdentifier>{1cfb387d-bb9a-464f-a643-2aff918dda31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SQLService">
+      <UniqueIdentifier>{0d8e8a3b-83d2-4e8f-a188-757cef2b970b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{0fa676f1-8a15-40eb-af45-3f3dafb8752f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="component\CompUserLocation.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Component</Filter>
     </ClCompile>
     <ClCompile Include="core\TPServer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="db\DBServer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>DB</Filter>
     </ClCompile>
     <ClCompile Include="db\DBService.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>DB</Filter>
     </ClCompile>
     <ClCompile Include="gameroom\GameRoom.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>GameRoom</Filter>
     </ClCompile>
     <ClCompile Include="gameroom\GameRoomService.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>GameRoom</Filter>
     </ClCompile>
     <ClCompile Include="object\ObjUser.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="packet\Packet.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Packet</Filter>
     </ClCompile>
     <ClCompile Include="packet\PacketGenerator.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Packet</Filter>
     </ClCompile>
     <ClCompile Include="packet\PacketProcessor.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Packet</Filter>
     </ClCompile>
     <ClCompile Include="packet\PacketService.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Packet</Filter>
     </ClCompile>
     <ClCompile Include="session\Session.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Session</Filter>
     </ClCompile>
     <ClCompile Include="session\SessionPool.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Session</Filter>
     </ClCompile>
     <ClCompile Include="sqlservice\SQLServiceUser.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>SQLService</Filter>
     </ClCompile>
     <ClCompile Include="util\TPError.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Util</Filter>
     </ClCompile>
     <ClCompile Include="util\TPResult.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Util</Filter>
     </ClCompile>
     <ClCompile Include="util\TPUtil.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Util</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TP_generated.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="component\CompUserLocation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="component\TPComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\TPServer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="db\DBServer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="db\DBService.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="flatbuffers\base.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="flatbuffers\code_generators.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="flatbuffers\flatbuffers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="flatbuffers\flatc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="flatbuffers\flexbuffers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="flatbuffers\grpc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="flatbuffers\hash.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="flatbuffers\idl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="flatbuffers\minireflect.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="flatbuffers\reflection_generated.h">
+      <Filter>flatbuffers</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\reflection.h">
-      <Filter>Header Files</Filter>
+      <Filter>flatbuffers</Filter>
     </ClInclude>
-    <ClInclude Include="flatbuffers\reflection_generated.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="flatbuffers\hash.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\grpc.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\idl.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\minireflect.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\flatc.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\flatbuffers.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\code_generators.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\base.h">
+      <Filter>flatbuffers</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\registry.h">
-      <Filter>Header Files</Filter>
+      <Filter>flatbuffers</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\stl_emulation.h">
-      <Filter>Header Files</Filter>
+      <Filter>flatbuffers</Filter>
     </ClInclude>
     <ClInclude Include="flatbuffers\util.h">
-      <Filter>Header Files</Filter>
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="flatbuffers\flexbuffers.h">
+      <Filter>flatbuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="component\TPComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="component\CompUserLocation.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="core\TPServer.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="db\DBService.h">
+      <Filter>DB</Filter>
+    </ClInclude>
+    <ClInclude Include="db\DBServer.h">
+      <Filter>DB</Filter>
     </ClInclude>
     <ClInclude Include="gameroom\GameRoom.h">
-      <Filter>Header Files</Filter>
+      <Filter>GameRoom</Filter>
     </ClInclude>
     <ClInclude Include="gameroom\GameRoomService.h">
-      <Filter>Header Files</Filter>
+      <Filter>GameRoom</Filter>
     </ClInclude>
     <ClInclude Include="object\ObjUser.h">
-      <Filter>Header Files</Filter>
+      <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="object\TPObject.h">
-      <Filter>Header Files</Filter>
+      <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="packet\Packet.h">
-      <Filter>Header Files</Filter>
+      <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="packet\PacketGenerator.h">
-      <Filter>Header Files</Filter>
+      <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="packet\PacketProcessor.h">
-      <Filter>Header Files</Filter>
+      <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="packet\PacketService.h">
-      <Filter>Header Files</Filter>
+      <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="packet\Protocol.h">
-      <Filter>Header Files</Filter>
+      <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="session\Session.h">
-      <Filter>Header Files</Filter>
+      <Filter>Session</Filter>
     </ClInclude>
     <ClInclude Include="session\SessionPool.h">
-      <Filter>Header Files</Filter>
+      <Filter>Session</Filter>
     </ClInclude>
     <ClInclude Include="sqlservice\SQLServiceUser.h">
-      <Filter>Header Files</Filter>
+      <Filter>SQLService</Filter>
     </ClInclude>
     <ClInclude Include="util\Enums.h">
-      <Filter>Header Files</Filter>
+      <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="util\TPDefine.h">
-      <Filter>Header Files</Filter>
+      <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="util\TPError.h">
-      <Filter>Header Files</Filter>
+      <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="util\TPResult.h">
-      <Filter>Header Files</Filter>
+      <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="util\TPUtil.h">
-      <Filter>Header Files</Filter>
+      <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="util\TSingleton.h">
-      <Filter>Header Files</Filter>
+      <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="util\Uncopyable.h">
-      <Filter>Header Files</Filter>
+      <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="TP_generated.h" />
   </ItemGroup>
 </Project>
