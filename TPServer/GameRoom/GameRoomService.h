@@ -2,7 +2,7 @@
 
 #include "../Util/TSingleton.h"
 #include "GameRoom.h"
-#include <vector>
+#include <map>
 
 class GameRoomService : public TSingleton<GameRoomService>
 {
@@ -14,9 +14,11 @@ public:
 	bool DeleteObjUser(wchar_t* const userId);
 	GameRoom* GetGameRoom() const;
 	GameRoom* GetGameRoom(const int roomId) const;
+	GameRoom* GetGameRoom(const wchar_t* const userId) const;
 	shared_ptr<ObjUser> GetObjUser(const wchar_t* const userId) const;
+	shared_ptr<ObjUser> GetObjUser(const int roomId, const wchar_t* const userId) const;
 
 private:
 	int LAST_ROOM_ID = 0;
-	vector<GameRoom*> roomList;
+	map<int, GameRoom*> roomMap;
 };

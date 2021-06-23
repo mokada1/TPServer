@@ -36,6 +36,9 @@ ObjUser::ObjUser()
 	this->userId = nullptr;
 	this->password = nullptr;
 	this->userLocation = nullptr;
+	totalRttMs = 0;
+	rttCount = 0;
+	avgRttMs = 0;
 }
 
 ObjUser::ObjUser(wchar_t* const _userId, wchar_t* const _password)
@@ -45,6 +48,9 @@ ObjUser::ObjUser(wchar_t* const _userId, wchar_t* const _password)
 	wcscpy_s(this->userId, SIZE_USER_USER_ID, _userId);
 	wcscpy_s(this->password, SIZE_USER_PASSWORD, _password);
 	this->userLocation = nullptr;
+	totalRttMs = 0;
+	rttCount = 0;
+	avgRttMs = 0;
 }
 
 ObjUser::~ObjUser()
@@ -65,20 +71,42 @@ ObjUser::~ObjUser()
 
 wchar_t* ObjUser::GetUserId() const
 {
-	return this->userId;
+	return userId;
 }
 
 wchar_t* ObjUser::GetPassword() const
 {
-	return this->password;
+	return password;
+}
+
+int ObjUser::GetRoomId() const
+{
+	return roomId;
+}
+
+int64_t ObjUser::GetAvgRttMs() const
+{
+	return avgRttMs;
 }
 
 shared_ptr<CompUserLocation> ObjUser::GetCompUserLocation() const
 {
-	return this->userLocation;
+	return userLocation;
 }
 
 void ObjUser::SetCompUserLocation(shared_ptr<CompUserLocation> _userLocation)
 {
 	this->userLocation = _userLocation;
+}
+
+void ObjUser::SetRoomId(const int _roomId)
+{
+	this->roomId = _roomId;
+}
+
+void ObjUser::AddRttMs(const int64_t _rttMs)
+{
+	totalRttMs += _rttMs;
+	rttCount++;
+	avgRttMs = totalRttMs / rttCount;
 }

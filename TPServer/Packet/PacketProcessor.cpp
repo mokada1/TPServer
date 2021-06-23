@@ -20,7 +20,7 @@ void PacketProcessor::Process(Session* const owner, char* const buffer, const si
 	auto clntSock = packet.GetOwner()->GetClntSock();
 	auto header = packet.GetHeader();
 
-	cout << "[" << clntSock << "]" << "Protocol:" << static_cast<uint16_t>(header) << endl;
+	cout << "[" << clntSock << "]" << "Recv Packet:" << static_cast<uint16_t>(header) << endl;
 
 	PacketService::GetInstance().Process(packet);
 }
@@ -65,7 +65,8 @@ void PacketProcessor::SendPacket(const Packet& packet, const SOCKET& clntSock)
 			TPError::GetInstance().PrintError(L"WSASend() Error", e);
 		}
 	}
-	cout << "패킷 전송:" << static_cast<uint16_t>(packet.GetHeader()) << endl;
+
+	cout << "[" << clntSock << "]" << "Send Packet:" << static_cast<uint16_t>(packet.GetHeader()) << endl;
 }
 
 void PacketProcessor::SendPacketAll(const Packet& packet, bool isIgnoreCastGroup)

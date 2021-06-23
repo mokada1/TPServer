@@ -6,20 +6,18 @@ using namespace std;
 
 void GameRoomService::CreateGameRoom()
 {
-	roomList.push_back(new GameRoom(++LAST_ROOM_ID));
+	++LAST_ROOM_ID;
+	roomMap.insert(pair<int, GameRoom*>(LAST_ROOM_ID, new GameRoom(LAST_ROOM_ID)));
 }
 
 bool GameRoomService::DeleteGameRoom(const int roomId)
 {
-	for (auto it = roomList.begin(); it != roomList.end(); ++it)
+	auto it = roomMap.find(roomId);
+	if (it != roomMap.end())
 	{
-		auto gr = *it;
-		if (gr->GetRoomId() == roomId)
-		{
-			roomList.erase(it);
-			delete gr;
-			return true;
-		}
+		delete it->second;
+		roomMap.erase(it);
+		return true;
 	}
 	return false;
 }
@@ -27,31 +25,28 @@ bool GameRoomService::DeleteGameRoom(const int roomId)
 bool GameRoomService::AddObjUser(shared_ptr<ObjUser> objUser)
 {
 	int roomId = 0;
-	if(roomList.empty())
+	if(roomMap.empty())
 	{
 		CreateGameRoom();
 		roomId = LAST_ROOM_ID;
 	}
 	else
 	{
-		auto room = roomList.front();
-		roomId = room->GetRoomId();
+		auto it = roomMap.begin();
+		roomId = it->second->GetRoomId();
 	}
 	return AddObjUser(roomId, objUser);
 }
 
 bool GameRoomService::AddObjUser(const int roomId, shared_ptr<ObjUser> objUser)
 {
-	for (auto it = roomList.begin(); it != roomList.end(); ++it)
+	auto it = roomMap.find(roomId);
+	if (it != roomMap.end())
 	{
-		auto gameRoom = *it;
-		if (gameRoom->GetRoomId() == roomId)
+		if (it->second->AddObjUser(objUser))
 		{
-			if (gameRoom->AddObjUser(objUser))
-			{
-				wcout << SUCCESS_ADD_OBJ_USER_GAME_ROOM << endl;
-				return true;
-			}			
+			wcout << SUCCESS_ADD_OBJ_USER_GAME_ROOM << endl;
+			return true;
 		}
 	}
 	return false;
@@ -59,9 +54,9 @@ bool GameRoomService::AddObjUser(const int roomId, shared_ptr<ObjUser> objUser)
 
 bool GameRoomService::DeleteObjUser(wchar_t* const userId)
 {
-	for (auto& room : roomList)
+	for (auto& p : roomMap)
 	{
-		if (room->DeleteObjUser(userId))
+		if (p.second->DeleteObjUser(userId))
 		{
 			wcout << DELETE_OBJ_USER_GAME_ROOM << endl;
 			return true;
@@ -72,33 +67,54 @@ bool GameRoomService::DeleteObjUser(wchar_t* const userId)
 
 GameRoom* GameRoomService::GetGameRoom() const
 {
-	if (roomList.empty())
+	if (roomMap.empty())
 	{
 		return nullptr;
 	}
-	auto room = roomList.front();
-	auto roomId = room->GetRoomId();
+	auto it = roomMap.begin();	
+	auto roomId = it->second->GetRoomId();
 	return GetGameRoom(roomId);
 }
 
 GameRoom* GameRoomService::GetGameRoom(const int roomId) const
 {
-	for (auto it = roomList.begin(); it != roomList.end(); ++it)
+	auto it = roomMap.find(roomId);
+	if (it != roomMap.end())
 	{
-		auto gameRoom = *it;
-		if (gameRoom->GetRoomId() == roomId)
+		return it->second;
+	}
+	return nullptr;
+}
+
+GameRoom* GameRoomService::GetGameRoom(const wchar_t* const userId) const
+{
+	auto objUser = GetObjUser(userId);
+	if (!objUser)
+	{
+		return nullptr;
+	}
+	return GetGameRoom(objUser->GetRoomId());
+}
+
+shared_ptr<ObjUser> GameRoomService::GetObjUser(const wchar_t* const userId) const
+{
+	for (auto& p : roomMap)
+	{
+		auto objUser = p.second->GetObjUser(userId);
+		if (objUser)
 		{
-			return gameRoom;
+			return objUser;
 		}
 	}
 	return nullptr;
 }
 
-shared_ptr<ObjUser> GameRoomService::GetObjUser(const wchar_t* const userId) const
+shared_ptr<ObjUser> GameRoomService::GetObjUser(const int roomId, const wchar_t* const userId) const
 {
-	for (auto& room : roomList)
+	auto it = roomMap.find(roomId);
+	if (it != roomMap.end())
 	{
-		auto objUser = room->GetObjUser(userId);
+		auto objUser = it->second->GetObjUser(userId);
 		if (objUser)
 		{
 			return objUser;

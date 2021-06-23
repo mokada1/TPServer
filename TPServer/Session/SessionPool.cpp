@@ -14,6 +14,18 @@ Session* SessionPool::GetSession(const SOCKET clntSock) const
 	return it->second;
 }
 
+Session* SessionPool::GetSession(const wchar_t* _userId) const
+{
+	for (auto it = sessionMap.begin(); it != sessionMap.end(); ++it)
+	{
+		if (wcscmp(it->second->GetUserId(), _userId) == 0)
+		{
+			return it->second;
+		}
+	}
+	return nullptr;
+}
+
 map<SOCKET, Session*> SessionPool::GetSessionMap() const
 {
 	return sessionMap;

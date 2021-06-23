@@ -1,5 +1,6 @@
 #include "PacketGenerator.h"
 #include "../GameRoom/GameRoom.h"
+#include "../GameRoom/GameRoomService.h"
 #include "../Session/Session.h"
 #include <iostream>
 
@@ -145,6 +146,13 @@ Packet PacketGenerator::CreateResLogin(Session* const owner, const GameRoom& gam
 	return CreatePacket(PROTOCOL::RES_LOGIN, fbb, owner);
 }
 
+Packet PacketGenerator::CreateResRoundTripTime(Session* const owner, const GameRoom& gameRoom)
+{
+	flatbuffers::FlatBufferBuilder fbb;
+	fbb.Finish(CreateTB_ResRoundTripTime(fbb, gameRoom.GetAvgRttMs()));
+	return CreatePacket(PROTOCOL::RES_ROUND_TRIP_TIME, fbb, owner);
+}
+
 Packet PacketGenerator::CreateBcastEnterGameRoom(Session* const owner, const shared_ptr<ObjUser> objUser)
 {
 	vector<Session*> packetCastGroup;
@@ -273,6 +281,7 @@ bool PacketGenerator::IsValidHeader(const PROTOCOL protocol)
 	{
 	case PROTOCOL::TP_ERROR:
 	case PROTOCOL::REQ_LOGIN:
+	case PROTOCOL::REQ_ROUND_TRIP_TIME:
 	case PROTOCOL::REQ_MOVE:
 	case PROTOCOL::REQ_LOCATION_SYNC:
 		return true;

@@ -3,7 +3,7 @@ enum OpMove : byte
 	// 이동 시작
 	Start = 0,
 	// 이동 방향 변경
-	Change = 1,	
+	Change = 1,
 	// 이동 종료
 	End = 2,
 }
@@ -85,4 +85,14 @@ table TB_BcastLocationSync
 {
 	UserId: string;
 	Location: ST_Vec3;
+}
+
+table TB_ReqRoundTripTime
+{
+	CurrentTimeMs: long;
+}
+
+table TB_ResRoundTripTime
+{
+	RoundTripTimeMs: long;
 }

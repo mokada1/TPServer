@@ -6,6 +6,7 @@
 #include "../Session/Session.h"
 #include "../Util/TPResult.h"
 
+#include <algorithm>
 #include <iostream>
 
 using namespace std;
@@ -24,6 +25,9 @@ void PacketService::Process(const Packet& packet)
 		break;
 	case PROTOCOL::REQ_LOCATION_SYNC:
 		ProcReqLocationSync(packet);
+	case PROTOCOL::REQ_ROUND_TRIP_TIME:
+		result = ProcReqRoundTripTime(packet);
+		break;
 	default:
 		break;
 	}
@@ -113,6 +117,37 @@ void PacketService::ProcReqMove(const Packet& packet)
 	auto req = flatbuffers::GetRoot<TB_ReqMove>(body);
 	auto packetBcastMove = PacketGenerator::GetInstance().CreateBcastMove(owner, *req);
 	PacketProcessor::GetInstance().SendPacket(packetBcastMove);
+}
+
+TPResult* PacketService::ProcReqRoundTripTime(const Packet& packet)
+{
+	auto body = packet.GetBody();
+	auto owner = packet.GetOwner();
+
+	auto req = flatbuffers::GetRoot<TB_ReqRoundTripTime>(body);
+	auto reqCurrentTimeMs = req->CurrentTimeMs();
+	auto currentTimeMs = TPUtil::GetInstance().TimeSinceEpochMs();
+	auto rttMs = max(currentTimeMs - reqCurrentTimeMs, 0);
+
+	auto result = new TPResult();
+
+	auto objUser = GameRoomService::GetInstance().GetObjUser(owner->GetUserId());
+	if (!objUser)
+	{
+		return nullptr;
+	}
+	objUser->AddRttMs(rttMs);
+
+	auto gameRoom = GameRoomService::GetInstance().GetGameRoom(objUser->GetRoomId());
+	if (!gameRoom)
+	{
+		return nullptr;
+	}
+	gameRoom->UpdateAvgRttMs();
+
+	auto packetResRoundTripTime = PacketGenerator::GetInstance().CreateResRoundTripTime(owner, *gameRoom);
+	result->SetPacket(packetResRoundTripTime);
+	return result;
 }
 
 void PacketService::ProcReqLocationSync(const Packet& packet)

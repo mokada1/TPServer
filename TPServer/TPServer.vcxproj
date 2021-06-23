@@ -158,6 +158,9 @@
     <ClInclude Include="util\TSingleton.h" />
     <ClInclude Include="util\Uncopyable.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="TP.fbs" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -203,4 +203,7 @@
     </ClInclude>
     <ClInclude Include="TP_generated.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="TP.fbs" />
+  </ItemGroup>
 </Project>

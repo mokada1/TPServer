@@ -13,6 +13,7 @@ public:
 
 	Packet CreateError(Session* const owner, const wchar_t* const message);
 	Packet CreateResLogin(Session* const owner, const GameRoom& gameRoom);
+	Packet CreateResRoundTripTime(Session* const owner, const GameRoom& gameRoom);
 	Packet CreateBcastEnterGameRoom(Session* const owner, const shared_ptr<ObjUser> objUser);
 	Packet CreateBcastExitGameRoom(const shared_ptr<ObjUser> objUser);
 	Packet CreateBcastMove(Session* const owner, const TB_ReqMove& reqMove);
