@@ -40,7 +40,6 @@ bool GameRoom::AddObjUser(shared_ptr<ObjUser> objUser)
 	{
 		objUser->SetRoomId(roomId);
 		objUserMap.insert(pair<wchar_t*, shared_ptr<ObjUser>>(objUser->GetUserId(), objUser));
-		UpdateAvgRttMs();
 		return true;
 	}
 	return false;
@@ -53,7 +52,7 @@ bool GameRoom::DeleteObjUser(wchar_t* const userId)
 	{
 		it->second->SetRoomId(0);
 		objUserMap.erase(it);
-		UpdateAvgRttMs();
+		UpdateRtt();
 		return true;
 	}
 	return false;
@@ -69,7 +68,7 @@ shared_ptr<ObjUser> GameRoom::GetObjUser(const wchar_t* const userId) const
 	return nullptr;
 }
 
-void GameRoom::UpdateAvgRttMs()
+void GameRoom::UpdateRtt()
 {
 	auto userNum = objUserMap.size();
 	if (userNum == 0)
@@ -81,6 +80,8 @@ void GameRoom::UpdateAvgRttMs()
 	for (auto it = objUserMap.begin(); it != objUserMap.end(); ++it)
 	{
 		totalRttMs += it->second->GetAvgRttMs();
+		cout << "GameRoom::UpdateRtt: GetAvgRttMs:" << it->second->GetAvgRttMs() << endl;
 	}
-	avgRttMs = totalRttMs / userNum;
+	avgRttMs = totalRttMs / static_cast<int64_t>(userNum);
+	cout << "GameRoom::UpdateRtt: avgRttMs:" << avgRttMs << endl;
 }

@@ -23,7 +23,7 @@ public:
 	void SetCompUserLocation(shared_ptr<CompUserLocation> _userLocation);
 	void SetRoomId(const int _roomId);
 
-	void AddRttMs(const int64_t _rttMs);
+	void UpdateRtt(const int64_t _rttMs);
 
 private:
 	wchar_t* userId;

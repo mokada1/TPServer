@@ -19,3 +19,6 @@ struct Vector3
 	float y;
 	float z;
 };
+
+#define TPUTIL_MAX(A,B) (A) > (B) ? (A) : (B)
+#define TPUTIL_MIN(A,B) (A) < (B) ? (A) : (B)

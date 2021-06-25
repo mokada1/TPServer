@@ -1,6 +1,9 @@
 #include "ObjUser.h"
 #include "../Util/TPDefine.h"
 #include <wchar.h>
+#include <iostream>
+
+using namespace std;
 						 
 wchar_t* ObjUser::GetObjectId() const
 {
@@ -104,9 +107,10 @@ void ObjUser::SetRoomId(const int _roomId)
 	this->roomId = _roomId;
 }
 
-void ObjUser::AddRttMs(const int64_t _rttMs)
+void ObjUser::UpdateRtt(const int64_t _rttMs)
 {
 	totalRttMs += _rttMs;
 	rttCount++;
 	avgRttMs = totalRttMs / rttCount;
+	cout << "ObjUser::UpdateRtt: avgRttMs:" << avgRttMs << " _rttMs:" << _rttMs << " rttCount:" << rttCount << endl;
 }

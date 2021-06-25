@@ -18,7 +18,7 @@ public:
 	bool DeleteObjUser(wchar_t* const userId);
 
 	shared_ptr<ObjUser> GetObjUser(const wchar_t* const userId) const;
-	void UpdateAvgRttMs();
+	void UpdateRtt();
 
 private:
 	int roomId;

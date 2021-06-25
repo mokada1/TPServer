@@ -148,8 +148,9 @@ Packet PacketGenerator::CreateResLogin(Session* const owner, const GameRoom& gam
 
 Packet PacketGenerator::CreateResRoundTripTime(Session* const owner, const GameRoom& gameRoom)
 {
+	const auto currentTimeMs = TPUtil::GetInstance().TimeSinceEpochMs();
 	flatbuffers::FlatBufferBuilder fbb;
-	fbb.Finish(CreateTB_ResRoundTripTime(fbb, gameRoom.GetAvgRttMs()));
+	fbb.Finish(CreateTB_ResRoundTripTime(fbb, currentTimeMs, gameRoom.GetAvgRttMs()));
 	return CreatePacket(PROTOCOL::RES_ROUND_TRIP_TIME, fbb, owner);
 }
 

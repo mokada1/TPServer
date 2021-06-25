@@ -1,11 +1,13 @@
 enum OpMove : byte
 {
+	// 초기값
+	None = 0,
 	// 이동 시작
-	Start = 0,
+	Start = 1,
 	// 이동 방향 변경
-	Change = 1,
+	Change = 2,
 	// 이동 종료
-	End = 2,
+	End = 3,
 }
 
 struct ST_Vec3
@@ -94,5 +96,6 @@ table TB_ReqRoundTripTime
 
 table TB_ResRoundTripTime
 {
+	CurrentTimeMs: long;
 	RoundTripTimeMs: long;
 }
