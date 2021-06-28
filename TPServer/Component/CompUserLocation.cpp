@@ -45,3 +45,8 @@ Vector3 CompUserLocation::GetLocation() const
 {
 	return location;
 }
+
+void CompUserLocation::SetLocation(const float _x, const float _y, const float _z)
+{
+	location = { _x, _y, _z };
+}

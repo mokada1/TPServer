@@ -64,13 +64,13 @@ TPResult* DBService::LoginUser(const wchar_t* const userId, const wchar_t* const
 	{
 		if (wcscmp(password, objUser->GetPassword()) == 0)
 		{
-			wcout << CORRECT_PASSWORD << endl;
+			//wcout << CORRECT_PASSWORD << endl;
 			result->AddObject(objUser);
 			result->SetFlag(true);			
 		}
 		else
 		{
-			wcout << INCORRECT_PASSWORD << endl;
+			//wcout << INCORRECT_PASSWORD << endl;
 			result->SetMsg(INCORRECT_PASSWORD);
 		}
 	}
@@ -79,13 +79,13 @@ TPResult* DBService::LoginUser(const wchar_t* const userId, const wchar_t* const
 		objUser = SQLServiceUser::GetInstance().InsertUser(hDbc, hStmt, userId, password);
 		if (objUser)
 		{			
-			wcout << SUCCESS_REGISTER_USER << endl;
+			//wcout << SUCCESS_REGISTER_USER << endl;
 			result->AddObject(objUser);
 			result->SetFlag(true);
 		}
 		else
 		{
-			wcout << FAIL_REGISTER_USER << endl;
+			//wcout << FAIL_REGISTER_USER << endl;
 			result->SetMsg(FAIL_REGISTER_USER);
 		}
 	}
@@ -108,7 +108,7 @@ TPResult* DBService::LoadUserInfo(const wchar_t* const userId)
 	auto compUserLocation = SQLServiceUser::GetInstance().GetUserLocation(hStmt, userId);
 	if (compUserLocation)
 	{
-		wcout << SUCCESS_GET_DATA << endl;
+		//wcout << SUCCESS_GET_DATA << endl;
 		result->AddComp(compUserLocation);
 		result->SetFlag(true);
 	}
@@ -117,13 +117,13 @@ TPResult* DBService::LoadUserInfo(const wchar_t* const userId)
 		compUserLocation = SQLServiceUser::GetInstance().InsertUserLocation(hDbc, hStmt, userId, { 0.f, 0.f, 0.f });
 		if (compUserLocation)
 		{
-			wcout << SUCCESS_INSERT_DATA << endl;
+			//wcout << SUCCESS_INSERT_DATA << endl;
 			result->AddComp(compUserLocation);
 			result->SetFlag(true);
 		}
 		else
 		{
-			wcout << FAIL_INSERT_DATA << endl;
+			//wcout << FAIL_INSERT_DATA << endl;
 			result->SetMsg(FAIL_INSERT_DATA);
 		}	
 	}

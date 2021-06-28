@@ -112,5 +112,4 @@ void ObjUser::UpdateRtt(const int64_t _rttMs)
 	totalRttMs += _rttMs;
 	rttCount++;
 	avgRttMs = totalRttMs / rttCount;
-	cout << "ObjUser::UpdateRtt: avgRttMs:" << avgRttMs << " _rttMs:" << _rttMs << " rttCount:" << rttCount << endl;
 }

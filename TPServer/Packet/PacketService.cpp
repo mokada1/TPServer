@@ -128,6 +128,12 @@ TPResult* PacketService::ProcReqRoundTripTime(const Packet& packet)
 	const auto reqCurrentTimeMs = req->CurrentTimeMs();
 	const auto currentTimeMs = TPUtil::GetInstance().TimeSinceEpochMs();
 	const auto rttMs = TPUTIL_MAX(currentTimeMs - reqCurrentTimeMs, 0);
+	
+	// 왕복 시간이 너무 큰 값이면 무시(1초 기준)
+	if (rttMs > MAX_RTT_MS)
+	{
+		return nullptr;
+	}
 
 	auto result = new TPResult();
 
@@ -136,7 +142,6 @@ TPResult* PacketService::ProcReqRoundTripTime(const Packet& packet)
 	{
 		return nullptr;
 	}
-	cout << "PacketService::ProcReqRoundTripTime: rttMs:" << rttMs << " reqCurrentTimeMs:" << reqCurrentTimeMs << " currentTimeMs:" << currentTimeMs << endl;
 	objUser->UpdateRtt(rttMs);
 
 	auto gameRoom = GameRoomService::GetInstance().GetGameRoom(objUser->GetRoomId());
@@ -157,6 +162,17 @@ void PacketService::ProcReqLocationSync(const Packet& packet)
 	auto owner = packet.GetOwner();
 
 	auto req = flatbuffers::GetRoot<TB_ReqLocationSync>(body);
+	auto userId = req->UserId()->c_str();
+	auto location = req->Location();
+
+	// 유저 위치 정보 갱신
+	wchar_t wUserId[SIZE_USER_USER_ID];
+	TPUtil::GetInstance().CharToWChar(wUserId, SIZE_USER_USER_ID, userId);
+
+	auto objUser = GameRoomService::GetInstance().GetObjUser(wUserId);
+	auto compUserLocation = objUser->GetCompUserLocation();
+	compUserLocation->SetLocation(location->x(), location->y(), location->z());
+
 	auto packetBcastLocationSync = PacketGenerator::GetInstance().CreateBcastLocationSync(owner, *req);
 	PacketProcessor::GetInstance().SendPacket(packetBcastLocationSync);
 }

@@ -104,14 +104,14 @@ void TPServer::Close()
 }
 
 void TPServer::CompletionThread()
-{
-    DWORD bytesTransferred;
+{    
     LPPER_HANDLE_DATA perHandleData;
     LPPER_IO_DATA perIoData;
+    DWORD recvBytes;
     DWORD flags;
 
     while (true) {
-        if (!GetQueuedCompletionStatus(hCompletionPort, &bytesTransferred, (PULONG_PTR)&perHandleData, (LPOVERLAPPED*)&perIoData, INFINITE))
+        if (!GetQueuedCompletionStatus(hCompletionPort, &recvBytes, (PULONG_PTR)&perHandleData, (LPOVERLAPPED*)&perIoData, INFINITE))
         {
             char buf[BUFF_SIZE_IP] = { 0, };
             cout << "Disconnected[" << perHandleData->hClntSock << "]: " << inet_ntop(AF_INET, &perHandleData->clntAddr.sin_addr, buf, sizeof(buf)) << " " << endl;
@@ -128,7 +128,7 @@ void TPServer::CompletionThread()
             auto session = SessionPool::GetInstance().GetSession(perHandleData->hClntSock);
             if (session != nullptr)
             {
-                PacketProcessor::GetInstance().Process(session, perIoData->wsaBuf.buf, static_cast<size_t>(bytesTransferred));
+                PacketProcessor::GetInstance().Process(session, perIoData->wsaBuf.buf, static_cast<size_t>(recvBytes));
             }
             else
             {

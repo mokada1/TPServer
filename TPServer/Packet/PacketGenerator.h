@@ -9,7 +9,7 @@ class GameRoom;
 class PacketGenerator : public TSingleton<PacketGenerator>
 {
 public:
-	Packet Parse(Session* const owner, char* const buffer, const size_t bytesTransferred);
+	Packet Parse(Session* const owner, char* const buffer, const size_t recvBytes);
 
 	Packet CreateError(Session* const owner, const wchar_t* const message);
 	Packet CreateResLogin(Session* const owner, const GameRoom& gameRoom);

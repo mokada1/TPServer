@@ -19,6 +19,7 @@ public:
 
 	shared_ptr<ObjUser> GetObjUser(const wchar_t* const userId) const;
 	void UpdateRtt();
+	size_t GetUserNum() const;
 
 private:
 	int roomId;

@@ -49,7 +49,7 @@ void SessionPool::DeleteSession(const SOCKET clntSock)
 		if (userId)
 		{
 			objUser = GameRoomService::GetInstance().GetObjUser(userId);
-			GameRoomService::GetInstance().DeleteObjUser(userId);
+			GameRoomService::GetInstance().DeleteObjUser(objUser);
 		}		
 		delete session;
 		sessionMap.erase(it);

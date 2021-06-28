@@ -11,7 +11,7 @@ public:
 	bool DeleteGameRoom(const int roomId);
 	bool AddObjUser(shared_ptr<ObjUser> objUser);
 	bool AddObjUser(const int roomId, shared_ptr<ObjUser> objUser);
-	bool DeleteObjUser(wchar_t* const userId);
+	bool DeleteObjUser(shared_ptr<ObjUser> objUser);
 	GameRoom* GetGameRoom() const;
 	GameRoom* GetGameRoom(const int roomId) const;
 	GameRoom* GetGameRoom(const wchar_t* const userId) const;

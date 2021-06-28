@@ -6,9 +6,9 @@
 
 using namespace std;
 
-Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const size_t bytesTransferred)
+Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const size_t recvBytes)
 {	
-	if (bytesTransferred == 0)
+	if (recvBytes == 0)
 	{
 		return Packet();
 	}
@@ -21,14 +21,14 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 	if (ownerBuff)
 	{
 		// 최대 버퍼 크기를 넘는 경우 패킷 처리 안함
-		if (owner->GetPacketSize() + bytesTransferred > MAX_BUFF_SIZE)
+		if (owner->GetPacketSize() + recvBytes > MAX_BUFF_SIZE)
 		{
 			cout << "Error:Invalid PacketSize" << endl;
 			owner->ClearBuff();
 			return Packet();
 		}
 
-		owner->AddToBuff(buffer, bytesTransferred);
+		owner->AddToBuff(buffer, recvBytes);
 		ownerBuff = owner->GetBuffer();
 		const auto ownerPacketSize = owner->GetPacketSize();
 
@@ -63,9 +63,9 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 	}
 	else
 	{
-		if (bytesTransferred < PACKET_HEAD_SIZE)
+		if (recvBytes < PACKET_HEAD_SIZE)
 		{
-			owner->AddToBuff(buffer, bytesTransferred);
+			owner->AddToBuff(buffer, recvBytes);
 		}
 		else
 		{
@@ -77,22 +77,22 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 				return Packet();
 			}
 
-			const auto endOfPacket = PacketGenerator::GetInstance().GetEndOfPacket(buffer, bytesTransferred);
+			const auto endOfPacket = PacketGenerator::GetInstance().GetEndOfPacket(buffer, recvBytes);
 			if (!IsValidEndOfPacket(endOfPacket))
 			{
 				// 잘못된 EndOfPacket일 경우 패킷 처리 안함
-				if (bytesTransferred == MAX_BUFF_SIZE)
+				if (recvBytes == MAX_BUFF_SIZE)
 				{
 					cout << "Error:Invalid EndOfPacket" << endl;
 					return Packet();
 				}
-				owner->AddToBuff(buffer, bytesTransferred);
+				owner->AddToBuff(buffer, recvBytes);
 			}
 			else
 			{
 				// 패킷 완성
 				finishedBuffer = buffer;
-				finishedPacketSize = bytesTransferred;
+				finishedPacketSize = recvBytes;
 			}
 		}
 	}

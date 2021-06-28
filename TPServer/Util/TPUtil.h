@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TSingleton.h"
+#include "../Packet/Protocol.h"
 
 class TPUtil : public TSingleton<TPUtil>
 {
@@ -11,6 +12,7 @@ public:
 	void MultiByteToWChar(wchar_t* buffer, size_t bufferSize, const char* const source);
 	long long TimeSinceEpochMs();
 	long long TimeSinceEpochSec();
+	const char* EnumToString(PROTOCOL protocol);
 };
 
 struct Vector3

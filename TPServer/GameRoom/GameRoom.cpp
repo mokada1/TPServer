@@ -80,8 +80,11 @@ void GameRoom::UpdateRtt()
 	for (auto it = objUserMap.begin(); it != objUserMap.end(); ++it)
 	{
 		totalRttMs += it->second->GetAvgRttMs();
-		cout << "GameRoom::UpdateRtt: GetAvgRttMs:" << it->second->GetAvgRttMs() << endl;
 	}
 	avgRttMs = totalRttMs / static_cast<int64_t>(userNum);
-	cout << "GameRoom::UpdateRtt: avgRttMs:" << avgRttMs << endl;
+}
+
+size_t GameRoom::GetUserNum() const
+{
+	return objUserMap.size();
 }

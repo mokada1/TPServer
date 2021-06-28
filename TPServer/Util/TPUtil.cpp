@@ -5,6 +5,7 @@
 #include <time.h>
 #include <ctime>
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -51,4 +52,25 @@ long long TPUtil::TimeSinceEpochMs()
 long long TPUtil::TimeSinceEpochSec()
 {
 	return duration_cast<seconds>(system_clock::now().time_since_epoch()).count();
+}
+
+const char* TPUtil::EnumToString(PROTOCOL protocol)
+{
+	switch (protocol)
+	{
+	case PROTOCOL::TP_ERROR: return "TP_ERROR";
+	case PROTOCOL::REQ_LOGIN: return "REQ_LOGIN";
+	case PROTOCOL::REQ_MOVE: return "REQ_MOVE";
+	case PROTOCOL::REQ_LOCATION_SYNC: return "REQ_LOCATION_SYNC";
+	case PROTOCOL::REQ_ROUND_TRIP_TIME: return "REQ_ROUND_TRIP_TIME";
+	case PROTOCOL::RES_LOGIN: return "RES_LOGIN";
+	case PROTOCOL::RES_ROUND_TRIP_TIME: return "RES_ROUND_TRIP_TIME";
+	case PROTOCOL::BCAST_ENTER_GAME_ROOM: return "BCAST_ENTER_GAME_ROOM";
+	case PROTOCOL::BCAST_EXIT_GAME_ROOM: return "BCAST_EXIT_GAME_ROOM";
+	case PROTOCOL::BCAST_MOVE: return "BCAST_MOVE";
+	case PROTOCOL::BCAST_LOCATION_SYNC: return "BCAST_LOCATION_SYNC";
+	case PROTOCOL::END_OF_PACKET: return "END_OF_PACKET";
+	default: return nullptr;
+	}
+	return nullptr;
 }

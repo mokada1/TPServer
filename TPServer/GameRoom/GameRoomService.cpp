@@ -43,22 +43,25 @@ bool GameRoomService::AddObjUser(const int roomId, shared_ptr<ObjUser> objUser)
 	auto it = roomMap.find(roomId);
 	if (it != roomMap.end())
 	{
-		if (it->second->AddObjUser(objUser))
+		auto gameRoom = it->second;
+		if (gameRoom->AddObjUser(objUser))
 		{
-			wcout << SUCCESS_ADD_OBJ_USER_GAME_ROOM << endl;
+			wcout << SUCCESS_ADD_OBJ_USER_GAME_ROOM << "[" << gameRoom->GetUserNum() << "]" << endl;
 			return true;
 		}
 	}
 	return false;
 }
 
-bool GameRoomService::DeleteObjUser(wchar_t* const userId)
+bool GameRoomService::DeleteObjUser(shared_ptr<ObjUser> objUser)
 {
-	for (auto& p : roomMap)
+	auto it = roomMap.find(objUser->GetRoomId());
+	if (it != roomMap.end())
 	{
-		if (p.second->DeleteObjUser(userId))
+		auto gameRoom = it->second;
+		if (gameRoom->DeleteObjUser(objUser->GetUserId()))
 		{
-			wcout << DELETE_OBJ_USER_GAME_ROOM << endl;
+			wcout << DELETE_OBJ_USER_GAME_ROOM << "[" << gameRoom->GetUserNum() << "]" << endl;
 			return true;
 		}
 	}
