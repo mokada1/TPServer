@@ -19,6 +19,7 @@ public:
 	
 	SOCKET GetClntSock() const;	
 	wchar_t* GetUserId() const;
+	char* GetCUserId() const;
 	char* GetBuffer() const;
 	size_t GetPacketSize() const;
 	
@@ -31,4 +32,5 @@ private:
 	size_t packetSize;
 
 	wchar_t* userId;
+	char* cUserId;
 };

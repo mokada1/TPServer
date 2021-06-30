@@ -112,11 +112,11 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 
 Packet PacketGenerator::CreateError(Session* const owner, const wchar_t* const message)
 {
-	char hMessage[ERR_MSG_SIZE];
-	TPUtil::GetInstance().WCharToChar(hMessage, ERR_MSG_SIZE, message);
+	char nMessage[ERR_MSG_SIZE];
+	TPUtil::GetInstance().WCharToChar(nMessage, ERR_MSG_SIZE, message);
 	
 	flatbuffers::FlatBufferBuilder fbb;
-	auto offsetMessage = fbb.CreateString(hMessage);
+	auto offsetMessage = fbb.CreateString(nMessage);
 
 	fbb.Finish(CreateTB_Error(fbb, offsetMessage));
 
@@ -182,7 +182,7 @@ Packet PacketGenerator::CreateBcastMove(Session* const owner, const TB_ReqMove& 
 
 	flatbuffers::FlatBufferBuilder fbb;
 
-	auto offsetUserId = fbb.CreateString(reqMove.UserId()->c_str());
+	auto offsetUserId = fbb.CreateString(owner->GetCUserId());
 	auto inputMove = reqMove.InputMove();
 	auto offsetOperation = reqMove.Operation();
 	auto offsetInputMove = CreateTB_InputMove(fbb,
@@ -204,12 +204,27 @@ Packet PacketGenerator::CreateBcastLocationSync(Session* const owner, const TB_R
 
 	flatbuffers::FlatBufferBuilder fbb;
 
-	auto offsetUserId = fbb.CreateString(reqLocationSync.UserId()->c_str());
+	auto offsetUserId = fbb.CreateString(owner->GetCUserId());
 	auto offsetLocation = reqLocationSync.Location();
 	
 	fbb.Finish(CreateTB_BcastLocationSync(fbb, offsetUserId, offsetLocation));
 
 	return CreatePacket(PROTOCOL::BCAST_LOCATION_SYNC, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
+}
+
+Packet PacketGenerator::CreateBcastInputAction(Session* const owner, const TB_ReqInputAction& reqInputAction)
+{
+	vector<Session*> packetCastGroup;
+	packetCastGroup.push_back(owner);
+
+	flatbuffers::FlatBufferBuilder fbb;
+
+	auto offsetUserId = fbb.CreateString(owner->GetCUserId());
+	auto offsetOperation = reqInputAction.Operation();
+
+	fbb.Finish(CreateTB_BcastInputAction(fbb, offsetUserId, offsetOperation));
+
+	return CreatePacket(PROTOCOL::BCAST_INPUT_ACTION, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
 }
 
 Packet PacketGenerator::CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner)
@@ -285,6 +300,7 @@ bool PacketGenerator::IsValidHeader(const PROTOCOL protocol)
 	case PROTOCOL::REQ_ROUND_TRIP_TIME:
 	case PROTOCOL::REQ_MOVE:
 	case PROTOCOL::REQ_LOCATION_SYNC:
+	case PROTOCOL::REQ_INPUT_ACTION:
 		return true;
 	}
 	return false;

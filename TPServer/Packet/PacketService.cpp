@@ -28,6 +28,9 @@ void PacketService::Process(const Packet& packet)
 	case PROTOCOL::REQ_ROUND_TRIP_TIME:
 		result = ProcReqRoundTripTime(packet);
 		break;
+	case PROTOCOL::REQ_INPUT_ACTION:
+		ProcReqInputAction(packet);
+		break;
 	default:
 		break;
 	}
@@ -57,6 +60,17 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	wchar_t wUserId[SIZE_USER_USER_ID], wPassword[SIZE_USER_PASSWORD];
 	TPUtil::GetInstance().CharToWChar(wUserId, SIZE_USER_USER_ID, userId);
 	TPUtil::GetInstance().CharToWChar(wPassword, SIZE_USER_PASSWORD, password);
+
+	// 중복 로그인 방지
+	auto dObjUser = GameRoomService::GetInstance().GetObjUser(wUserId);
+	if (dObjUser)
+	{
+		wcout << DUPLICATE_LOGIN << endl;
+		auto result = new TPResult();
+		auto packetError = PacketGenerator::GetInstance().CreateError(owner, DUPLICATE_LOGIN);
+		result->SetPacket(packetError);
+		return result;
+	}
 
 	// 유저 로그인 또는 등록
 	auto resultLoginUser = DBService::GetInstance().LoginUser(wUserId, wPassword);
@@ -162,17 +176,27 @@ void PacketService::ProcReqLocationSync(const Packet& packet)
 	auto owner = packet.GetOwner();
 
 	auto req = flatbuffers::GetRoot<TB_ReqLocationSync>(body);
-	auto userId = req->UserId()->c_str();
 	auto location = req->Location();
 
 	// 유저 위치 정보 갱신
-	wchar_t wUserId[SIZE_USER_USER_ID];
-	TPUtil::GetInstance().CharToWChar(wUserId, SIZE_USER_USER_ID, userId);
-
-	auto objUser = GameRoomService::GetInstance().GetObjUser(wUserId);
+	auto objUser = GameRoomService::GetInstance().GetObjUser(owner->GetUserId());
+	if (!objUser)
+	{
+		return;
+	}
 	auto compUserLocation = objUser->GetCompUserLocation();
 	compUserLocation->SetLocation(location->x(), location->y(), location->z());
 
 	auto packetBcastLocationSync = PacketGenerator::GetInstance().CreateBcastLocationSync(owner, *req);
 	PacketProcessor::GetInstance().SendPacket(packetBcastLocationSync);
+}
+
+void PacketService::ProcReqInputAction(const Packet& packet)
+{
+	auto body = packet.GetBody();
+	auto owner = packet.GetOwner();
+
+	auto req = flatbuffers::GetRoot<TB_ReqInputAction>(body);
+	auto packetBcastInputAction = PacketGenerator::GetInstance().CreateBcastInputAction(owner, *req);
+	PacketProcessor::GetInstance().SendPacket(packetBcastInputAction);
 }

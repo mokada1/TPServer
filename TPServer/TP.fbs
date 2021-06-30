@@ -1,3 +1,5 @@
+// Enum
+
 enum OpMove : byte
 {
 	// �ʱⰪ
@@ -10,6 +12,17 @@ enum OpMove : byte
 	End = 3,
 }
 
+enum OpAction : byte
+{
+	None = 0,
+	Jump = 1,
+	Vaulting = 2,
+	DrawWeapon = 3,
+	MeleeAttack = 4,
+}
+
+// Struct
+
 struct ST_Vec3
 {
 	x:float;
@@ -17,11 +30,15 @@ struct ST_Vec3
 	z:float;
 }
 
+// Table
+
+// Component
 table TB_CompUserLocation
 {
 	Location: ST_Vec3;
 }
 
+// Object
 table TB_ObjUser
 {
 	UserId: string;
@@ -29,12 +46,44 @@ table TB_ObjUser
 	UserLocation: TB_CompUserLocation;
 }
 
+// Bundle
+table TB_InputMove
+{	
+	ForwardVector: ST_Vec3;
+	RightVector: ST_Vec3;
+	MoveForward: float;
+	MoveRight: float;
+}
+
+// Request
 table TB_ReqLogin
 {
 	UserId: string;
 	Password: string;
 }
 
+table TB_ReqMove
+{
+	Operation: OpMove;
+	InputMove: TB_InputMove;
+}
+
+table TB_ReqLocationSync
+{
+	Location: ST_Vec3;
+}
+
+table TB_ReqRoundTripTime
+{
+	CurrentTimeMs: long;
+}
+
+table TB_ReqInputAction
+{
+	Operation: OpAction;
+}
+
+// Response
 table TB_Error
 {
 	Message: string;
@@ -45,6 +94,13 @@ table TB_ResLogin
 	ObjUserList: [TB_ObjUser];
 }
 
+table TB_ResRoundTripTime
+{
+	CurrentTimeMs: long;
+	RoundTripTimeMs: long;
+}
+
+// Broadcast
 table TB_BcastEnterGameRoom
 {
 	ObjUser: TB_ObjUser;
@@ -55,32 +111,11 @@ table TB_BcastExitGameRoom
 	ObjUser: TB_ObjUser;
 }
 
-table TB_InputMove
-{	
-	ForwardVector: ST_Vec3;
-	RightVector: ST_Vec3;
-	MoveForward: float;
-	MoveRight: float;
-}
-
-table TB_ReqMove
-{
-	UserId: string;
-	Operation: OpMove;
-	InputMove: TB_InputMove;
-}
-
 table TB_BcastMove
 {
 	UserId: string;
 	Operation: OpMove;
 	InputMove: TB_InputMove;
-}
-
-table TB_ReqLocationSync
-{
-	UserId: string;
-	Location: ST_Vec3;
 }
 
 table TB_BcastLocationSync
@@ -89,13 +124,8 @@ table TB_BcastLocationSync
 	Location: ST_Vec3;
 }
 
-table TB_ReqRoundTripTime
+table TB_BcastInputAction
 {
-	CurrentTimeMs: long;
-}
-
-table TB_ResRoundTripTime
-{
-	CurrentTimeMs: long;
-	RoundTripTimeMs: long;
+	UserId: string;
+	Operation: OpAction;
 }

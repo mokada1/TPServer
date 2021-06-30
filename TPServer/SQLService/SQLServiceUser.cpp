@@ -10,10 +10,10 @@ ObjUser* SQLServiceUser::GetUser(const SQLHSTMT& hStmt, const wchar_t* const use
 		return nullptr;
 	}
 
-	SQLWCHAR pUserId[SIZE_USER_USER_ID] = L"";
+	SQLWCHAR sUserId[SIZE_USER_USER_ID] = L"";
 	
-	SQLBindParameter(hStmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, SIZE_USER_USER_ID, 0, pUserId, 0, NULL);
-	wcscpy_s(reinterpret_cast<wchar_t*>(pUserId), SIZE_USER_USER_ID, userId);
+	SQLBindParameter(hStmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, SIZE_USER_USER_ID, 0, sUserId, 0, NULL);
+	wcscpy_s(reinterpret_cast<wchar_t*>(sUserId), SIZE_USER_USER_ID, userId);
 
 	if (SQLExecute(hStmt) != SQL_SUCCESS)
 	{
@@ -45,10 +45,10 @@ ObjUser* SQLServiceUser::InsertUser(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, 
 		return nullptr;
 	}
 
-	SQLWCHAR pUserId[SIZE_USER_USER_ID] = L"", pPassword[SIZE_USER_PASSWORD] = L"";
+	SQLWCHAR sUserId[SIZE_USER_USER_ID] = L"", pPassword[SIZE_USER_PASSWORD] = L"";
 
-	SQLBindParameter(hStmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, SIZE_USER_USER_ID, 0, pUserId, 0, NULL);
-	wcscpy_s(reinterpret_cast<wchar_t*>(pUserId), SIZE_USER_USER_ID, userId);
+	SQLBindParameter(hStmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, SIZE_USER_USER_ID, 0, sUserId, 0, NULL);
+	wcscpy_s(reinterpret_cast<wchar_t*>(sUserId), SIZE_USER_USER_ID, userId);
 	SQLBindParameter(hStmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, SIZE_USER_PASSWORD, 0, pPassword, 0, NULL);
 	wcscpy_s(reinterpret_cast<wchar_t*>(pPassword), SIZE_USER_PASSWORD, password);
 
@@ -62,7 +62,7 @@ ObjUser* SQLServiceUser::InsertUser(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, 
 		return nullptr;
 	}
 
-	auto castedUserId = reinterpret_cast<wchar_t*>(pUserId);
+	auto castedUserId = reinterpret_cast<wchar_t*>(sUserId);
 	auto castedPassword = reinterpret_cast<wchar_t*>(pPassword);
 	return new ObjUser(castedUserId, castedPassword);
 }
@@ -76,10 +76,10 @@ CompUserLocation* SQLServiceUser::GetUserLocation(const SQLHSTMT& hStmt, const w
 		return nullptr;
 	}
 
-	SQLWCHAR pUserId[SIZE_USER_USER_ID] = L"";
+	SQLWCHAR sUserId[SIZE_USER_USER_ID] = L"";
 
-	SQLBindParameter(hStmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, SIZE_USER_USER_ID, 0, pUserId, 0, NULL);
-	wcscpy_s(reinterpret_cast<wchar_t*>(pUserId), SIZE_USER_USER_ID, userId);
+	SQLBindParameter(hStmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, SIZE_USER_USER_ID, 0, sUserId, 0, NULL);
+	wcscpy_s(reinterpret_cast<wchar_t*>(sUserId), SIZE_USER_USER_ID, userId);
 
 	if (SQLExecute(hStmt) != SQL_SUCCESS)
 	{
@@ -108,14 +108,18 @@ CompUserLocation* SQLServiceUser::InsertUserLocation(const SQLHDBC& hDbc, const 
 		return nullptr;
 	}
 
-	SQLWCHAR pUserId[SIZE_USER_USER_ID] = L"";
-	SQLFLOAT pX = location.x, pY = location.y, pZ = location.z;
+	SQLWCHAR sUserId[SIZE_USER_USER_ID] = L"";
+	SQLDOUBLE pX = 0, pY = 0, pZ = 0;
 
-	SQLBindParameter(hStmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, SIZE_USER_USER_ID, 0, pUserId, 0, NULL);
-	wcscpy_s(reinterpret_cast<wchar_t*>(pUserId), SIZE_USER_USER_ID, userId);
-	SQLBindParameter(hStmt, 2, SQL_PARAM_INPUT, SQL_C_FLOAT, SQL_FLOAT, 0, 0, &pX, 0, NULL);
-	SQLBindParameter(hStmt, 3, SQL_PARAM_INPUT, SQL_C_FLOAT, SQL_FLOAT, 0, 0, &pY, 0, NULL);
-	SQLBindParameter(hStmt, 4, SQL_PARAM_INPUT, SQL_C_FLOAT, SQL_FLOAT, 0, 0, &pZ, 0, NULL);
+	SQLBindParameter(hStmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, SIZE_USER_USER_ID, 0, sUserId, 0, NULL);	
+	SQLBindParameter(hStmt, 2, SQL_PARAM_INPUT, SQL_C_DOUBLE, SQL_DOUBLE, 0, 0, &pX, 0, NULL);
+	SQLBindParameter(hStmt, 3, SQL_PARAM_INPUT, SQL_C_DOUBLE, SQL_DOUBLE, 0, 0, &pY, 0, NULL);
+	SQLBindParameter(hStmt, 4, SQL_PARAM_INPUT, SQL_C_DOUBLE, SQL_DOUBLE, 0, 0, &pZ, 0, NULL);
+
+	wcscpy_s(reinterpret_cast<wchar_t*>(sUserId), SIZE_USER_USER_ID, userId);
+	pX = location.x;
+	pY = location.y;
+	pZ = location.z;
 
 	if (SQLExecute(hStmt) != SQL_SUCCESS)
 	{

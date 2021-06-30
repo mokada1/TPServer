@@ -30,3 +30,4 @@ static const wchar_t* FAIL_GET_DATA = L"데이터 조회 실패";
 static const wchar_t* FAIL_ADD_OBJ_USER_GAME_ROOM = L"유저 방 참가 실패";
 static const wchar_t* SUCCESS_ADD_OBJ_USER_GAME_ROOM = L"유저 방 참가 성공";
 static const wchar_t* DELETE_OBJ_USER_GAME_ROOM = L"유저 방 이탈";
+static const wchar_t* DUPLICATE_LOGIN = L"중복 로그인";

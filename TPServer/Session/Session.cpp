@@ -1,6 +1,7 @@
 #include "Session.h"
 #include <WS2tcpip.h>
 #include "../Util/TPDefine.h"
+#include "../Util/TPUtil.h"
 
 Session::Session()
 {
@@ -26,6 +27,10 @@ Session::~Session()
 	if (userId)
 	{
 		delete[] userId;
+	}
+	if (cUserId)
+	{
+		delete[] cUserId;
 	}
 	if (buffer)
 	{
@@ -76,6 +81,8 @@ void Session::SetUserId(const wchar_t* const _userId)
 {
 	this->userId = new wchar_t[SIZE_USER_USER_ID];
 	wcscpy_s(this->userId, SIZE_USER_USER_ID, _userId);
+	this->cUserId = new char[SIZE_USER_USER_ID];
+	TPUtil::GetInstance().WCharToChar(this->cUserId, SIZE_USER_USER_ID, this->userId);
 }
 
 void Session::SetBuffer(char* const _buffer)
@@ -96,6 +103,11 @@ SOCKET Session::GetClntSock() const
 wchar_t* Session::GetUserId() const
 {
 	return userId;
+}
+
+char* Session::GetCUserId() const
+{
+	return cUserId;
 }
 
 char* Session::GetBuffer() const
