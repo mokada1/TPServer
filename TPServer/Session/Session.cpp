@@ -8,6 +8,7 @@ Session::Session()
 	this->hClntSock = 0;
 	this->ip = nullptr;
 	this->userId = nullptr;
+	this->cUserId = nullptr;
 	this->buffer = nullptr;
 	this->packetSize = 0;
 }
@@ -18,6 +19,7 @@ Session::Session(SOCKET clntSock, SOCKADDR_IN clntAddr)
 	char buf[BUFF_SIZE_IP] = { 0, };
 	this->ip = inet_ntop(AF_INET, &clntAddr.sin_addr, buf, sizeof(buf));
 	this->userId = nullptr;
+	this->cUserId = nullptr;
 	this->buffer = nullptr;
 	this->packetSize = 0;
 }

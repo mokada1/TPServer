@@ -38,12 +38,11 @@ void SessionPool::CreateSession(const SOCKET clntSock, const SOCKADDR_IN& clntAd
 }
 
 void SessionPool::DeleteSession(const SOCKET clntSock)
-{
-	std::shared_ptr<ObjUser> objUser = nullptr;
-
+{	
 	auto it = sessionMap.find(clntSock);	
 	if (it != sessionMap.end())
 	{
+		std::shared_ptr<ObjUser> objUser = nullptr;
 		auto session = it->second;
 		auto userId = session->GetUserId();
 		if (userId)
@@ -53,13 +52,13 @@ void SessionPool::DeleteSession(const SOCKET clntSock)
 		}		
 		delete session;
 		sessionMap.erase(it);
-	}	
 
-	if (objUser)
-	{
-		auto packetBcastExitGameRoom = PacketGenerator::GetInstance().CreateBcastExitGameRoom(objUser);
-		PacketProcessor::GetInstance().SendPacket(packetBcastExitGameRoom);
-	}
+		if (objUser)
+		{
+			auto packetBcastExitGameRoom = PacketGenerator::GetInstance().CreateBcastExitGameRoom(objUser);
+			PacketProcessor::GetInstance().SendPacket(packetBcastExitGameRoom);
+		}
+	}	
 }
 
 void SessionPool::Destroy()
