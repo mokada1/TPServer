@@ -4,12 +4,7 @@
 #include "../Util/TPDefine.h"
 #include "../Util/TPResult.h"
 
-#include <iostream>
-#include <string>
-
-using namespace std;
-
-bool DBService::CheckDBC()
+bool DBService::DBConnect()
 {
 	if (!DBServer::GetInstance().GetIsConnected())
 	{
@@ -18,19 +13,17 @@ bool DBService::CheckDBC()
 			return false;
 		}
 	}	
-	if (hDbc == nullptr)
-	{
-		hDbc = DBServer::GetInstance().GetHDBC();
-	}
 	return true;
 }
 
-SQLHSTMT DBService::StartStmt()
+SQLHSTMT DBService::DBStart()
 {
-	if (!CheckDBC())
+	if (!DBConnect())
 	{
 		return nullptr;
 	}
+
+	hDbc = DBServer::GetInstance().GetHDBC();
 
 	SQLHSTMT hStmt;
 	if (SQLAllocHandle(SQL_HANDLE_STMT, hDbc, &hStmt) != SQL_SUCCESS)
@@ -40,19 +33,20 @@ SQLHSTMT DBService::StartStmt()
 	return hStmt;
 }
 
-void DBService::ENDStmt(const SQLHSTMT& hStmt)
+void DBService::DBEnd(const SQLHSTMT& hStmt)
 {
 	if (hStmt)
 	{
 		SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
 	}
+	DBServer::GetInstance().DBDisconnect();
 }
 
 TPResult* DBService::LoginUser(const wchar_t* const userId, const wchar_t* const password)
 {
 	auto result = new TPResult();
 
-	SQLHSTMT hStmt = StartStmt();
+	SQLHSTMT hStmt = DBStart();
 	if (hStmt == nullptr)
 	{
 		result->SetMsg(FAIL_DBCONNECT_OR_ALLOC_HANDLE);
@@ -90,7 +84,7 @@ TPResult* DBService::LoginUser(const wchar_t* const userId, const wchar_t* const
 		}
 	}
 	
-	ENDStmt(hStmt);
+	DBEnd(hStmt);
 	return result;
 }
 
@@ -98,7 +92,7 @@ TPResult* DBService::LoadUserInfo(const wchar_t* const userId)
 {
 	auto result = new TPResult();
 
-	SQLHSTMT hStmt = StartStmt();
+	SQLHSTMT hStmt = DBStart();
 	if (hStmt == nullptr)
 	{
 		result->SetMsg(FAIL_DBCONNECT_OR_ALLOC_HANDLE);
@@ -128,6 +122,6 @@ TPResult* DBService::LoadUserInfo(const wchar_t* const userId)
 		}	
 	}
 
-	ENDStmt(hStmt);
+	DBEnd(hStmt);
 	return result;
 }

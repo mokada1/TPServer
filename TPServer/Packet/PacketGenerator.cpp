@@ -2,9 +2,7 @@
 #include "../GameRoom/GameRoom.h"
 #include "../GameRoom/GameRoomService.h"
 #include "../Session/Session.h"
-#include <iostream>
-
-using namespace std;
+#include "../Util/TPLogger.h"
 
 Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const size_t recvBytes)
 {	
@@ -23,7 +21,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 		// 최대 버퍼 크기를 넘는 경우 패킷 처리 안함
 		if (owner->GetPacketSize() + recvBytes > MAX_BUFF_SIZE)
 		{
-			cout << "Error:Invalid PacketSize" << endl;
+			TPLogger::GetInstance().PrintLog(INVALID_PACKET_SIZE);
 			owner->ClearBuff();
 			return Packet();
 		}
@@ -36,7 +34,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 		// 잘못된 Header일 경우 패킷 처리 안함
 		if (!IsValidHeader(header))
 		{
-			cout << "Error:Invalid Header" << endl;
+			TPLogger::GetInstance().PrintLog(INVALID_HEADER);
 			owner->ClearBuff();
 			return Packet();
 		}
@@ -47,7 +45,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 			// 잘못된 EndOfPacket일 경우 패킷 처리 안함
 			if (ownerPacketSize == MAX_BUFF_SIZE)
 			{
-				cout << "Error:Invalid EndOfPacket" << endl;
+				TPLogger::GetInstance().PrintLog(INVALID_END_OF_PACKET);
 				owner->ClearBuff();
 				return Packet();
 			}
@@ -73,7 +71,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 			// 잘못된 Header일 경우 패킷 처리 안함
 			if (!IsValidHeader(header))
 			{
-				cout << "Error:Invalid Header" << endl;
+				TPLogger::GetInstance().PrintLog(INVALID_HEADER);
 				return Packet();
 			}
 
@@ -83,7 +81,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 				// 잘못된 EndOfPacket일 경우 패킷 처리 안함
 				if (recvBytes == MAX_BUFF_SIZE)
 				{
-					cout << "Error:Invalid EndOfPacket" << endl;
+					TPLogger::GetInstance().PrintLog(INVALID_END_OF_PACKET);
 					return Packet();
 				}
 				owner->AddToBuff(buffer, recvBytes);

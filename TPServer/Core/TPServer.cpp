@@ -1,36 +1,25 @@
 #include "TPServer.h"
-#include <iostream>
-#include <WS2tcpip.h>
 #include "../DB/DBServer.h"
 #include "../Packet/PacketProcessor.h"
 #include "../Session/SessionPool.h"
-#include "../Util/TPError.h"
+#include "../Util/TPLogger.h"
+
+#include <WS2tcpip.h>
 
 void TPServer::Play()
 {
-    // DB 시작 처리
-    if (!DBServer::GetInstance().DBConnect())
-    {
-        TPError::GetInstance().PrintError(L"DB연결에 실패했습니다.");
-    }
-    cout << "DB연결에 성공했습니다." << endl;
-
-    // 서버 시작 처리
     Initialize();
     Start();
-
-    // 서버 종료 처리
     Close();
-
-    // DB 종료 처리
-    DBServer::GetInstance().DBDisConnect();
 }
 
 void TPServer::Initialize()
 {
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-        TPError::GetInstance().PrintError(L"WSAStartup() error!");
+    {
+        TPLogger::GetInstance().PrintLog("WSAStartup() Error!");
+    }
 
     hCompletionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 
@@ -60,7 +49,7 @@ void TPServer::Start()
     DWORD recvBytes;
     DWORD flags;
 
-    cout << "서버가 시작되었습니다." << endl;
+    TPLogger::GetInstance().PrintLog(SERVER_STARTED);
 
     while (TRUE)
     {
@@ -75,7 +64,9 @@ void TPServer::Start()
         memcpy(&(perHandleData->clntAddr), &clntAddr, addrLen);
 
         char buf[BUFF_SIZE_IP] = { 0, };
-        cout << "Connected[" << hClntSock << "]: " << inet_ntop(AF_INET, &clntAddr.sin_addr, buf, sizeof(buf)) << " " << endl;
+        auto address = inet_ntop(AF_INET, &clntAddr.sin_addr, buf, sizeof(buf));
+        TPLogger::GetInstance().PrintLog("Connected[%d]: %s", hClntSock, address);
+
         SessionPool::GetInstance().CreateSession(hClntSock, clntAddr);
 
         CreateIoCompletionPort((HANDLE)hClntSock, hCompletionPort, (ULONG_PTR)perHandleData, 0);
@@ -114,7 +105,9 @@ void TPServer::CompletionThread()
         if (!GetQueuedCompletionStatus(hCompletionPort, &recvBytes, (PULONG_PTR)&perHandleData, (LPOVERLAPPED*)&perIoData, INFINITE))
         {
             char buf[BUFF_SIZE_IP] = { 0, };
-            cout << "Disconnected[" << perHandleData->hClntSock << "]: " << inet_ntop(AF_INET, &perHandleData->clntAddr.sin_addr, buf, sizeof(buf)) << " " << endl;
+            auto address = inet_ntop(AF_INET, &perHandleData->clntAddr.sin_addr, buf, sizeof(buf));
+            TPLogger::GetInstance().PrintLog("Disconnected[%d]: %s", perHandleData->hClntSock, address);
+            
             SessionPool::GetInstance().DeleteSession(perHandleData->hClntSock);
 
             closesocket(perHandleData->hClntSock);
@@ -132,7 +125,7 @@ void TPServer::CompletionThread()
             }
             else
             {
-                cout << "Not found session!" << endl;
+                TPLogger::GetInstance().PrintLog(NOT_FOUND_SESSION);
             }
 
             memset(&(perIoData->overlapped), 0, sizeof(OVERLAPPED));
@@ -145,7 +138,7 @@ void TPServer::CompletionThread()
                 auto e = WSAGetLastError();
                 if (e != WSA_IO_PENDING)
                 {
-                    TPError::GetInstance().PrintError(L"WSARecv() Error", e);
+                    TPLogger::GetInstance().PrintLog("WSARecv() Error:%d", e);
                 }
             }
         }

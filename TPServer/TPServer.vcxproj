@@ -113,7 +113,7 @@
     <ClCompile Include="session\Session.cpp" />
     <ClCompile Include="session\SessionPool.cpp" />
     <ClCompile Include="sqlservice\SQLServiceUser.cpp" />
-    <ClCompile Include="util\TPError.cpp" />
+    <ClCompile Include="util\TPLogger.cpp" />
     <ClCompile Include="util\TPResult.cpp" />
     <ClCompile Include="util\TPUtil.cpp" />
   </ItemGroup>
@@ -152,7 +152,7 @@
     <ClInclude Include="TP_generated.h" />
     <ClInclude Include="util\Enums.h" />
     <ClInclude Include="util\TPDefine.h" />
-    <ClInclude Include="util\TPError.h" />
+    <ClInclude Include="util\TPLogger.h" />
     <ClInclude Include="util\TPResult.h" />
     <ClInclude Include="util\TPUtil.h" />
     <ClInclude Include="util\TSingleton.h" />

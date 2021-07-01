@@ -75,7 +75,7 @@
     <ClCompile Include="sqlservice\SQLServiceUser.cpp">
       <Filter>SQLService</Filter>
     </ClCompile>
-    <ClCompile Include="util\TPError.cpp">
+    <ClCompile Include="util\TPLogger.cpp">
       <Filter>Util</Filter>
     </ClCompile>
     <ClCompile Include="util\TPResult.cpp">
@@ -186,7 +186,7 @@
     <ClInclude Include="util\TPDefine.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="util\TPError.h">
+    <ClInclude Include="util\TPLogger.h">
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="util\TPResult.h">

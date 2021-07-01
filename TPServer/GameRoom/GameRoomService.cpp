@@ -1,8 +1,6 @@
 #include "GameRoomService.h"
 #include "../Util/TPDefine.h"
-#include <iostream> 
-
-using namespace std;
+#include "../Util/TPLogger.h"
 
 void GameRoomService::CreateGameRoom()
 {
@@ -46,7 +44,7 @@ bool GameRoomService::AddObjUser(const int roomId, shared_ptr<ObjUser> objUser)
 		auto gameRoom = it->second;
 		if (gameRoom->AddObjUser(objUser))
 		{
-			wcout << SUCCESS_ADD_OBJ_USER_GAME_ROOM << "[" << gameRoom->GetUserNum() << "]" << endl;
+			TPLogger::GetInstance().PrintLog(SUCCESS_ADD_OBJ_USER_GAME_ROOM, gameRoom->GetUserNum());
 			return true;
 		}
 	}
@@ -61,7 +59,7 @@ bool GameRoomService::DeleteObjUser(shared_ptr<ObjUser> objUser)
 		auto gameRoom = it->second;
 		if (gameRoom->DeleteObjUser(objUser->GetUserId()))
 		{
-			wcout << DELETE_OBJ_USER_GAME_ROOM << "[" << gameRoom->GetUserNum() << "]" << endl;
+			TPLogger::GetInstance().PrintLog(DELETE_OBJ_USER_GAME_ROOM, gameRoom->GetUserNum());
 			return true;
 		}
 	}

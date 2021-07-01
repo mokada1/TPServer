@@ -2,12 +2,8 @@
 #include "PacketProcessor.h"
 #include "PacketService.h"
 #include "PacketGenerator.h"
-#include "../Util/TPError.h"
+#include "../Util/TPLogger.h"
 #include "../Session/SessionPool.h"
-
-#include <iostream>
-
-using namespace std;
 
 void PacketProcessor::Process(Session* const owner, char* const buffer, const size_t recvBytes)
 {
@@ -21,7 +17,7 @@ void PacketProcessor::Process(Session* const owner, char* const buffer, const si
 	auto header = packet.GetHeader();
 	auto strHeader = TPUtil::GetInstance().EnumToString(header);
 
-	cout << "[" << clntSock << "]" << "Recv Packet:" << strHeader << endl;
+	TPLogger::GetInstance().PrintLog("[%d]Recv packet:%s", clntSock, strHeader);
 
 	PacketService::GetInstance().Process(packet);
 }
@@ -63,14 +59,14 @@ void PacketProcessor::SendPacket(const Packet& packet, const SOCKET& clntSock)
 		auto e = WSAGetLastError();
 		if (e != WSA_IO_PENDING)
 		{
-			TPError::GetInstance().PrintError(L"WSASend() Error", e);
+			TPLogger::GetInstance().PrintLog("WSASend() Error", e);
 		}
 	}
 
 	auto header = packet.GetHeader();
 	auto strHeader = TPUtil::GetInstance().EnumToString(header);
 
-	cout << "[" << clntSock << "]" << "Send Packet:" << strHeader << endl;
+	TPLogger::GetInstance().PrintLog("[%d]Send packet:%s", clntSock, strHeader);
 }
 
 void PacketProcessor::SendPacketAll(const Packet& packet, bool isIgnoreCastGroup)

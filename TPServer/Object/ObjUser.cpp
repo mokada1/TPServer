@@ -1,9 +1,5 @@
 #include "ObjUser.h"
 #include "../Util/TPDefine.h"
-#include <wchar.h>
-#include <iostream>
-
-using namespace std;
 						 
 wchar_t* ObjUser::GetObjectId() const
 {

@@ -5,10 +5,7 @@
 #include "../GameRoom/GameRoomService.h"
 #include "../Session/Session.h"
 #include "../Util/TPResult.h"
-
-#include <iostream>
-
-using namespace std;
+#include "../Util/TPLogger.h"
 
 void PacketService::Process(const Packet& packet)
 {
@@ -55,7 +52,7 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	auto userId = req->UserId()->c_str();
 	auto password = req->Password()->c_str();
 
-	cout << "로그인 요청 - UserId:" << userId << " Password:" << password << endl;
+	TPLogger::GetInstance().PrintLog(REQ_LOGIN, userId, password);
 
 	wchar_t wUserId[SIZE_USER_USER_ID], wPassword[SIZE_USER_PASSWORD];
 	TPUtil::GetInstance().CharToWChar(wUserId, SIZE_USER_USER_ID, userId);
@@ -65,7 +62,7 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	auto dObjUser = GameRoomService::GetInstance().GetObjUser(wUserId);
 	if (dObjUser)
 	{
-		wcout << DUPLICATE_LOGIN << endl;
+		TPLogger::GetInstance().PrintLog(DUPLICATE_LOGIN);
 		auto result = new TPResult();
 		auto packetError = PacketGenerator::GetInstance().CreateError(owner, DUPLICATE_LOGIN);
 		result->SetPacket(packetError);

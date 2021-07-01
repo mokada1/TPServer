@@ -1,7 +1,4 @@
 #include "GameRoom.h"
-#include <iostream>
-
-using namespace std;
 
 GameRoom::GameRoom(int _roomId)
 {

@@ -2,8 +2,9 @@
 
 #include "../Object/TPObject.h"
 #include "../Component/TPComponent.h"
-#include <vector>
 #include "../Packet/Packet.h"
+
+#include <vector>
 
 using namespace std;
 

@@ -17,7 +17,7 @@ public:
 private:
 	SQLHDBC hDbc;
 
-	bool CheckDBC();
-	SQLHSTMT StartStmt();
-	void ENDStmt(const SQLHSTMT& hStmt);	
+	bool DBConnect();
+	SQLHSTMT DBStart();
+	void DBEnd(const SQLHSTMT& hStmt);	
 };

@@ -1,8 +1,5 @@
 #include "DBServer.h"
-#include "../Util/TPError.h"
-#include <iostream>
-
-using namespace std;
+#include "../Util/TPLogger.h"
 
 bool DBServer::GetIsConnected()
 {
@@ -23,27 +20,27 @@ bool DBServer::DBConnect()
 
     if (SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &hEnv) != SQL_SUCCESS)
     {
-        TPError::GetInstance().PrintError(L"SQLAllocHandle Error");
+        TPLogger::GetInstance().PrintLog("SQLAllocHandle Error");
         return false;
     }
     if (SQLSetEnvAttr(hEnv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER*)SQL_OV_ODBC3, 0) != SQL_SUCCESS)
     {
-        TPError::GetInstance().PrintError(L"SQLSetEnvAttr Error");
+        TPLogger::GetInstance().PrintLog("SQLSetEnvAttr Error");
         return false;
     }
     if (SQLAllocHandle(SQL_HANDLE_DBC, hEnv, &hDbc) != SQL_SUCCESS)
     {
-        TPError::GetInstance().PrintError(L"SQLAllocHandle Error");
+        TPLogger::GetInstance().PrintLog("SQLAllocHandle Error");
         return false;
     }
     if (SQLSetConnectAttr(hDbc, SQL_AUTOCOMMIT, (SQLPOINTER)FALSE, 0) != SQL_SUCCESS)
     {
-        TPError::GetInstance().PrintError(L"SQLSetConnectAttr Error");
+        TPLogger::GetInstance().PrintLog("SQLSetConnectAttr Error");
         return false;
     }
     if (SQLConnect(hDbc, ODBC_Name, SQL_NTS, ODBC_ID, SQL_NTS, ODBC_PW, SQL_NTS) != SQL_SUCCESS)
     {
-        TPError::GetInstance().PrintError(L"SQLConnect Error");
+        TPLogger::GetInstance().PrintLog("SQLConnect Error");
         return false;
     }
 
@@ -51,7 +48,7 @@ bool DBServer::DBConnect()
     return true;
 }
 
-void DBServer::DBDisConnect()
+void DBServer::DBDisconnect()
 {
     if (!isConnected)
     {
