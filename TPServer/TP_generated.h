@@ -8,14 +8,17 @@
 
 struct ST_Vec3;
 
-struct TB_CompUserLocation;
-struct TB_CompUserLocationBuilder;
+struct TB_CompUserTransform;
+struct TB_CompUserTransformBuilder;
 
 struct TB_ObjUser;
 struct TB_ObjUserBuilder;
 
 struct TB_InputMove;
 struct TB_InputMoveBuilder;
+
+struct TB_InputAction;
+struct TB_InputActionBuilder;
 
 struct TB_ReqLogin;
 struct TB_ReqLoginBuilder;
@@ -29,8 +32,14 @@ struct TB_ReqLocationSyncBuilder;
 struct TB_ReqRoundTripTime;
 struct TB_ReqRoundTripTimeBuilder;
 
-struct TB_ReqInputAction;
-struct TB_ReqInputActionBuilder;
+struct TB_ReqAction;
+struct TB_ReqActionBuilder;
+
+struct TB_ReqDamage;
+struct TB_ReqDamageBuilder;
+
+struct TB_ReqRotate;
+struct TB_ReqRotateBuilder;
 
 struct TB_Error;
 struct TB_ErrorBuilder;
@@ -53,8 +62,14 @@ struct TB_BcastMoveBuilder;
 struct TB_BcastLocationSync;
 struct TB_BcastLocationSyncBuilder;
 
-struct TB_BcastInputAction;
-struct TB_BcastInputActionBuilder;
+struct TB_BcastAction;
+struct TB_BcastActionBuilder;
+
+struct TB_BcastHit;
+struct TB_BcastHitBuilder;
+
+struct TB_BcastRotate;
+struct TB_BcastRotateBuilder;
 
 enum OpMove {
   OpMove_None = 0,
@@ -158,44 +173,54 @@ FLATBUFFERS_MANUALLY_ALIGNED_STRUCT(4) ST_Vec3 FLATBUFFERS_FINAL_CLASS {
 };
 FLATBUFFERS_STRUCT_END(ST_Vec3, 12);
 
-struct TB_CompUserLocation FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef TB_CompUserLocationBuilder Builder;
+struct TB_CompUserTransform FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_CompUserTransformBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_LOCATION = 4
+    VT_LOCATION = 4,
+    VT_ROTATION = 6
   };
   const ST_Vec3 *Location() const {
     return GetStruct<const ST_Vec3 *>(VT_LOCATION);
   }
+  const ST_Vec3 *Rotation() const {
+    return GetStruct<const ST_Vec3 *>(VT_ROTATION);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<ST_Vec3>(verifier, VT_LOCATION) &&
+           VerifyField<ST_Vec3>(verifier, VT_ROTATION) &&
            verifier.EndTable();
   }
 };
 
-struct TB_CompUserLocationBuilder {
-  typedef TB_CompUserLocation Table;
+struct TB_CompUserTransformBuilder {
+  typedef TB_CompUserTransform Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_Location(const ST_Vec3 *Location) {
-    fbb_.AddStruct(TB_CompUserLocation::VT_LOCATION, Location);
+    fbb_.AddStruct(TB_CompUserTransform::VT_LOCATION, Location);
   }
-  explicit TB_CompUserLocationBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+  void add_Rotation(const ST_Vec3 *Rotation) {
+    fbb_.AddStruct(TB_CompUserTransform::VT_ROTATION, Rotation);
+  }
+  explicit TB_CompUserTransformBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  TB_CompUserLocationBuilder &operator=(const TB_CompUserLocationBuilder &);
-  flatbuffers::Offset<TB_CompUserLocation> Finish() {
+  TB_CompUserTransformBuilder &operator=(const TB_CompUserTransformBuilder &);
+  flatbuffers::Offset<TB_CompUserTransform> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<TB_CompUserLocation>(end);
+    auto o = flatbuffers::Offset<TB_CompUserTransform>(end);
     return o;
   }
 };
 
-inline flatbuffers::Offset<TB_CompUserLocation> CreateTB_CompUserLocation(
+inline flatbuffers::Offset<TB_CompUserTransform> CreateTB_CompUserTransform(
     flatbuffers::FlatBufferBuilder &_fbb,
-    const ST_Vec3 *Location = 0) {
-  TB_CompUserLocationBuilder builder_(_fbb);
+    const ST_Vec3 *Location = 0,
+    const ST_Vec3 *Rotation = 0) {
+  TB_CompUserTransformBuilder builder_(_fbb);
+  builder_.add_Rotation(Rotation);
   builder_.add_Location(Location);
   return builder_.Finish();
 }
@@ -204,26 +229,20 @@ struct TB_ObjUser FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef TB_ObjUserBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_USERID = 4,
-    VT_PASSWORD = 6,
-    VT_USERLOCATION = 8
+    VT_USERTRANSFORM = 6
   };
   const flatbuffers::String *UserId() const {
     return GetPointer<const flatbuffers::String *>(VT_USERID);
   }
-  const flatbuffers::String *Password() const {
-    return GetPointer<const flatbuffers::String *>(VT_PASSWORD);
-  }
-  const TB_CompUserLocation *UserLocation() const {
-    return GetPointer<const TB_CompUserLocation *>(VT_USERLOCATION);
+  const TB_CompUserTransform *UserTransform() const {
+    return GetPointer<const TB_CompUserTransform *>(VT_USERTRANSFORM);
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_USERID) &&
            verifier.VerifyString(UserId()) &&
-           VerifyOffset(verifier, VT_PASSWORD) &&
-           verifier.VerifyString(Password()) &&
-           VerifyOffset(verifier, VT_USERLOCATION) &&
-           verifier.VerifyTable(UserLocation()) &&
+           VerifyOffset(verifier, VT_USERTRANSFORM) &&
+           verifier.VerifyTable(UserTransform()) &&
            verifier.EndTable();
   }
 };
@@ -235,11 +254,8 @@ struct TB_ObjUserBuilder {
   void add_UserId(flatbuffers::Offset<flatbuffers::String> UserId) {
     fbb_.AddOffset(TB_ObjUser::VT_USERID, UserId);
   }
-  void add_Password(flatbuffers::Offset<flatbuffers::String> Password) {
-    fbb_.AddOffset(TB_ObjUser::VT_PASSWORD, Password);
-  }
-  void add_UserLocation(flatbuffers::Offset<TB_CompUserLocation> UserLocation) {
-    fbb_.AddOffset(TB_ObjUser::VT_USERLOCATION, UserLocation);
+  void add_UserTransform(flatbuffers::Offset<TB_CompUserTransform> UserTransform) {
+    fbb_.AddOffset(TB_ObjUser::VT_USERTRANSFORM, UserTransform);
   }
   explicit TB_ObjUserBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -256,11 +272,9 @@ struct TB_ObjUserBuilder {
 inline flatbuffers::Offset<TB_ObjUser> CreateTB_ObjUser(
     flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<flatbuffers::String> UserId = 0,
-    flatbuffers::Offset<flatbuffers::String> Password = 0,
-    flatbuffers::Offset<TB_CompUserLocation> UserLocation = 0) {
+    flatbuffers::Offset<TB_CompUserTransform> UserTransform = 0) {
   TB_ObjUserBuilder builder_(_fbb);
-  builder_.add_UserLocation(UserLocation);
-  builder_.add_Password(Password);
+  builder_.add_UserTransform(UserTransform);
   builder_.add_UserId(UserId);
   return builder_.Finish();
 }
@@ -268,15 +282,12 @@ inline flatbuffers::Offset<TB_ObjUser> CreateTB_ObjUser(
 inline flatbuffers::Offset<TB_ObjUser> CreateTB_ObjUserDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     const char *UserId = nullptr,
-    const char *Password = nullptr,
-    flatbuffers::Offset<TB_CompUserLocation> UserLocation = 0) {
+    flatbuffers::Offset<TB_CompUserTransform> UserTransform = 0) {
   auto UserId__ = UserId ? _fbb.CreateString(UserId) : 0;
-  auto Password__ = Password ? _fbb.CreateString(Password) : 0;
   return CreateTB_ObjUser(
       _fbb,
       UserId__,
-      Password__,
-      UserLocation);
+      UserTransform);
 }
 
 struct TB_InputMove FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
@@ -348,6 +359,58 @@ inline flatbuffers::Offset<TB_InputMove> CreateTB_InputMove(
   builder_.add_MoveForward(MoveForward);
   builder_.add_RightVector(RightVector);
   builder_.add_ForwardVector(ForwardVector);
+  return builder_.Finish();
+}
+
+struct TB_InputAction FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_InputActionBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_LOCATION = 4,
+    VT_ROTATION = 6
+  };
+  const ST_Vec3 *Location() const {
+    return GetStruct<const ST_Vec3 *>(VT_LOCATION);
+  }
+  const ST_Vec3 *Rotation() const {
+    return GetStruct<const ST_Vec3 *>(VT_ROTATION);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<ST_Vec3>(verifier, VT_LOCATION) &&
+           VerifyField<ST_Vec3>(verifier, VT_ROTATION) &&
+           verifier.EndTable();
+  }
+};
+
+struct TB_InputActionBuilder {
+  typedef TB_InputAction Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_Location(const ST_Vec3 *Location) {
+    fbb_.AddStruct(TB_InputAction::VT_LOCATION, Location);
+  }
+  void add_Rotation(const ST_Vec3 *Rotation) {
+    fbb_.AddStruct(TB_InputAction::VT_ROTATION, Rotation);
+  }
+  explicit TB_InputActionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TB_InputActionBuilder &operator=(const TB_InputActionBuilder &);
+  flatbuffers::Offset<TB_InputAction> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TB_InputAction>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TB_InputAction> CreateTB_InputAction(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const ST_Vec3 *Location = 0,
+    const ST_Vec3 *Rotation = 0) {
+  TB_InputActionBuilder builder_(_fbb);
+  builder_.add_Rotation(Rotation);
+  builder_.add_Location(Location);
   return builder_.Finish();
 }
 
@@ -554,45 +617,128 @@ inline flatbuffers::Offset<TB_ReqRoundTripTime> CreateTB_ReqRoundTripTime(
   return builder_.Finish();
 }
 
-struct TB_ReqInputAction FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef TB_ReqInputActionBuilder Builder;
+struct TB_ReqAction FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_ReqActionBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_OPERATION = 4
+    VT_OPERATION = 4,
+    VT_INPUTACTION = 6
   };
   OpAction Operation() const {
     return static_cast<OpAction>(GetField<int8_t>(VT_OPERATION, 0));
   }
+  const TB_InputAction *InputAction() const {
+    return GetPointer<const TB_InputAction *>(VT_INPUTACTION);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int8_t>(verifier, VT_OPERATION) &&
+           VerifyOffset(verifier, VT_INPUTACTION) &&
+           verifier.VerifyTable(InputAction()) &&
            verifier.EndTable();
   }
 };
 
-struct TB_ReqInputActionBuilder {
-  typedef TB_ReqInputAction Table;
+struct TB_ReqActionBuilder {
+  typedef TB_ReqAction Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_Operation(OpAction Operation) {
-    fbb_.AddElement<int8_t>(TB_ReqInputAction::VT_OPERATION, static_cast<int8_t>(Operation), 0);
+    fbb_.AddElement<int8_t>(TB_ReqAction::VT_OPERATION, static_cast<int8_t>(Operation), 0);
   }
-  explicit TB_ReqInputActionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+  void add_InputAction(flatbuffers::Offset<TB_InputAction> InputAction) {
+    fbb_.AddOffset(TB_ReqAction::VT_INPUTACTION, InputAction);
+  }
+  explicit TB_ReqActionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  TB_ReqInputActionBuilder &operator=(const TB_ReqInputActionBuilder &);
-  flatbuffers::Offset<TB_ReqInputAction> Finish() {
+  TB_ReqActionBuilder &operator=(const TB_ReqActionBuilder &);
+  flatbuffers::Offset<TB_ReqAction> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<TB_ReqInputAction>(end);
+    auto o = flatbuffers::Offset<TB_ReqAction>(end);
     return o;
   }
 };
 
-inline flatbuffers::Offset<TB_ReqInputAction> CreateTB_ReqInputAction(
+inline flatbuffers::Offset<TB_ReqAction> CreateTB_ReqAction(
     flatbuffers::FlatBufferBuilder &_fbb,
-    OpAction Operation = OpAction_None) {
-  TB_ReqInputActionBuilder builder_(_fbb);
+    OpAction Operation = OpAction_None,
+    flatbuffers::Offset<TB_InputAction> InputAction = 0) {
+  TB_ReqActionBuilder builder_(_fbb);
+  builder_.add_InputAction(InputAction);
   builder_.add_Operation(Operation);
+  return builder_.Finish();
+}
+
+struct TB_ReqDamage FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_ReqDamageBuilder Builder;
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           verifier.EndTable();
+  }
+};
+
+struct TB_ReqDamageBuilder {
+  typedef TB_ReqDamage Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  explicit TB_ReqDamageBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TB_ReqDamageBuilder &operator=(const TB_ReqDamageBuilder &);
+  flatbuffers::Offset<TB_ReqDamage> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TB_ReqDamage>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TB_ReqDamage> CreateTB_ReqDamage(
+    flatbuffers::FlatBufferBuilder &_fbb) {
+  TB_ReqDamageBuilder builder_(_fbb);
+  return builder_.Finish();
+}
+
+struct TB_ReqRotate FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_ReqRotateBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_ROTATION = 4
+  };
+  const ST_Vec3 *Rotation() const {
+    return GetStruct<const ST_Vec3 *>(VT_ROTATION);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<ST_Vec3>(verifier, VT_ROTATION) &&
+           verifier.EndTable();
+  }
+};
+
+struct TB_ReqRotateBuilder {
+  typedef TB_ReqRotate Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_Rotation(const ST_Vec3 *Rotation) {
+    fbb_.AddStruct(TB_ReqRotate::VT_ROTATION, Rotation);
+  }
+  explicit TB_ReqRotateBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TB_ReqRotateBuilder &operator=(const TB_ReqRotateBuilder &);
+  flatbuffers::Offset<TB_ReqRotate> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TB_ReqRotate>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TB_ReqRotate> CreateTB_ReqRotate(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const ST_Vec3 *Rotation = 0) {
+  TB_ReqRotateBuilder builder_(_fbb);
+  builder_.add_Rotation(Rotation);
   return builder_.Finish();
 }
 
@@ -980,8 +1126,8 @@ inline flatbuffers::Offset<TB_BcastLocationSync> CreateTB_BcastLocationSyncDirec
       Location);
 }
 
-struct TB_BcastInputAction FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef TB_BcastInputActionBuilder Builder;
+struct TB_BcastAction FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_BcastActionBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_USERID = 4,
     VT_OPERATION = 6
@@ -1001,47 +1147,163 @@ struct TB_BcastInputAction FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table 
   }
 };
 
-struct TB_BcastInputActionBuilder {
-  typedef TB_BcastInputAction Table;
+struct TB_BcastActionBuilder {
+  typedef TB_BcastAction Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_UserId(flatbuffers::Offset<flatbuffers::String> UserId) {
-    fbb_.AddOffset(TB_BcastInputAction::VT_USERID, UserId);
+    fbb_.AddOffset(TB_BcastAction::VT_USERID, UserId);
   }
   void add_Operation(OpAction Operation) {
-    fbb_.AddElement<int8_t>(TB_BcastInputAction::VT_OPERATION, static_cast<int8_t>(Operation), 0);
+    fbb_.AddElement<int8_t>(TB_BcastAction::VT_OPERATION, static_cast<int8_t>(Operation), 0);
   }
-  explicit TB_BcastInputActionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+  explicit TB_BcastActionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  TB_BcastInputActionBuilder &operator=(const TB_BcastInputActionBuilder &);
-  flatbuffers::Offset<TB_BcastInputAction> Finish() {
+  TB_BcastActionBuilder &operator=(const TB_BcastActionBuilder &);
+  flatbuffers::Offset<TB_BcastAction> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<TB_BcastInputAction>(end);
+    auto o = flatbuffers::Offset<TB_BcastAction>(end);
     return o;
   }
 };
 
-inline flatbuffers::Offset<TB_BcastInputAction> CreateTB_BcastInputAction(
+inline flatbuffers::Offset<TB_BcastAction> CreateTB_BcastAction(
     flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<flatbuffers::String> UserId = 0,
     OpAction Operation = OpAction_None) {
-  TB_BcastInputActionBuilder builder_(_fbb);
+  TB_BcastActionBuilder builder_(_fbb);
   builder_.add_UserId(UserId);
   builder_.add_Operation(Operation);
   return builder_.Finish();
 }
 
-inline flatbuffers::Offset<TB_BcastInputAction> CreateTB_BcastInputActionDirect(
+inline flatbuffers::Offset<TB_BcastAction> CreateTB_BcastActionDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     const char *UserId = nullptr,
     OpAction Operation = OpAction_None) {
   auto UserId__ = UserId ? _fbb.CreateString(UserId) : 0;
-  return CreateTB_BcastInputAction(
+  return CreateTB_BcastAction(
       _fbb,
       UserId__,
       Operation);
+}
+
+struct TB_BcastHit FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_BcastHitBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_USERID = 4
+  };
+  const flatbuffers::String *UserId() const {
+    return GetPointer<const flatbuffers::String *>(VT_USERID);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_USERID) &&
+           verifier.VerifyString(UserId()) &&
+           verifier.EndTable();
+  }
+};
+
+struct TB_BcastHitBuilder {
+  typedef TB_BcastHit Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_UserId(flatbuffers::Offset<flatbuffers::String> UserId) {
+    fbb_.AddOffset(TB_BcastHit::VT_USERID, UserId);
+  }
+  explicit TB_BcastHitBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TB_BcastHitBuilder &operator=(const TB_BcastHitBuilder &);
+  flatbuffers::Offset<TB_BcastHit> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TB_BcastHit>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TB_BcastHit> CreateTB_BcastHit(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::String> UserId = 0) {
+  TB_BcastHitBuilder builder_(_fbb);
+  builder_.add_UserId(UserId);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<TB_BcastHit> CreateTB_BcastHitDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const char *UserId = nullptr) {
+  auto UserId__ = UserId ? _fbb.CreateString(UserId) : 0;
+  return CreateTB_BcastHit(
+      _fbb,
+      UserId__);
+}
+
+struct TB_BcastRotate FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_BcastRotateBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_USERID = 4,
+    VT_ROTATION = 6
+  };
+  const flatbuffers::String *UserId() const {
+    return GetPointer<const flatbuffers::String *>(VT_USERID);
+  }
+  const ST_Vec3 *Rotation() const {
+    return GetStruct<const ST_Vec3 *>(VT_ROTATION);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_USERID) &&
+           verifier.VerifyString(UserId()) &&
+           VerifyField<ST_Vec3>(verifier, VT_ROTATION) &&
+           verifier.EndTable();
+  }
+};
+
+struct TB_BcastRotateBuilder {
+  typedef TB_BcastRotate Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_UserId(flatbuffers::Offset<flatbuffers::String> UserId) {
+    fbb_.AddOffset(TB_BcastRotate::VT_USERID, UserId);
+  }
+  void add_Rotation(const ST_Vec3 *Rotation) {
+    fbb_.AddStruct(TB_BcastRotate::VT_ROTATION, Rotation);
+  }
+  explicit TB_BcastRotateBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TB_BcastRotateBuilder &operator=(const TB_BcastRotateBuilder &);
+  flatbuffers::Offset<TB_BcastRotate> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TB_BcastRotate>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TB_BcastRotate> CreateTB_BcastRotate(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    flatbuffers::Offset<flatbuffers::String> UserId = 0,
+    const ST_Vec3 *Rotation = 0) {
+  TB_BcastRotateBuilder builder_(_fbb);
+  builder_.add_Rotation(Rotation);
+  builder_.add_UserId(UserId);
+  return builder_.Finish();
+}
+
+inline flatbuffers::Offset<TB_BcastRotate> CreateTB_BcastRotateDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const char *UserId = nullptr,
+    const ST_Vec3 *Rotation = 0) {
+  auto UserId__ = UserId ? _fbb.CreateString(UserId) : 0;
+  return CreateTB_BcastRotate(
+      _fbb,
+      UserId__,
+      Rotation);
 }
 
 #endif  // FLATBUFFERS_GENERATED_TP_H_

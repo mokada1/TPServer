@@ -99,20 +99,22 @@ TPResult* DBService::LoadUserInfo(const wchar_t* const userId)
 		return result;
 	}
 
-	auto compUserLocation = SQLServiceUser::GetInstance().GetUserLocation(hStmt, userId);
-	if (compUserLocation)
+	auto compUserTransform = SQLServiceUser::GetInstance().GetUserTransform(hStmt, userId);
+	if (compUserTransform)
 	{
 		//wcout << SUCCESS_GET_DATA << endl;
-		result->AddComp(compUserLocation);
+		result->AddComp(compUserTransform);
 		result->SetFlag(true);
 	}
 	else
 	{
-		compUserLocation = SQLServiceUser::GetInstance().InsertUserLocation(hDbc, hStmt, userId, { -1340.f, 40.f, 230.f });
-		if (compUserLocation)
+		static const Vector3 DEFAULT_USER_LOCATION = { -1340.f, 40.f, 230.f };
+		static const Vector3 DEFAULT_USER_ROTATION = { 0.f, 0.f, 0.f };
+		compUserTransform = SQLServiceUser::GetInstance().InsertUserTransform(hDbc, hStmt, userId, DEFAULT_USER_LOCATION, DEFAULT_USER_ROTATION);
+		if (compUserTransform)
 		{
 			//wcout << SUCCESS_INSERT_DATA << endl;
-			result->AddComp(compUserLocation);
+			result->AddComp(compUserTransform);
 			result->SetFlag(true);
 		}
 		else

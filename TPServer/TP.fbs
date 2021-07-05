@@ -33,17 +33,17 @@ struct ST_Vec3
 // Table
 
 // Component
-table TB_CompUserLocation
+table TB_CompUserTransform
 {
 	Location: ST_Vec3;
+	Rotation: ST_Vec3;
 }
 
 // Object
 table TB_ObjUser
 {
 	UserId: string;
-	Password: string;
-	UserLocation: TB_CompUserLocation;
+	UserTransform: TB_CompUserTransform;
 }
 
 // Bundle
@@ -53,6 +53,12 @@ table TB_InputMove
 	RightVector: ST_Vec3;
 	MoveForward: float;
 	MoveRight: float;
+}
+
+table TB_InputAction
+{	
+	Location: ST_Vec3;
+	Rotation: ST_Vec3;
 }
 
 // Request
@@ -78,9 +84,19 @@ table TB_ReqRoundTripTime
 	CurrentTimeMs: long;
 }
 
-table TB_ReqInputAction
+table TB_ReqAction
 {
 	Operation: OpAction;
+	InputAction: TB_InputAction;
+}
+
+table TB_ReqDamage
+{
+}
+
+table TB_ReqRotate
+{
+	Rotation: ST_Vec3;
 }
 
 // Response
@@ -124,8 +140,19 @@ table TB_BcastLocationSync
 	Location: ST_Vec3;
 }
 
-table TB_BcastInputAction
+table TB_BcastAction
 {
 	UserId: string;
 	Operation: OpAction;
+}
+
+table TB_BcastHit
+{
+	UserId: string;
+}
+
+table TB_BcastRotate
+{
+	UserId: string;
+	Rotation: ST_Vec3;
 }

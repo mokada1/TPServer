@@ -3,6 +3,13 @@
 #include "TSingleton.h"
 #include "../Packet/Protocol.h"
 
+struct Vector3
+{
+	float x;
+	float y;
+	float z;
+};
+
 class TPUtil : public TSingleton<TPUtil>
 {
 public:
@@ -13,13 +20,7 @@ public:
 	long long TimeSinceEpochMs();
 	long long TimeSinceEpochSec();
 	const char* EnumToString(PROTOCOL protocol);
-};
-
-struct Vector3
-{
-	float x;
-	float y;
-	float z;
+	float Distance(const Vector3 v1, const Vector3 v2);
 };
 
 #define TPUTIL_MAX(A,B) (A) > (B) ? (A) : (B)

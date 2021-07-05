@@ -11,6 +11,6 @@ class SQLServiceUser : public TSingleton<SQLServiceUser>
 public:
 	ObjUser* GetUser(const SQLHSTMT& hStmt, const wchar_t* const userId);
 	ObjUser* InsertUser(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const wchar_t* const password);
-	CompUserLocation* GetUserLocation(const SQLHSTMT& hStmt, const wchar_t* const userId);
-	CompUserLocation* InsertUserLocation(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const Vector3 location);
+	CompUserTransform* GetUserTransform(const SQLHSTMT& hStmt, const wchar_t* const userId);
+	CompUserTransform* InsertUserTransform(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const Vector3 location, const Vector3 rotation);
 };

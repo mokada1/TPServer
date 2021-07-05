@@ -31,9 +31,12 @@
     <Filter Include="Util">
       <UniqueIdentifier>{0fa676f1-8a15-40eb-af45-3f3dafb8752f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Battle">
+      <UniqueIdentifier>{77aa5dc2-64db-4b42-b805-b9a626f928e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="component\CompUserLocation.cpp">
+    <ClCompile Include="component\CompUserTransform.cpp">
       <Filter>Component</Filter>
     </ClCompile>
     <ClCompile Include="core\TPServer.cpp">
@@ -85,6 +88,9 @@
       <Filter>Util</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Battle\BattleService.cpp">
+      <Filter>Battle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="flatbuffers\reflection_generated.h">
@@ -132,7 +138,7 @@
     <ClInclude Include="component\TPComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="component\CompUserLocation.h">
+    <ClInclude Include="component\CompUserTransform.h">
       <Filter>Component</Filter>
     </ClInclude>
     <ClInclude Include="core\TPServer.h">
@@ -202,6 +208,9 @@
       <Filter>Util</Filter>
     </ClInclude>
     <ClInclude Include="TP_generated.h" />
+    <ClInclude Include="Battle\BattleService.h">
+      <Filter>Battle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="TP.fbs" />

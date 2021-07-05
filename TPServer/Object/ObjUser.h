@@ -1,7 +1,7 @@
 #pragma once
 
 #include "TPObject.h"
-#include "../Component/CompUserLocation.h"
+#include "../Component/CompUserTransform.h"
 
 class ObjUser : public TPObject
 {
@@ -15,21 +15,23 @@ public:
 	~ObjUser();
 	
 	wchar_t* GetUserId() const;
+	char* GetCUserId() const;
 	wchar_t* GetPassword() const;
 	int GetRoomId() const;
 	int64_t GetAvgRttMs() const;
-	shared_ptr<CompUserLocation> GetCompUserLocation() const;
+	shared_ptr<CompUserTransform> GetCompUserTransform() const;
 
-	void SetCompUserLocation(shared_ptr<CompUserLocation> _userLocation);
+	void SetCompUserTransform(shared_ptr<CompUserTransform> _userTransform);
 	void SetRoomId(const int _roomId);
 
 	void UpdateRtt(const int64_t _rttMs);
 
 private:
 	wchar_t* userId;
+	char* cUserId;
 	wchar_t* password;
 	
-	shared_ptr<CompUserLocation> userLocation;
+	shared_ptr<CompUserTransform> userTransform;
 
 	int roomId;
 

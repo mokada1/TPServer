@@ -15,5 +15,7 @@ private:
 	void ProcReqMove(const Packet& packet);
 	TPResult* ProcReqRoundTripTime(const Packet& packet);
 	void ProcReqLocationSync(const Packet& packet);
-	void ProcReqInputAction(const Packet& packet);
+	void ProcReqAction(const Packet& packet);
+	void ProcReqDamage(const Packet& packet);
+	void ProcReqRotate(const Packet& packet);
 };

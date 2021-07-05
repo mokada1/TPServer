@@ -210,7 +210,7 @@ Packet PacketGenerator::CreateBcastLocationSync(Session* const owner, const TB_R
 	return CreatePacket(PROTOCOL::BCAST_LOCATION_SYNC, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
 }
 
-Packet PacketGenerator::CreateBcastInputAction(Session* const owner, const TB_ReqInputAction& reqInputAction)
+Packet PacketGenerator::CreateBcastAction(Session* const owner, const TB_ReqAction& reqInputAction)
 {
 	vector<Session*> packetCastGroup;
 	packetCastGroup.push_back(owner);
@@ -220,9 +220,35 @@ Packet PacketGenerator::CreateBcastInputAction(Session* const owner, const TB_Re
 	auto offsetUserId = fbb.CreateString(owner->GetCUserId());
 	auto offsetOperation = reqInputAction.Operation();
 
-	fbb.Finish(CreateTB_BcastInputAction(fbb, offsetUserId, offsetOperation));
+	fbb.Finish(CreateTB_BcastAction(fbb, offsetUserId, offsetOperation));
 
-	return CreatePacket(PROTOCOL::BCAST_INPUT_ACTION, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
+	return CreatePacket(PROTOCOL::BCAST_ACTION, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
+}
+
+Packet PacketGenerator::CreateBcastHit(const char* const userId)
+{
+	flatbuffers::FlatBufferBuilder fbb;
+
+	auto offsetUserId = fbb.CreateString(userId);
+
+	fbb.Finish(CreateTB_BcastHit(fbb, offsetUserId));
+
+	return CreatePacket(PROTOCOL::BCAST_HIT, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST);
+}
+
+Packet PacketGenerator::CreateBcastRotate(Session* const owner, const TB_ReqRotate& reqRotate)
+{
+	vector<Session*> packetCastGroup;
+	packetCastGroup.push_back(owner);
+
+	flatbuffers::FlatBufferBuilder fbb;
+
+	auto offsetUserId = fbb.CreateString(owner->GetCUserId());
+	auto offsetRotation = reqRotate.Rotation();
+
+	fbb.Finish(CreateTB_BcastRotate(fbb, offsetUserId, offsetRotation));
+
+	return CreatePacket(PROTOCOL::BCAST_ROTATE, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
 }
 
 Packet PacketGenerator::CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner)
@@ -298,7 +324,9 @@ bool PacketGenerator::IsValidHeader(const PROTOCOL protocol)
 	case PROTOCOL::REQ_ROUND_TRIP_TIME:
 	case PROTOCOL::REQ_MOVE:
 	case PROTOCOL::REQ_LOCATION_SYNC:
-	case PROTOCOL::REQ_INPUT_ACTION:
+	case PROTOCOL::REQ_ACTION:
+	case PROTOCOL::REQ_DAMAGE:
+	case PROTOCOL::REQ_ROTATE:
 		return true;
 	}
 	return false;

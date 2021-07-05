@@ -13,19 +13,16 @@ bool ObjUser::IsValid() const
 
 flatbuffers::Offset<TB_ObjUser> ObjUser::Serialize(flatbuffers::FlatBufferBuilder& _fbb) const
 {
-	char hUserId[SIZE_USER_USER_ID], hPassword[SIZE_USER_PASSWORD];
+	char hUserId[SIZE_USER_USER_ID];
 	TPUtil::GetInstance().WCharToChar(hUserId, SIZE_USER_USER_ID, userId);
-	TPUtil::GetInstance().WCharToChar(hPassword, SIZE_USER_PASSWORD, password);
 	auto offsetUserId = _fbb.CreateString(hUserId);
-	auto offsetPassword = _fbb.CreateString(hPassword);	
-	auto offsetUserLocation = userLocation ? userLocation->Serialize(_fbb) : 0;
+	auto offsetUserTransform = userTransform ? userTransform->Serialize(_fbb) : 0;
 
 	TB_ObjUserBuilder builder(_fbb);	
 	builder.add_UserId(offsetUserId);
-	builder.add_Password(offsetPassword);
-	if (!offsetUserLocation.IsNull())
+	if (!offsetUserTransform.IsNull())
 	{
-		builder.add_UserLocation(offsetUserLocation);
+		builder.add_UserTransform(offsetUserTransform);
 	}	
 	return builder.Finish();
 }
@@ -33,8 +30,9 @@ flatbuffers::Offset<TB_ObjUser> ObjUser::Serialize(flatbuffers::FlatBufferBuilde
 ObjUser::ObjUser()
 {
 	this->userId = nullptr;
+	this->cUserId = nullptr;
 	this->password = nullptr;
-	this->userLocation = nullptr;
+	this->userTransform = nullptr;
 	totalRttMs = 0;
 	rttCount = 0;
 	avgRttMs = 0;
@@ -42,11 +40,16 @@ ObjUser::ObjUser()
 
 ObjUser::ObjUser(wchar_t* const _userId, wchar_t* const _password)
 {
-	this->userId = new wchar_t[SIZE_USER_USER_ID];
-	this->password = new wchar_t[SIZE_USER_PASSWORD];
+	this->userId = new wchar_t[SIZE_USER_USER_ID];	
 	wcscpy_s(this->userId, SIZE_USER_USER_ID, _userId);
+	
+	this->cUserId = new char[SIZE_USER_USER_ID];
+	TPUtil::GetInstance().WCharToChar(this->cUserId, SIZE_USER_USER_ID, this->userId);
+
+	this->password = new wchar_t[SIZE_USER_PASSWORD];
 	wcscpy_s(this->password, SIZE_USER_PASSWORD, _password);
-	this->userLocation = nullptr;
+
+	this->userTransform = nullptr;
 	totalRttMs = 0;
 	rttCount = 0;
 	avgRttMs = 0;
@@ -58,19 +61,28 @@ ObjUser::~ObjUser()
 	{
 		delete[] userId;
 	}
+	if (cUserId)
+	{
+		delete[] cUserId;
+	}
 	if (password)
 	{
 		delete[] password;
 	}
-	if (userLocation)
+	if (userTransform)
 	{
-		userLocation.reset();
+		userTransform.reset();
 	}
 }
 
 wchar_t* ObjUser::GetUserId() const
 {
 	return userId;
+}
+
+char* ObjUser::GetCUserId() const
+{
+	return cUserId;
 }
 
 wchar_t* ObjUser::GetPassword() const
@@ -88,14 +100,14 @@ int64_t ObjUser::GetAvgRttMs() const
 	return avgRttMs;
 }
 
-shared_ptr<CompUserLocation> ObjUser::GetCompUserLocation() const
+shared_ptr<CompUserTransform> ObjUser::GetCompUserTransform() const
 {
-	return userLocation;
+	return userTransform;
 }
 
-void ObjUser::SetCompUserLocation(shared_ptr<CompUserLocation> _userLocation)
+void ObjUser::SetCompUserTransform(shared_ptr<CompUserTransform> _userTransform)
 {
-	this->userLocation = _userLocation;
+	this->userTransform = _userTransform;
 }
 
 void ObjUser::SetRoomId(const int _roomId)

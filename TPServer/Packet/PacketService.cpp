@@ -6,6 +6,7 @@
 #include "../Session/Session.h"
 #include "../Util/TPResult.h"
 #include "../Util/TPLogger.h"
+#include "../Battle/BattleService.h"
 
 void PacketService::Process(const Packet& packet)
 {
@@ -25,8 +26,14 @@ void PacketService::Process(const Packet& packet)
 	case PROTOCOL::REQ_ROUND_TRIP_TIME:
 		result = ProcReqRoundTripTime(packet);
 		break;
-	case PROTOCOL::REQ_INPUT_ACTION:
-		ProcReqInputAction(packet);
+	case PROTOCOL::REQ_ACTION:
+		ProcReqAction(packet);
+		break;
+	case PROTOCOL::REQ_DAMAGE:
+		ProcReqDamage(packet);
+		break;
+	case PROTOCOL::REQ_ROTATE:
+		ProcReqRotate(packet);
 		break;
 	default:
 		break;
@@ -92,10 +99,10 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	auto objUser = static_pointer_cast<ObjUser>(obj);
 
 	auto comp = resultLoadUserInfo->GetCompList().front();
-	auto compUserLocation = static_pointer_cast<CompUserLocation>(comp);
+	auto compUserTransform = static_pointer_cast<CompUserTransform>(comp);
 	
 	// 유저 컴포넌트 설정
-	objUser->SetCompUserLocation(compUserLocation);
+	objUser->SetCompUserTransform(compUserTransform);
 
 	// 세션에 유저 아이디 설정
 	owner->SetUserId(wUserId);
@@ -181,19 +188,77 @@ void PacketService::ProcReqLocationSync(const Packet& packet)
 	{
 		return;
 	}
-	auto compUserLocation = objUser->GetCompUserLocation();
-	compUserLocation->SetLocation(location->x(), location->y(), location->z());
+	auto compUserTransform = objUser->GetCompUserTransform();
+	compUserTransform->SetLocation({ location->x(), location->y(), location->z() });
 
 	auto packetBcastLocationSync = PacketGenerator::GetInstance().CreateBcastLocationSync(owner, *req);
 	PacketProcessor::GetInstance().SendPacket(packetBcastLocationSync);
 }
 
-void PacketService::ProcReqInputAction(const Packet& packet)
+void PacketService::ProcReqAction(const Packet& packet)
 {
 	auto body = packet.GetBody();
 	auto owner = packet.GetOwner();
 
-	auto req = flatbuffers::GetRoot<TB_ReqInputAction>(body);
-	auto packetBcastInputAction = PacketGenerator::GetInstance().CreateBcastInputAction(owner, *req);
-	PacketProcessor::GetInstance().SendPacket(packetBcastInputAction);
+	auto req = flatbuffers::GetRoot<TB_ReqAction>(body);
+
+	auto objUser = GameRoomService::GetInstance().GetObjUser(owner->GetUserId());
+	if (!objUser)
+	{
+		return;
+	}
+	auto inputAction = req->InputAction();
+	auto compUserTransform = objUser->GetCompUserTransform();
+	compUserTransform->SetLocation({ inputAction->Location()->x(), inputAction->Location()->y(), inputAction->Location()->z() });
+	compUserTransform->SetRotation({ inputAction->Rotation()->x(), inputAction->Rotation()->y(), inputAction->Rotation()->z() });
+
+	auto packetBcastAction = PacketGenerator::GetInstance().CreateBcastAction(owner, *req);
+	PacketProcessor::GetInstance().SendPacket(packetBcastAction);
+}
+
+void PacketService::ProcReqDamage(const Packet& packet)
+{
+	auto body = packet.GetBody();
+	auto owner = packet.GetOwner();
+
+	//auto req = flatbuffers::GetRoot<TB_ReqDamage>(body);
+
+	auto objUser = GameRoomService::GetInstance().GetObjUser(owner->GetUserId());
+	if (!objUser)
+	{
+		return;
+	}
+
+	auto hitList = BattleService::GetInstance().GetObjUserListAround(objUser);
+	if (hitList.empty())
+	{
+		return;
+	}
+
+	for (auto& hit : hitList)
+	{
+		auto cUserId = hit->GetCUserId();
+		auto packetBcastHit = PacketGenerator::GetInstance().CreateBcastHit(cUserId);
+		PacketProcessor::GetInstance().SendPacket(packetBcastHit);
+	}
+}
+
+void PacketService::ProcReqRotate(const Packet& packet)
+{
+	auto body = packet.GetBody();
+	auto owner = packet.GetOwner();
+
+	auto req = flatbuffers::GetRoot<TB_ReqRotate>(body);
+
+	auto objUser = GameRoomService::GetInstance().GetObjUser(owner->GetUserId());
+	if (!objUser)
+	{
+		return;
+	}
+	auto rotation = req->Rotation();
+	auto compUserTransform = objUser->GetCompUserTransform();
+	compUserTransform->SetRotation({ rotation->x(), rotation->y(), rotation->z() });
+
+	auto packetBcastRotate = PacketGenerator::GetInstance().CreateBcastRotate(owner, *req);
+	PacketProcessor::GetInstance().SendPacket(packetBcastRotate);
 }

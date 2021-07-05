@@ -18,7 +18,9 @@ public:
 	Packet CreateBcastExitGameRoom(const shared_ptr<ObjUser> objUser);
 	Packet CreateBcastMove(Session* const owner, const TB_ReqMove& reqMove);
 	Packet CreateBcastLocationSync(Session* const owner, const TB_ReqLocationSync& reqLocationSync);
-	Packet CreateBcastInputAction(Session* const owner, const TB_ReqInputAction& reqInputAction);
+	Packet CreateBcastAction(Session* const owner, const TB_ReqAction& reqAction);
+	Packet CreateBcastHit(const char* const userId);
+	Packet CreateBcastRotate(Session* const owner, const TB_ReqRotate& reqRotate);
 	
 private:	
 	Packet CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner, PACKET_CAST_TYPE packetCastType);

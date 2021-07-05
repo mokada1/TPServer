@@ -98,7 +98,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="component\CompUserLocation.cpp" />
+    <ClCompile Include="Battle\BattleService.cpp" />
+    <ClCompile Include="component\CompUserTransform.cpp" />
     <ClCompile Include="core\TPServer.cpp" />
     <ClCompile Include="db\DBServer.cpp" />
     <ClCompile Include="db\DBService.cpp" />
@@ -118,7 +119,8 @@
     <ClCompile Include="util\TPUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="component\CompUserLocation.h" />
+    <ClInclude Include="Battle\BattleService.h" />
+    <ClInclude Include="component\CompUserTransform.h" />
     <ClInclude Include="component\TPComponent.h" />
     <ClInclude Include="core\TPServer.h" />
     <ClInclude Include="db\DBServer.h" />
