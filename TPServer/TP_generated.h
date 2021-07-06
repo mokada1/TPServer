@@ -113,35 +113,38 @@ enum OpAction {
   OpAction_Vaulting = 2,
   OpAction_DrawWeapon = 3,
   OpAction_MeleeAttack = 4,
+  OpAction_MeleeAttackCombo = 5,
   OpAction_MIN = OpAction_None,
-  OpAction_MAX = OpAction_MeleeAttack
+  OpAction_MAX = OpAction_MeleeAttackCombo
 };
 
-inline const OpAction (&EnumValuesOpAction())[5] {
+inline const OpAction (&EnumValuesOpAction())[6] {
   static const OpAction values[] = {
     OpAction_None,
     OpAction_Jump,
     OpAction_Vaulting,
     OpAction_DrawWeapon,
-    OpAction_MeleeAttack
+    OpAction_MeleeAttack,
+    OpAction_MeleeAttackCombo
   };
   return values;
 }
 
 inline const char * const *EnumNamesOpAction() {
-  static const char * const names[6] = {
+  static const char * const names[7] = {
     "None",
     "Jump",
     "Vaulting",
     "DrawWeapon",
     "MeleeAttack",
+    "MeleeAttackCombo",
     nullptr
   };
   return names;
 }
 
 inline const char *EnumNameOpAction(OpAction e) {
-  if (flatbuffers::IsOutRange(e, OpAction_None, OpAction_MeleeAttack)) return "";
+  if (flatbuffers::IsOutRange(e, OpAction_None, OpAction_MeleeAttackCombo)) return "";
   const size_t index = static_cast<size_t>(e);
   return EnumNamesOpAction()[index];
 }

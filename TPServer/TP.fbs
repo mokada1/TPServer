@@ -19,6 +19,7 @@ enum OpAction : byte
 	Vaulting = 2,
 	DrawWeapon = 3,
 	MeleeAttack = 4,
+	MeleeAttackCombo = 5,
 }
 
 // Struct
