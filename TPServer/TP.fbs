@@ -60,6 +60,7 @@ table TB_InputAction
 {	
 	Location: ST_Vec3;
 	Rotation: ST_Vec3;
+	ComboSectionName: string;
 }
 
 // Request
@@ -145,6 +146,7 @@ table TB_BcastAction
 {
 	UserId: string;
 	Operation: OpAction;
+	InputAction: TB_InputAction;
 }
 
 table TB_BcastHit

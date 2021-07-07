@@ -369,7 +369,8 @@ struct TB_InputAction FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef TB_InputActionBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_LOCATION = 4,
-    VT_ROTATION = 6
+    VT_ROTATION = 6,
+    VT_COMBOSECTIONNAME = 8
   };
   const ST_Vec3 *Location() const {
     return GetStruct<const ST_Vec3 *>(VT_LOCATION);
@@ -377,10 +378,15 @@ struct TB_InputAction FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const ST_Vec3 *Rotation() const {
     return GetStruct<const ST_Vec3 *>(VT_ROTATION);
   }
+  const flatbuffers::String *ComboSectionName() const {
+    return GetPointer<const flatbuffers::String *>(VT_COMBOSECTIONNAME);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<ST_Vec3>(verifier, VT_LOCATION) &&
            VerifyField<ST_Vec3>(verifier, VT_ROTATION) &&
+           VerifyOffset(verifier, VT_COMBOSECTIONNAME) &&
+           verifier.VerifyString(ComboSectionName()) &&
            verifier.EndTable();
   }
 };
@@ -394,6 +400,9 @@ struct TB_InputActionBuilder {
   }
   void add_Rotation(const ST_Vec3 *Rotation) {
     fbb_.AddStruct(TB_InputAction::VT_ROTATION, Rotation);
+  }
+  void add_ComboSectionName(flatbuffers::Offset<flatbuffers::String> ComboSectionName) {
+    fbb_.AddOffset(TB_InputAction::VT_COMBOSECTIONNAME, ComboSectionName);
   }
   explicit TB_InputActionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -410,11 +419,26 @@ struct TB_InputActionBuilder {
 inline flatbuffers::Offset<TB_InputAction> CreateTB_InputAction(
     flatbuffers::FlatBufferBuilder &_fbb,
     const ST_Vec3 *Location = 0,
-    const ST_Vec3 *Rotation = 0) {
+    const ST_Vec3 *Rotation = 0,
+    flatbuffers::Offset<flatbuffers::String> ComboSectionName = 0) {
   TB_InputActionBuilder builder_(_fbb);
+  builder_.add_ComboSectionName(ComboSectionName);
   builder_.add_Rotation(Rotation);
   builder_.add_Location(Location);
   return builder_.Finish();
+}
+
+inline flatbuffers::Offset<TB_InputAction> CreateTB_InputActionDirect(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    const ST_Vec3 *Location = 0,
+    const ST_Vec3 *Rotation = 0,
+    const char *ComboSectionName = nullptr) {
+  auto ComboSectionName__ = ComboSectionName ? _fbb.CreateString(ComboSectionName) : 0;
+  return CreateTB_InputAction(
+      _fbb,
+      Location,
+      Rotation,
+      ComboSectionName__);
 }
 
 struct TB_ReqLogin FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
@@ -1133,7 +1157,8 @@ struct TB_BcastAction FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef TB_BcastActionBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_USERID = 4,
-    VT_OPERATION = 6
+    VT_OPERATION = 6,
+    VT_INPUTACTION = 8
   };
   const flatbuffers::String *UserId() const {
     return GetPointer<const flatbuffers::String *>(VT_USERID);
@@ -1141,11 +1166,16 @@ struct TB_BcastAction FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   OpAction Operation() const {
     return static_cast<OpAction>(GetField<int8_t>(VT_OPERATION, 0));
   }
+  const TB_InputAction *InputAction() const {
+    return GetPointer<const TB_InputAction *>(VT_INPUTACTION);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_USERID) &&
            verifier.VerifyString(UserId()) &&
            VerifyField<int8_t>(verifier, VT_OPERATION) &&
+           VerifyOffset(verifier, VT_INPUTACTION) &&
+           verifier.VerifyTable(InputAction()) &&
            verifier.EndTable();
   }
 };
@@ -1159,6 +1189,9 @@ struct TB_BcastActionBuilder {
   }
   void add_Operation(OpAction Operation) {
     fbb_.AddElement<int8_t>(TB_BcastAction::VT_OPERATION, static_cast<int8_t>(Operation), 0);
+  }
+  void add_InputAction(flatbuffers::Offset<TB_InputAction> InputAction) {
+    fbb_.AddOffset(TB_BcastAction::VT_INPUTACTION, InputAction);
   }
   explicit TB_BcastActionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -1175,8 +1208,10 @@ struct TB_BcastActionBuilder {
 inline flatbuffers::Offset<TB_BcastAction> CreateTB_BcastAction(
     flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<flatbuffers::String> UserId = 0,
-    OpAction Operation = OpAction_None) {
+    OpAction Operation = OpAction_None,
+    flatbuffers::Offset<TB_InputAction> InputAction = 0) {
   TB_BcastActionBuilder builder_(_fbb);
+  builder_.add_InputAction(InputAction);
   builder_.add_UserId(UserId);
   builder_.add_Operation(Operation);
   return builder_.Finish();
@@ -1185,12 +1220,14 @@ inline flatbuffers::Offset<TB_BcastAction> CreateTB_BcastAction(
 inline flatbuffers::Offset<TB_BcastAction> CreateTB_BcastActionDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     const char *UserId = nullptr,
-    OpAction Operation = OpAction_None) {
+    OpAction Operation = OpAction_None,
+    flatbuffers::Offset<TB_InputAction> InputAction = 0) {
   auto UserId__ = UserId ? _fbb.CreateString(UserId) : 0;
   return CreateTB_BcastAction(
       _fbb,
       UserId__,
-      Operation);
+      Operation,
+      InputAction);
 }
 
 struct TB_BcastHit FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {

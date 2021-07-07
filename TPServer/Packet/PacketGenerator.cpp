@@ -181,8 +181,9 @@ Packet PacketGenerator::CreateBcastMove(Session* const owner, const TB_ReqMove& 
 	flatbuffers::FlatBufferBuilder fbb;
 
 	auto offsetUserId = fbb.CreateString(owner->GetCUserId());
-	auto inputMove = reqMove.InputMove();
 	auto offsetOperation = reqMove.Operation();
+
+	auto inputMove = reqMove.InputMove();	
 	auto offsetInputMove = CreateTB_InputMove(fbb,
 		inputMove->ForwardVector(),
 		inputMove->RightVector(),
@@ -219,8 +220,16 @@ Packet PacketGenerator::CreateBcastAction(Session* const owner, const TB_ReqActi
 
 	auto offsetUserId = fbb.CreateString(owner->GetCUserId());
 	auto offsetOperation = reqInputAction.Operation();
+	
+	auto inputAction = reqInputAction.InputAction();
+	auto offsetComboSectionName = fbb.CreateString(inputAction->ComboSectionName());
+	auto offsetInputAction = CreateTB_InputAction(fbb,
+		inputAction->Location(),
+		inputAction->Rotation(),
+		offsetComboSectionName
+	);
 
-	fbb.Finish(CreateTB_BcastAction(fbb, offsetUserId, offsetOperation));
+	fbb.Finish(CreateTB_BcastAction(fbb, offsetUserId, offsetOperation, offsetInputAction));
 
 	return CreatePacket(PROTOCOL::BCAST_ACTION, fbb, nullptr, PACKET_CAST_TYPE::BROADCAST, packetCastGroup);
 }
