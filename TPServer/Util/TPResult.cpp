@@ -88,12 +88,12 @@ void TPResult::SetNextResult(TPResult* const _nextResult)
 
 void TPResult::AddObject(TPObject* const _object)
 {
-	objectList.push_back(shared_ptr<TPObject>(_object));
+	objectList.emplace_back(shared_ptr<TPObject>(_object));
 }
 
 void TPResult::AddComp(TPComponent* const _comp)
 {
-	compList.push_back(shared_ptr<TPComponent>(_comp));
+	compList.emplace_back(shared_ptr<TPComponent>(_comp));
 }
 
 void TPResult::init(const wchar_t* const _message)

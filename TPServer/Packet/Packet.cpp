@@ -75,7 +75,7 @@ Session* Packet::GetOwner() const
 	return owner;
 }
 
-PACKET_CAST_TYPE Packet::GetPacketCastType() const
+PacketCastType Packet::GetPacketCastType() const
 {
 	return packetCastType;
 }
@@ -97,7 +97,7 @@ void Packet::Clear()
 	buffer = nullptr;
 	packetSize = 0;
 	owner = nullptr;
-	packetCastType = PACKET_CAST_TYPE::UNICAST;
+	packetCastType = PacketCastType::UNICAST;
 	if(!packetCastGroup.empty()) packetCastGroup.clear();
 	isDAllocBuf = false;
 }

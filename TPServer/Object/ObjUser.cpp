@@ -117,6 +117,11 @@ void ObjUser::SetRoomId(const int _roomId)
 
 void ObjUser::UpdateRtt(const int64_t _rttMs)
 {
+	if (rttCount >= MAX_RTT_COUNT)
+	{
+		totalRttMs = 0;
+		rttCount = 0;
+	}
 	totalRttMs += _rttMs;
 	rttCount++;
 	avgRttMs = totalRttMs / rttCount;

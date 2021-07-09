@@ -109,6 +109,7 @@
     <ClCompile Include="object\ObjUser.cpp" />
     <ClCompile Include="packet\Packet.cpp" />
     <ClCompile Include="packet\PacketGenerator.cpp" />
+    <ClCompile Include="Packet\PacketGeneratorServer.cpp" />
     <ClCompile Include="packet\PacketProcessor.cpp" />
     <ClCompile Include="packet\PacketService.cpp" />
     <ClCompile Include="session\Session.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="object\TPObject.h" />
     <ClInclude Include="packet\Packet.h" />
     <ClInclude Include="packet\PacketGenerator.h" />
+    <ClInclude Include="Packet\PacketGeneratorServer.h" />
     <ClInclude Include="packet\PacketProcessor.h" />
     <ClInclude Include="packet\PacketService.h" />
     <ClInclude Include="packet\Protocol.h" />

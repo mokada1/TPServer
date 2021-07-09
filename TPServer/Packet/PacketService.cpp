@@ -1,7 +1,7 @@
 #include "PacketService.h"
 #include "PacketProcessor.h"
 #include "../DB/DBService.h"
-#include "PacketGenerator.h"
+#include "PacketGeneratorServer.h"
 #include "../GameRoom/GameRoomService.h"
 #include "../Session/Session.h"
 #include "../Util/TPResult.h"
@@ -71,7 +71,7 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	{
 		TPLogger::GetInstance().PrintLog(DUPLICATE_LOGIN);
 		auto result = new TPResult();
-		auto packetError = PacketGenerator::GetInstance().CreateError(owner, DUPLICATE_LOGIN);
+		auto packetError = PacketGeneratorServer::GetInstance().CreateError(owner, DUPLICATE_LOGIN);
 		result->SetPacket(packetError);
 		return result;
 	}
@@ -80,7 +80,7 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	auto resultLoginUser = DBService::GetInstance().LoginUser(wUserId, wPassword);
 	if (!resultLoginUser->GetFlag())
 	{
-		auto packetError = PacketGenerator::GetInstance().CreateError(owner, resultLoginUser->GetMsg());
+		auto packetError = PacketGeneratorServer::GetInstance().CreateError(owner, resultLoginUser->GetMsg());
 		resultLoginUser->SetPacket(packetError);
 		return resultLoginUser;
 	}
@@ -90,7 +90,7 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	resultLoadUserInfo->SetNextResult(resultLoginUser);
 	if (!resultLoadUserInfo->GetFlag())
 	{
-		auto packetError = PacketGenerator::GetInstance().CreateError(owner, resultLoadUserInfo->GetMsg());
+		auto packetError = PacketGeneratorServer::GetInstance().CreateError(owner, resultLoadUserInfo->GetMsg());
 		resultLoadUserInfo->SetPacket(packetError);
 		return resultLoadUserInfo;
 	}
@@ -110,17 +110,17 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	// 유저 방 참가
 	if (!GameRoomService::GetInstance().AddObjUser(objUser))
 	{
-		auto packetError = PacketGenerator::GetInstance().CreateError(owner, FAIL_ADD_OBJ_USER_GAME_ROOM);
+		auto packetError = PacketGeneratorServer::GetInstance().CreateError(owner, FAIL_ADD_OBJ_USER_GAME_ROOM);
 		resultLoadUserInfo->SetPacket(packetError);
 		return resultLoadUserInfo;
 	}
 
 	// 방 정보 전달용 패킷 생성
 	auto gameRoom = GameRoomService::GetInstance().GetGameRoom();
-	auto packetResLogin = PacketGenerator::GetInstance().CreateResLogin(owner, *gameRoom);
+	auto packetResLogin = PacketGeneratorServer::GetInstance().CreateResLogin(owner, *gameRoom);
 
 	// 방 입장 패킷 전송
-	auto packetBcastEnterGameRoom = PacketGenerator::GetInstance().CreateBcastEnterGameRoom(owner, objUser);
+	auto packetBcastEnterGameRoom = PacketGeneratorServer::GetInstance().CreateBcastEnterGameRoom(owner, objUser);
 	PacketProcessor::GetInstance().SendPacket(packetBcastEnterGameRoom);
 
 	resultLoadUserInfo->SetPacket(packetResLogin);
@@ -133,7 +133,7 @@ void PacketService::ProcReqMove(const Packet& packet)
 	auto owner = packet.GetOwner();
 
 	auto req = flatbuffers::GetRoot<TB_ReqMove>(body);
-	auto packetBcastMove = PacketGenerator::GetInstance().CreateBcastMove(owner, *req);
+	auto packetBcastMove = PacketGeneratorServer::GetInstance().CreateBcastMove(owner, *req);
 	PacketProcessor::GetInstance().SendPacket(packetBcastMove);
 }
 
@@ -169,7 +169,7 @@ TPResult* PacketService::ProcReqRoundTripTime(const Packet& packet)
 	}
 	gameRoom->UpdateRtt();
 
-	auto packetResRoundTripTime = PacketGenerator::GetInstance().CreateResRoundTripTime(owner, *gameRoom);
+	auto packetResRoundTripTime = PacketGeneratorServer::GetInstance().CreateResRoundTripTime(owner, *gameRoom);
 	result->SetPacket(packetResRoundTripTime);
 	return result;
 }
@@ -191,7 +191,7 @@ void PacketService::ProcReqLocationSync(const Packet& packet)
 	auto compUserTransform = objUser->GetCompUserTransform();
 	compUserTransform->SetLocation({ location->x(), location->y(), location->z() });
 
-	auto packetBcastLocationSync = PacketGenerator::GetInstance().CreateBcastLocationSync(owner, *req);
+	auto packetBcastLocationSync = PacketGeneratorServer::GetInstance().CreateBcastLocationSync(owner, *req);
 	PacketProcessor::GetInstance().SendPacket(packetBcastLocationSync);
 }
 
@@ -212,7 +212,7 @@ void PacketService::ProcReqAction(const Packet& packet)
 	compUserTransform->SetLocation({ inputAction->Location()->x(), inputAction->Location()->y(), inputAction->Location()->z() });
 	compUserTransform->SetRotation({ inputAction->Rotation()->x(), inputAction->Rotation()->y(), inputAction->Rotation()->z() });
 
-	auto packetBcastAction = PacketGenerator::GetInstance().CreateBcastAction(owner, *req);
+	auto packetBcastAction = PacketGeneratorServer::GetInstance().CreateBcastAction(owner, *req);
 	PacketProcessor::GetInstance().SendPacket(packetBcastAction);
 }
 
@@ -238,7 +238,7 @@ void PacketService::ProcReqDamage(const Packet& packet)
 	for (auto& hit : hitList)
 	{
 		auto cUserId = hit->GetCUserId();
-		auto packetBcastHit = PacketGenerator::GetInstance().CreateBcastHit(cUserId);
+		auto packetBcastHit = PacketGeneratorServer::GetInstance().CreateBcastHit(cUserId);
 		PacketProcessor::GetInstance().SendPacket(packetBcastHit);
 	}
 }
@@ -259,6 +259,6 @@ void PacketService::ProcReqRotate(const Packet& packet)
 	auto compUserTransform = objUser->GetCompUserTransform();
 	compUserTransform->SetRotation({ rotation->x(), rotation->y(), rotation->z() });
 
-	auto packetBcastRotate = PacketGenerator::GetInstance().CreateBcastRotate(owner, *req);
+	auto packetBcastRotate = PacketGeneratorServer::GetInstance().CreateBcastRotate(owner, *req);
 	PacketProcessor::GetInstance().SendPacket(packetBcastRotate);
 }

@@ -27,7 +27,7 @@ vector<shared_ptr<ObjUser>> BattleService::GetObjUserListAround(shared_ptr<ObjUs
 		auto location = compUserLocation->GetLocation();
 		if (TPUtil::GetInstance().Distance(tLocation, location) <= DISTANCE_AROUND)
 		{
-			objUserList.push_back(objUser);
+			objUserList.emplace_back(objUser);
 		}
 	}
 

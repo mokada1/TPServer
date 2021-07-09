@@ -28,7 +28,7 @@ public:
 	char* GetBuffer() const;
 	size_t GetPacketSize() const;
 	Session* GetOwner() const;	
-	PACKET_CAST_TYPE GetPacketCastType() const;
+	PacketCastType GetPacketCastType() const;
 	vector<Session*> GetPacketCastGroup() const;
 	bool IsValid() const;
 	void Clear();	
@@ -41,7 +41,7 @@ private:
 	char* buffer;
 	size_t packetSize;
 	Session* owner;
-	PACKET_CAST_TYPE packetCastType;
+	PacketCastType packetCastType;
 	vector<Session*> packetCastGroup;
 	bool isDAllocBuf;
 };
@@ -71,28 +71,28 @@ class PacketSubInfo
 public:
 	PacketSubInfo(Session* const _owner)
 	{
-		init(_owner, PACKET_CAST_TYPE::UNICAST, vector<Session*>(), true);
+		init(_owner, PacketCastType::UNICAST, vector<Session*>(), true);
 	}
-	PacketSubInfo(Session* const _owner, PACKET_CAST_TYPE _packetCastType)
+	PacketSubInfo(Session* const _owner, PacketCastType _packetCastType)
 	{
 		init(_owner, _packetCastType, vector<Session*>(), true);
 	}
-	PacketSubInfo(Session* const _owner, PACKET_CAST_TYPE _packetCastType, const vector<Session*>& _packetCastGroup)
+	PacketSubInfo(Session* const _owner, PacketCastType _packetCastType, const vector<Session*>& _packetCastGroup)
 	{
 		init(_owner, _packetCastType, _packetCastGroup, true);
 	}
-	PacketSubInfo(Session* const _owner, PACKET_CAST_TYPE _packetCastType, const vector<Session*>& _packetCastGroup, bool _isDAllocBuf)
+	PacketSubInfo(Session* const _owner, PacketCastType _packetCastType, const vector<Session*>& _packetCastGroup, bool _isDAllocBuf)
 	{
 		init(_owner, _packetCastType, _packetCastGroup, _isDAllocBuf);
 	}
 
 	Session* GetOwner() const { return owner; }
-	PACKET_CAST_TYPE GetPacketCastType() const { return packetCastType; }
+	PacketCastType GetPacketCastType() const { return packetCastType; }
 	bool GetIsDAllocBuf() const { return isDAllocBuf; }
 	vector<Session*> GetPacketCastGroup() const { return packetCastGroup; }
 
 private:
-	void init(Session* const _owner, PACKET_CAST_TYPE _packetCastType, const vector<Session*>& _packetCastGroup, bool _isDAllocBuf)
+	void init(Session* const _owner, PacketCastType _packetCastType, const vector<Session*>& _packetCastGroup, bool _isDAllocBuf)
 	{
 		owner = _owner;
 		packetCastType = _packetCastType;
@@ -101,7 +101,7 @@ private:
 	}
 
 	Session* owner;
-	PACKET_CAST_TYPE packetCastType;
+	PacketCastType packetCastType;
 	bool isDAllocBuf;
 	vector<Session*> packetCastGroup;
 };

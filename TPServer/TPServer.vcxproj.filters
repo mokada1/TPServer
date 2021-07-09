@@ -91,6 +91,9 @@
     <ClCompile Include="Battle\BattleService.cpp">
       <Filter>Battle</Filter>
     </ClCompile>
+    <ClCompile Include="Packet\PacketGeneratorServer.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="flatbuffers\reflection_generated.h">
@@ -210,6 +213,9 @@
     <ClInclude Include="TP_generated.h" />
     <ClInclude Include="Battle\BattleService.h">
       <Filter>Battle</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet\PacketGeneratorServer.h">
+      <Filter>Packet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

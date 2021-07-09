@@ -19,6 +19,7 @@ void TPServer::Initialize()
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
     {
         TPLogger::GetInstance().PrintLog(WSASTARTUP_ERROR);
+        return;
     }
 
     hCompletionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
@@ -43,8 +44,9 @@ void TPServer::Start()
     bind(hServSock, (SOCKADDR*)&servAddr, sizeof(servAddr));
     listen(hServSock, LISTEN_BACKLOG);
 
+    TPLogger::GetInstance().PrintLog(SERVER_STARTED);
+
     acceptThread = new thread([&](){ Accept(); });
-    recvThread = new thread([&]() { ProcRecvPacket(); });
 }
 
 void TPServer::Close()
@@ -59,11 +61,6 @@ void TPServer::Close()
         t->join();
         delete t;
     }
-    if (recvThread)
-    {
-        recvThread->join();
-        delete recvThread;
-    }
 
     SessionPool::GetInstance().Destroy();
     WSACleanup();    
@@ -71,13 +68,6 @@ void TPServer::Close()
 
 void TPServer::Accept()
 {
-    LPPER_HANDLE_DATA perHandleData;
-
-    DWORD recvBytes;
-    DWORD flags;
-
-    TPLogger::GetInstance().PrintLog(SERVER_STARTED);
-
     while (TRUE)
     {
         SOCKADDR_IN clntAddr;
@@ -95,7 +85,7 @@ void TPServer::Accept()
             break;
         }
 
-        perHandleData = new PER_HANDLE_DATA;
+        LPPER_HANDLE_DATA perHandleData = new PER_HANDLE_DATA;
         perHandleData->hClntSock = hClntSock;
         memcpy(&(perHandleData->clntAddr), &clntAddr, addrLen);
 
@@ -112,9 +102,9 @@ void TPServer::Accept()
         perIoData->wsaBuf.len = MAX_BUFF_SIZE;
         perIoData->wsaBuf.buf = perIoData->buffer;
         perIoData->operation = OP_ClientToServer;
-        flags = 0;
+        DWORD flags = 0;
 
-        if (WSARecv(perHandleData->hClntSock, &(perIoData->wsaBuf), 1, &recvBytes, &flags, &(perIoData->overlapped), NULL) == SOCKET_ERROR)
+        if (WSARecv(perHandleData->hClntSock, &(perIoData->wsaBuf), 1, nullptr, &flags, &(perIoData->overlapped), NULL) == SOCKET_ERROR)
         {
             auto e = WSAGetLastError();
             if (e != WSA_IO_PENDING)
@@ -128,13 +118,13 @@ void TPServer::Accept()
 void TPServer::ReadCompletionStatus()
 {    
     OVERLAPPED_ENTRY overlappeds[MAX_OVERLAPPED_ENTRY];
-    ULONG count;
+    ULONG completionCount;
 
     while (true) {
-        if (GetQueuedCompletionStatusEx(hCompletionPort, overlappeds, MAX_OVERLAPPED_ENTRY, &count, INFINITE, false))
+        if (GetQueuedCompletionStatusEx(hCompletionPort, overlappeds, MAX_OVERLAPPED_ENTRY, &completionCount, INFINITE, false))
         {
-            TPLogger::GetInstance().PrintLog("GetQueuedCompletionStatusEx:%d", count);
-            for (int i = 0; i < count; ++i)
+            //TPLogger::GetInstance().PrintLog("GetQueuedCompletionStatusEx:%d", count);
+            for (int i = 0; i < completionCount; ++i)
             {
                 auto perHandleData = (LPPER_HANDLE_DATA)overlappeds[i].lpCompletionKey;
                 auto perIoData = (LPPER_IO_DATA)overlappeds[i].lpOverlapped;
@@ -182,7 +172,7 @@ void TPServer::ProcCompletion(const LPPER_HANDLE_DATA perHandleData, const LPPER
         perIoData->operation = OP_ClientToServer;
         DWORD flags = 0;
 
-        if (WSARecv(perHandleData->hClntSock, &(perIoData->wsaBuf), 1, NULL, &flags, &(perIoData->overlapped), NULL) == SOCKET_ERROR)
+        if (WSARecv(perHandleData->hClntSock, &(perIoData->wsaBuf), 1, nullptr, &flags, &(perIoData->overlapped), NULL) == SOCKET_ERROR)
         {
             auto e = WSAGetLastError();
             if (e != WSA_IO_PENDING)
@@ -200,13 +190,4 @@ void TPServer::ProcCompletion(const LPPER_HANDLE_DATA perHandleData, const LPPER
         TPLogger::GetInstance().PrintLog(INVALID_OPERATION);
         delete perIoData;
     }
-}
-
-void TPServer::ProcRecvPacket()
-{
-    while (true)
-    {
-        PacketProcessor::GetInstance().ProcRecvPacket();
-        this_thread::sleep_for(std::chrono::milliseconds(10));
-    }    
 }

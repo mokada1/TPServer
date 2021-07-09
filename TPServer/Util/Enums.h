@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-enum class PACKET_CAST_TYPE : uint8_t
+enum class PacketCastType : uint8_t
 {
 	UNICAST,
 	BROADCAST,

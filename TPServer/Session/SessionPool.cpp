@@ -1,6 +1,6 @@
 #include "SessionPool.h"
 #include "../GameRoom/GameRoomService.h"
-#include "../Packet/PacketGenerator.h"
+#include "../Packet/PacketGeneratorServer.h"
 #include "../Packet/PacketProcessor.h"
 #include "../Util/TPDefine.h"
 
@@ -55,7 +55,7 @@ void SessionPool::DeleteSession(const SOCKET clntSock)
 
 		if (objUser)
 		{
-			auto packetBcastExitGameRoom = PacketGenerator::GetInstance().CreateBcastExitGameRoom(objUser);
+			auto packetBcastExitGameRoom = PacketGeneratorServer::GetInstance().CreateBcastExitGameRoom(objUser);
 			PacketProcessor::GetInstance().SendPacket(packetBcastExitGameRoom);
 		}
 	}	

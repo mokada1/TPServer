@@ -1,59 +1,42 @@
 #include "../Core/TPServer.h"
 #include "PacketProcessor.h"
 #include "PacketService.h"
-#include "PacketGenerator.h"
+#include "PacketGeneratorServer.h"
 #include "../Util/TPLogger.h"
 #include "../Session/SessionPool.h"
 
 void PacketProcessor::Parse(Session* const owner, char* const buffer, const size_t recvBytes)
 {
-	auto packet = PacketGenerator::GetInstance().Parse(owner, buffer, recvBytes);
-	if (!packet)
+	auto packetList = PacketGeneratorServer::GetInstance().Parse(owner, buffer, recvBytes);
+	if (packetList.empty())
 	{
 		return;
 	}
-	if (!packet->IsValid())
+
+	for (auto packet : packetList)
 	{
-		delete packet;
-		return;
-	}
+		auto clntSock = packet->GetOwner()->GetClntSock();
+		auto header = packet->GetHeader();
+		auto strHeader = TPUtil::GetInstance().EnumToString(header);
 
-	auto clntSock = packet->GetOwner()->GetClntSock();
-	auto header = packet->GetHeader();
-	auto strHeader = TPUtil::GetInstance().EnumToString(header);
+		TPLogger::GetInstance().PrintLog(RECV_PACKET, clntSock, strHeader);
 
-	TPLogger::GetInstance().PrintLog("[%d]Recv packet:%s", clntSock, strHeader);
-
-	packetRecvQueue.push(packet);
-}
-
-bool PacketProcessor::ProcRecvPacket()
-{
-	if (packetRecvQueue.empty())
-	{
-		return false;
-	}
-	Packet* packet = nullptr;
-	if (packetRecvQueue.try_pop(packet))
-	{
 		PacketService::GetInstance().Process(*packet);
 		delete packet;
-		return true;
 	}
-	return false;
 }
 
 void PacketProcessor::SendPacket(const Packet& packet)
 {		
 	switch (packet.GetPacketCastType())
 	{
-	case PACKET_CAST_TYPE::UNICAST:
+	case PacketCastType::UNICAST:
 		SendPacket(packet, packet.GetOwner());
 		break;
-	case PACKET_CAST_TYPE::BROADCAST:
+	case PacketCastType::BROADCAST:
 		SendPacketAll(packet, true);
 		break;
-	case PACKET_CAST_TYPE::MULTICAST:
+	case PacketCastType::MULTICAST:
 		SendPacketAll(packet, false);
 		break;
 	default:
