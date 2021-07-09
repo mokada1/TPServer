@@ -9,7 +9,7 @@ class GameRoom;
 class PacketGenerator : public TSingleton<PacketGenerator>
 {
 public:
-	Packet Parse(Session* const owner, char* const buffer, const size_t recvBytes);
+	Packet* Parse(Session* const owner, char* const buffer, const size_t recvBytes);
 
 	Packet CreateError(Session* const owner, const wchar_t* const message);
 	Packet CreateResLogin(Session* const owner, const GameRoom& gameRoom);
@@ -22,7 +22,7 @@ public:
 	Packet CreateBcastHit(const char* const userId);
 	Packet CreateBcastRotate(Session* const owner, const TB_ReqRotate& reqRotate);
 	
-private:	
+private:
 	Packet CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner, PACKET_CAST_TYPE packetCastType);
 	Packet CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner);
 	Packet CreatePacket(PROTOCOL header, flatbuffers::FlatBufferBuilder& _fbb, Session* const owner, PACKET_CAST_TYPE packetCastType, vector<Session*> packetCastGroup);

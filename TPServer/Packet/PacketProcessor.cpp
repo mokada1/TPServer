@@ -5,21 +5,42 @@
 #include "../Util/TPLogger.h"
 #include "../Session/SessionPool.h"
 
-void PacketProcessor::Process(Session* const owner, char* const buffer, const size_t recvBytes)
+void PacketProcessor::Parse(Session* const owner, char* const buffer, const size_t recvBytes)
 {
-	const auto& packet = PacketGenerator::GetInstance().Parse(owner, buffer, recvBytes);
-	if (!packet.IsValid())
+	auto packet = PacketGenerator::GetInstance().Parse(owner, buffer, recvBytes);
+	if (!packet)
 	{
 		return;
 	}
+	if (!packet->IsValid())
+	{
+		delete packet;
+		return;
+	}
 
-	auto clntSock = packet.GetOwner()->GetClntSock();
-	auto header = packet.GetHeader();
+	auto clntSock = packet->GetOwner()->GetClntSock();
+	auto header = packet->GetHeader();
 	auto strHeader = TPUtil::GetInstance().EnumToString(header);
 
 	TPLogger::GetInstance().PrintLog("[%d]Recv packet:%s", clntSock, strHeader);
 
-	PacketService::GetInstance().Process(packet);
+	packetRecvQueue.push(packet);
+}
+
+bool PacketProcessor::ProcRecvPacket()
+{
+	if (packetRecvQueue.empty())
+	{
+		return false;
+	}
+	Packet* packet = nullptr;
+	if (packetRecvQueue.try_pop(packet))
+	{
+		PacketService::GetInstance().Process(*packet);
+		delete packet;
+		return true;
+	}
+	return false;
 }
 
 void PacketProcessor::SendPacket(const Packet& packet)

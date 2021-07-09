@@ -18,17 +18,16 @@ void TPServer::Initialize()
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
     {
-        TPLogger::GetInstance().PrintLog("WSAStartup() Error!");
+        TPLogger::GetInstance().PrintLog(WSASTARTUP_ERROR);
     }
 
     hCompletionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 
-    SYSTEM_INFO systemInfo;
     GetSystemInfo(&systemInfo);
     
     for (unsigned int i = 0; i < systemInfo.dwNumberOfProcessors; ++i)
     {
-        worker_threads.push_back(new thread([&](){ CompletionThread(); }));
+        completionThreads.push_back(new thread([&](){ ReadCompletionStatus(); }));
     }
 }
 
@@ -44,6 +43,34 @@ void TPServer::Start()
     bind(hServSock, (SOCKADDR*)&servAddr, sizeof(servAddr));
     listen(hServSock, LISTEN_BACKLOG);
 
+    acceptThread = new thread([&](){ Accept(); });
+    recvThread = new thread([&]() { ProcRecvPacket(); });
+}
+
+void TPServer::Close()
+{
+    if (acceptThread)
+    {
+        acceptThread->join();
+        delete acceptThread;
+    }    
+    for (auto t : completionThreads)
+    {
+        t->join();
+        delete t;
+    }
+    if (recvThread)
+    {
+        recvThread->join();
+        delete recvThread;
+    }
+
+    SessionPool::GetInstance().Destroy();
+    WSACleanup();    
+}
+
+void TPServer::Accept()
+{
     LPPER_HANDLE_DATA perHandleData;
 
     DWORD recvBytes;
@@ -57,7 +84,16 @@ void TPServer::Start()
         auto addrLen = sizeof(clntAddr);
         auto addrLenInt = static_cast<int>(addrLen);
 
-        SOCKET hClntSock = accept(hServSock, (SOCKADDR*)&clntAddr, &addrLenInt);
+        SOCKET hClntSock = WSAAccept(hServSock, (SOCKADDR*)&clntAddr, &addrLenInt, nullptr, 0);
+        if (hClntSock == SOCKET_ERROR)
+        {
+            auto e = WSAGetLastError();
+            if (e != WSA_IO_PENDING)
+            {
+                TPLogger::GetInstance().PrintLog(WSARECV_ERROR, e);
+            }
+            break;
+        }
 
         perHandleData = new PER_HANDLE_DATA;
         perHandleData->hClntSock = hClntSock;
@@ -65,86 +101,112 @@ void TPServer::Start()
 
         char buf[BUFF_SIZE_IP] = { 0, };
         auto address = inet_ntop(AF_INET, &clntAddr.sin_addr, buf, sizeof(buf));
-        TPLogger::GetInstance().PrintLog("Connected[%d]: %s", hClntSock, address);
+        TPLogger::GetInstance().PrintLog(CONNECTED, hClntSock, address);
 
         SessionPool::GetInstance().CreateSession(hClntSock, clntAddr);
 
         CreateIoCompletionPort((HANDLE)hClntSock, hCompletionPort, (ULONG_PTR)perHandleData, 0);
 
-        LPPER_IO_DATA PerIoData = new PER_IO_DATA;
-        memset(&(PerIoData->overlapped), 0, sizeof(OVERLAPPED));
-        PerIoData->wsaBuf.len = MAX_BUFF_SIZE;
-        PerIoData->wsaBuf.buf = PerIoData->buffer;
-        PerIoData->operation = OP_ClientToServer;
+        LPPER_IO_DATA perIoData = new PER_IO_DATA;
+        memset(&(perIoData->overlapped), 0, sizeof(OVERLAPPED));
+        perIoData->wsaBuf.len = MAX_BUFF_SIZE;
+        perIoData->wsaBuf.buf = perIoData->buffer;
+        perIoData->operation = OP_ClientToServer;
         flags = 0;
 
-        WSARecv(perHandleData->hClntSock, &(PerIoData->wsaBuf), 1, &recvBytes, &flags, &(PerIoData->overlapped), NULL);
+        if (WSARecv(perHandleData->hClntSock, &(perIoData->wsaBuf), 1, &recvBytes, &flags, &(perIoData->overlapped), NULL) == SOCKET_ERROR)
+        {
+            auto e = WSAGetLastError();
+            if (e != WSA_IO_PENDING)
+            {
+                TPLogger::GetInstance().PrintLog(WSARECV_ERROR, e);
+            }
+        }
     }
 }
 
-void TPServer::Close()
-{
-    for (auto t : worker_threads)
-    {
-        t->join();
-        delete t;
-    }
-
-    SessionPool::GetInstance().Destroy();
-    WSACleanup();    
-}
-
-void TPServer::CompletionThread()
+void TPServer::ReadCompletionStatus()
 {    
-    LPPER_HANDLE_DATA perHandleData;
-    LPPER_IO_DATA perIoData;
-    DWORD recvBytes;
-    DWORD flags;
+    OVERLAPPED_ENTRY overlappeds[MAX_OVERLAPPED_ENTRY];
+    ULONG count;
 
     while (true) {
-        if (!GetQueuedCompletionStatus(hCompletionPort, &recvBytes, (PULONG_PTR)&perHandleData, (LPOVERLAPPED*)&perIoData, INFINITE))
+        if (GetQueuedCompletionStatusEx(hCompletionPort, overlappeds, MAX_OVERLAPPED_ENTRY, &count, INFINITE, false))
+        {
+            TPLogger::GetInstance().PrintLog("GetQueuedCompletionStatusEx:%d", count);
+            for (int i = 0; i < count; ++i)
+            {
+                auto perHandleData = (LPPER_HANDLE_DATA)overlappeds[i].lpCompletionKey;
+                auto perIoData = (LPPER_IO_DATA)overlappeds[i].lpOverlapped;
+                ProcCompletion(perHandleData, perIoData, static_cast<size_t>(overlappeds[i].dwNumberOfBytesTransferred));
+            }
+        }
+        else
+        {
+            TPLogger::GetInstance().PrintLog("GetQueuedCompletionStatusEx:false");
+        }
+    }
+}
+
+void TPServer::ProcCompletion(const LPPER_HANDLE_DATA perHandleData, const LPPER_IO_DATA perIoData, const size_t recvBytes)
+{
+    if (perIoData->operation == OP_ClientToServer)
+    {
+        if (recvBytes == 0)
         {
             char buf[BUFF_SIZE_IP] = { 0, };
             auto address = inet_ntop(AF_INET, &perHandleData->clntAddr.sin_addr, buf, sizeof(buf));
             TPLogger::GetInstance().PrintLog("Disconnected[%d]: %s", perHandleData->hClntSock, address);
-            
+
             SessionPool::GetInstance().DeleteSession(perHandleData->hClntSock);
 
             closesocket(perHandleData->hClntSock);
             delete perHandleData;
             delete perIoData;
-            continue;
+            return;
         }
 
-        if (perIoData->operation == OP_ClientToServer)
+        auto session = SessionPool::GetInstance().GetSession(perHandleData->hClntSock);
+        if (session != nullptr)
         {
-            auto session = SessionPool::GetInstance().GetSession(perHandleData->hClntSock);
-            if (session != nullptr)
-            {
-                PacketProcessor::GetInstance().Process(session, perIoData->wsaBuf.buf, static_cast<size_t>(recvBytes));
-            }
-            else
-            {
-                TPLogger::GetInstance().PrintLog(NOT_FOUND_SESSION);
-            }
-
-            memset(&(perIoData->overlapped), 0, sizeof(OVERLAPPED));
-            perIoData->wsaBuf.len = MAX_BUFF_SIZE;
-            perIoData->wsaBuf.buf = perIoData->buffer;
-            perIoData->operation = OP_ClientToServer;
-            flags = 0;
-            if (WSARecv(perHandleData->hClntSock, &(perIoData->wsaBuf), 1, NULL, &flags, &(perIoData->overlapped), NULL) == SOCKET_ERROR)
-            {
-                auto e = WSAGetLastError();
-                if (e != WSA_IO_PENDING)
-                {
-                    TPLogger::GetInstance().PrintLog("WSARecv() Error:%d", e);
-                }
-            }
+            PacketProcessor::GetInstance().Parse(session, perIoData->wsaBuf.buf, recvBytes);
         }
-        else if (perIoData->operation == OP_ServerToClient)
+        else
         {
-            delete perIoData;
+            TPLogger::GetInstance().PrintLog(NOT_FOUND_SESSION);
+        }
+
+        memset(&(perIoData->overlapped), 0, sizeof(OVERLAPPED));
+        perIoData->wsaBuf.len = MAX_BUFF_SIZE;
+        perIoData->wsaBuf.buf = perIoData->buffer;
+        perIoData->operation = OP_ClientToServer;
+        DWORD flags = 0;
+
+        if (WSARecv(perHandleData->hClntSock, &(perIoData->wsaBuf), 1, NULL, &flags, &(perIoData->overlapped), NULL) == SOCKET_ERROR)
+        {
+            auto e = WSAGetLastError();
+            if (e != WSA_IO_PENDING)
+            {
+                TPLogger::GetInstance().PrintLog(WSARECV_ERROR, e);
+            }
         }
     }
+    else if (perIoData->operation == OP_ServerToClient)
+    {
+        delete perIoData;
+    }
+    else
+    {
+        TPLogger::GetInstance().PrintLog(INVALID_OPERATION);
+        delete perIoData;
+    }
+}
+
+void TPServer::ProcRecvPacket()
+{
+    while (true)
+    {
+        PacketProcessor::GetInstance().ProcRecvPacket();
+        this_thread::sleep_for(std::chrono::milliseconds(10));
+    }    
 }

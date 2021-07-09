@@ -4,11 +4,11 @@
 #include "../Session/Session.h"
 #include "../Util/TPLogger.h"
 
-Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const size_t recvBytes)
+Packet* PacketGenerator::Parse(Session* const owner, char* const buffer, const size_t recvBytes)
 {	
 	if (recvBytes == 0)
 	{
-		return Packet();
+		return nullptr;
 	}
 
 	char* finishedBuffer = nullptr;
@@ -23,7 +23,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 		{
 			TPLogger::GetInstance().PrintLog(INVALID_PACKET_SIZE);
 			owner->ClearBuff();
-			return Packet();
+			return nullptr;
 		}
 
 		owner->AddToBuff(buffer, recvBytes);
@@ -36,7 +36,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 		{
 			TPLogger::GetInstance().PrintLog(INVALID_HEADER);
 			owner->ClearBuff();
-			return Packet();
+			return nullptr;
 		}
 
 		const auto endOfPacket = PacketGenerator::GetInstance().GetEndOfPacket(ownerBuff, ownerPacketSize);
@@ -47,7 +47,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 			{
 				TPLogger::GetInstance().PrintLog(INVALID_END_OF_PACKET);
 				owner->ClearBuff();
-				return Packet();
+				return nullptr;
 			}
 		}
 		else
@@ -72,7 +72,7 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 			if (!IsValidHeader(header))
 			{
 				TPLogger::GetInstance().PrintLog(INVALID_HEADER);
-				return Packet();
+				return nullptr;
 			}
 
 			const auto endOfPacket = PacketGenerator::GetInstance().GetEndOfPacket(buffer, recvBytes);
@@ -82,15 +82,17 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 				if (recvBytes == MAX_BUFF_SIZE)
 				{
 					TPLogger::GetInstance().PrintLog(INVALID_END_OF_PACKET);
-					return Packet();
+					return nullptr;
 				}
 				owner->AddToBuff(buffer, recvBytes);
 			}
 			else
 			{
 				// 패킷 완성
-				finishedBuffer = buffer;
+				finishedBuffer = new char[recvBytes];
+				memcpy(finishedBuffer, buffer, recvBytes);
 				finishedPacketSize = recvBytes;
+				isDAllocBuf = true;
 			}
 		}
 	}
@@ -98,14 +100,14 @@ Packet PacketGenerator::Parse(Session* const owner, char* const buffer, const si
 	// 패킷이 완성되지 않았으면 빈 패킷 리턴
 	if (!finishedBuffer)
 	{
-		return Packet();
+		return nullptr;
 	}
 
 	// 완성된 패킷 리턴
 	PROTOCOL header = GetHeaderByBuff(finishedBuffer);
 	auto packetInfo = PacketInfo(finishedBuffer, finishedPacketSize, header);
 	auto packetSubInfo = PacketSubInfo(owner, PACKET_CAST_TYPE::UNICAST, vector<Session*>(), isDAllocBuf);
-	return Packet(packetInfo, packetSubInfo);
+	return new Packet(packetInfo, packetSubInfo);
 }
 
 Packet PacketGenerator::CreateError(Session* const owner, const wchar_t* const message)

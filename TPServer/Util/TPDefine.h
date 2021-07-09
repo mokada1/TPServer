@@ -10,6 +10,7 @@ typedef unsigned long DWORD;
 #define ERR_MSG_SIZE 256
 #define SERVER_IP_SIZE 15
 
+#define MAX_OVERLAPPED_ENTRY 128
 #define OP_ServerToClient 1
 #define OP_ClientToServer 2
 
@@ -33,7 +34,15 @@ static const wchar_t* DELETE_OBJ_USER_GAME_ROOM = L"유저 방 이탈[%d]";
 static const wchar_t* DUPLICATE_LOGIN = L"중복 로그인";
 static const wchar_t* SERVER_STARTED = L"서버가 시작되었습니다.";
 static const wchar_t* NOT_FOUND_SESSION = L"세션 조회 실패";
-static const wchar_t* INVALID_PACKET_SIZE = L"INVALID_PACKET_SIZE";
-static const wchar_t* INVALID_HEADER = L"INVALID_HEADER";
-static const wchar_t* INVALID_END_OF_PACKET = L"INVALID_END_OF_PACKET";
 static const wchar_t* REQ_LOGIN = L"로그인 요청: id[%S] pw[%S]";
+static const char* INVALID_PACKET_SIZE = "INVALID_PACKET_SIZE";
+static const char* INVALID_HEADER = "INVALID_HEADER";
+static const char* INVALID_END_OF_PACKET = "INVALID_END_OF_PACKET";
+static const char* INVALID_OPERATION = "INVALID_OPERATION";
+static const char* CONNECTED = "Connected[%d]: %s";
+static const char* DISCONNECTED = "Disconnected[%d]: %s";
+static const char* WSARECV_ERROR = "WSARecv() Error:%d";
+static const char* WSASEND_ERROR = "WSASend() Error:%d";
+static const char* WSASTARTUP_ERROR = "WSAStartup() Error!";
+static const char* RECV_PACKET = "[%d]Recv packet:%s";
+static const char* SEND_PACKET = "[%d]Send packet:%s";
