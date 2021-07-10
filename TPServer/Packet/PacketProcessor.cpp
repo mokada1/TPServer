@@ -22,8 +22,12 @@ void PacketProcessor::Parse(Session* const owner, char* const buffer, const size
 		TPLogger::GetInstance().PrintLog(RECV_PACKET, clntSock, strHeader);
 
 		PacketService::GetInstance().Process(*packet);
+
 		delete packet;
+		packet = nullptr;
 	}
+
+	packetList.clear();
 }
 
 void PacketProcessor::SendPacket(const Packet& packet)

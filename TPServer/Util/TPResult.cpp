@@ -20,10 +20,6 @@ TPResult::~TPResult()
 	{
 		compList.clear();
 	}
-	if (nextResult)
-	{
-		delete nextResult;
-	}
 }
 
 bool TPResult::GetFlag() const
@@ -56,11 +52,6 @@ Packet TPResult::GetPacket() const
 	return packet;
 }
 
-TPResult& TPResult::GetNextResult() const
-{
-	return *nextResult;
-}
-
 void TPResult::SetFlag(const bool _flag)
 {
 	this->flag = _flag;
@@ -81,11 +72,6 @@ void TPResult::SetPacket(const Packet& _packet)
 	this->packet = _packet;
 }
 
-void TPResult::SetNextResult(TPResult* const _nextResult)
-{
-	this->nextResult = _nextResult;
-}
-
 void TPResult::AddObject(TPObject* const _object)
 {
 	objectList.emplace_back(shared_ptr<TPObject>(_object));
@@ -101,5 +87,4 @@ void TPResult::init(const wchar_t* const _message)
 	this->flag = false;
 	this->message = _message ? const_cast<wchar_t*>(_message) : nullptr;
 	this->number = 0;
-	this->nextResult = nullptr;
 }

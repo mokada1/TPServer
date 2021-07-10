@@ -99,6 +99,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Battle\BattleService.cpp" />
+    <ClCompile Include="Component\CompUserCondition.cpp" />
     <ClCompile Include="component\CompUserTransform.cpp" />
     <ClCompile Include="core\TPServer.cpp" />
     <ClCompile Include="db\DBServer.cpp" />
@@ -121,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Battle\BattleService.h" />
+    <ClInclude Include="Component\CompUserCondition.h" />
     <ClInclude Include="component\CompUserTransform.h" />
     <ClInclude Include="component\TPComponent.h" />
     <ClInclude Include="core\TPServer.h" />

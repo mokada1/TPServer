@@ -1,6 +1,7 @@
 #include "BattleService.h"
 #include "../GameRoom/GameRoomService.h"
 #include "../Util/TPUtil.h"
+#include "../Util/TPLogger.h"
 
 vector<shared_ptr<ObjUser>> BattleService::GetObjUserListAround(shared_ptr<ObjUser> target)
 {
@@ -11,7 +12,7 @@ vector<shared_ptr<ObjUser>> BattleService::GetObjUserListAround(shared_ptr<ObjUs
 		return objUserList;
 	}	
 
-	auto tCompUserLocation = target->GetCompUserTransform();
+	auto tCompUserLocation = target->GetCompTransform();
 	auto tLocation = tCompUserLocation->GetLocation();
 
 	auto objUserMap = gameRoom->GetObjUserMap();
@@ -23,9 +24,11 @@ vector<shared_ptr<ObjUser>> BattleService::GetObjUserListAround(shared_ptr<ObjUs
 			continue;
 		}
 
-		auto compUserLocation = objUser->GetCompUserTransform();
+		auto compUserLocation = objUser->GetCompTransform();
 		auto location = compUserLocation->GetLocation();
-		if (TPUtil::GetInstance().Distance(tLocation, location) <= DISTANCE_AROUND)
+		auto distance = TPUtil::GetInstance().Distance(tLocation, location);
+
+		if (distance <= DISTANCE_AROUND)
 		{
 			objUserList.emplace_back(objUser);
 		}

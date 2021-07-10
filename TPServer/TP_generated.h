@@ -11,6 +11,9 @@ struct ST_Vec3;
 struct TB_CompUserTransform;
 struct TB_CompUserTransformBuilder;
 
+struct TB_CompUserCondition;
+struct TB_CompUserConditionBuilder;
+
 struct TB_ObjUser;
 struct TB_ObjUserBuilder;
 
@@ -228,24 +231,72 @@ inline flatbuffers::Offset<TB_CompUserTransform> CreateTB_CompUserTransform(
   return builder_.Finish();
 }
 
+struct TB_CompUserCondition FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_CompUserConditionBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_ISCOMBATPOSTURE = 4
+  };
+  bool IsCombatPosture() const {
+    return GetField<uint8_t>(VT_ISCOMBATPOSTURE, 0) != 0;
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint8_t>(verifier, VT_ISCOMBATPOSTURE) &&
+           verifier.EndTable();
+  }
+};
+
+struct TB_CompUserConditionBuilder {
+  typedef TB_CompUserCondition Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_IsCombatPosture(bool IsCombatPosture) {
+    fbb_.AddElement<uint8_t>(TB_CompUserCondition::VT_ISCOMBATPOSTURE, static_cast<uint8_t>(IsCombatPosture), 0);
+  }
+  explicit TB_CompUserConditionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TB_CompUserConditionBuilder &operator=(const TB_CompUserConditionBuilder &);
+  flatbuffers::Offset<TB_CompUserCondition> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TB_CompUserCondition>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TB_CompUserCondition> CreateTB_CompUserCondition(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    bool IsCombatPosture = false) {
+  TB_CompUserConditionBuilder builder_(_fbb);
+  builder_.add_IsCombatPosture(IsCombatPosture);
+  return builder_.Finish();
+}
+
 struct TB_ObjUser FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef TB_ObjUserBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_USERID = 4,
-    VT_USERTRANSFORM = 6
+    VT_TRANSFORM = 6,
+    VT_CONDITION = 8
   };
   const flatbuffers::String *UserId() const {
     return GetPointer<const flatbuffers::String *>(VT_USERID);
   }
-  const TB_CompUserTransform *UserTransform() const {
-    return GetPointer<const TB_CompUserTransform *>(VT_USERTRANSFORM);
+  const TB_CompUserTransform *Transform() const {
+    return GetPointer<const TB_CompUserTransform *>(VT_TRANSFORM);
+  }
+  const TB_CompUserCondition *Condition() const {
+    return GetPointer<const TB_CompUserCondition *>(VT_CONDITION);
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_USERID) &&
            verifier.VerifyString(UserId()) &&
-           VerifyOffset(verifier, VT_USERTRANSFORM) &&
-           verifier.VerifyTable(UserTransform()) &&
+           VerifyOffset(verifier, VT_TRANSFORM) &&
+           verifier.VerifyTable(Transform()) &&
+           VerifyOffset(verifier, VT_CONDITION) &&
+           verifier.VerifyTable(Condition()) &&
            verifier.EndTable();
   }
 };
@@ -257,8 +308,11 @@ struct TB_ObjUserBuilder {
   void add_UserId(flatbuffers::Offset<flatbuffers::String> UserId) {
     fbb_.AddOffset(TB_ObjUser::VT_USERID, UserId);
   }
-  void add_UserTransform(flatbuffers::Offset<TB_CompUserTransform> UserTransform) {
-    fbb_.AddOffset(TB_ObjUser::VT_USERTRANSFORM, UserTransform);
+  void add_Transform(flatbuffers::Offset<TB_CompUserTransform> Transform) {
+    fbb_.AddOffset(TB_ObjUser::VT_TRANSFORM, Transform);
+  }
+  void add_Condition(flatbuffers::Offset<TB_CompUserCondition> Condition) {
+    fbb_.AddOffset(TB_ObjUser::VT_CONDITION, Condition);
   }
   explicit TB_ObjUserBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -275,9 +329,11 @@ struct TB_ObjUserBuilder {
 inline flatbuffers::Offset<TB_ObjUser> CreateTB_ObjUser(
     flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<flatbuffers::String> UserId = 0,
-    flatbuffers::Offset<TB_CompUserTransform> UserTransform = 0) {
+    flatbuffers::Offset<TB_CompUserTransform> Transform = 0,
+    flatbuffers::Offset<TB_CompUserCondition> Condition = 0) {
   TB_ObjUserBuilder builder_(_fbb);
-  builder_.add_UserTransform(UserTransform);
+  builder_.add_Condition(Condition);
+  builder_.add_Transform(Transform);
   builder_.add_UserId(UserId);
   return builder_.Finish();
 }
@@ -285,12 +341,14 @@ inline flatbuffers::Offset<TB_ObjUser> CreateTB_ObjUser(
 inline flatbuffers::Offset<TB_ObjUser> CreateTB_ObjUserDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     const char *UserId = nullptr,
-    flatbuffers::Offset<TB_CompUserTransform> UserTransform = 0) {
+    flatbuffers::Offset<TB_CompUserTransform> Transform = 0,
+    flatbuffers::Offset<TB_CompUserCondition> Condition = 0) {
   auto UserId__ = UserId ? _fbb.CreateString(UserId) : 0;
   return CreateTB_ObjUser(
       _fbb,
       UserId__,
-      UserTransform);
+      Transform,
+      Condition);
 }
 
 struct TB_InputMove FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
@@ -370,7 +428,8 @@ struct TB_InputAction FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_LOCATION = 4,
     VT_ROTATION = 6,
-    VT_COMBOSECTIONNAME = 8
+    VT_COMBOSECTIONNAME = 8,
+    VT_ISCOMBATPOSTURE = 10
   };
   const ST_Vec3 *Location() const {
     return GetStruct<const ST_Vec3 *>(VT_LOCATION);
@@ -381,12 +440,16 @@ struct TB_InputAction FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const flatbuffers::String *ComboSectionName() const {
     return GetPointer<const flatbuffers::String *>(VT_COMBOSECTIONNAME);
   }
+  bool IsCombatPosture() const {
+    return GetField<uint8_t>(VT_ISCOMBATPOSTURE, 0) != 0;
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<ST_Vec3>(verifier, VT_LOCATION) &&
            VerifyField<ST_Vec3>(verifier, VT_ROTATION) &&
            VerifyOffset(verifier, VT_COMBOSECTIONNAME) &&
            verifier.VerifyString(ComboSectionName()) &&
+           VerifyField<uint8_t>(verifier, VT_ISCOMBATPOSTURE) &&
            verifier.EndTable();
   }
 };
@@ -404,6 +467,9 @@ struct TB_InputActionBuilder {
   void add_ComboSectionName(flatbuffers::Offset<flatbuffers::String> ComboSectionName) {
     fbb_.AddOffset(TB_InputAction::VT_COMBOSECTIONNAME, ComboSectionName);
   }
+  void add_IsCombatPosture(bool IsCombatPosture) {
+    fbb_.AddElement<uint8_t>(TB_InputAction::VT_ISCOMBATPOSTURE, static_cast<uint8_t>(IsCombatPosture), 0);
+  }
   explicit TB_InputActionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -420,11 +486,13 @@ inline flatbuffers::Offset<TB_InputAction> CreateTB_InputAction(
     flatbuffers::FlatBufferBuilder &_fbb,
     const ST_Vec3 *Location = 0,
     const ST_Vec3 *Rotation = 0,
-    flatbuffers::Offset<flatbuffers::String> ComboSectionName = 0) {
+    flatbuffers::Offset<flatbuffers::String> ComboSectionName = 0,
+    bool IsCombatPosture = false) {
   TB_InputActionBuilder builder_(_fbb);
   builder_.add_ComboSectionName(ComboSectionName);
   builder_.add_Rotation(Rotation);
   builder_.add_Location(Location);
+  builder_.add_IsCombatPosture(IsCombatPosture);
   return builder_.Finish();
 }
 
@@ -432,13 +500,15 @@ inline flatbuffers::Offset<TB_InputAction> CreateTB_InputActionDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     const ST_Vec3 *Location = 0,
     const ST_Vec3 *Rotation = 0,
-    const char *ComboSectionName = nullptr) {
+    const char *ComboSectionName = nullptr,
+    bool IsCombatPosture = false) {
   auto ComboSectionName__ = ComboSectionName ? _fbb.CreateString(ComboSectionName) : 0;
   return CreateTB_InputAction(
       _fbb,
       Location,
       Rotation,
-      ComboSectionName__);
+      ComboSectionName__,
+      IsCombatPosture);
 }
 
 struct TB_ReqLogin FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {

@@ -12,10 +12,10 @@ public:
 
 private:
 	TPResult* ProcReqLogin(const Packet& packet);
-	void ProcReqMove(const Packet& packet);
+	TPResult* ProcReqMove(const Packet& packet);
 	TPResult* ProcReqRoundTripTime(const Packet& packet);
-	void ProcReqLocationSync(const Packet& packet);
-	void ProcReqAction(const Packet& packet);
-	void ProcReqDamage(const Packet& packet);
-	void ProcReqRotate(const Packet& packet);
+	TPResult* ProcReqLocationSync(const Packet& packet);
+	TPResult* ProcReqAction(const Packet& packet);
+	TPResult* ProcReqDamage(const Packet& packet);
+	TPResult* ProcReqRotate(const Packet& packet);
 };

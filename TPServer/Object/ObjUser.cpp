@@ -13,33 +13,35 @@ bool ObjUser::IsValid() const
 
 flatbuffers::Offset<TB_ObjUser> ObjUser::Serialize(flatbuffers::FlatBufferBuilder& _fbb) const
 {
-	char hUserId[SIZE_USER_USER_ID];
-	TPUtil::GetInstance().WCharToChar(hUserId, SIZE_USER_USER_ID, userId);
-	auto offsetUserId = _fbb.CreateString(hUserId);
-	auto offsetUserTransform = userTransform ? userTransform->Serialize(_fbb) : 0;
+	auto offsetUserId = _fbb.CreateString(cUserId);
+	auto offsetCompTransform = compTransform ? compTransform->Serialize(_fbb) : 0;
+	auto offsetCompCondition = compCondition ? compCondition->Serialize(_fbb) : 0;
 
 	TB_ObjUserBuilder builder(_fbb);	
 	builder.add_UserId(offsetUserId);
-	if (!offsetUserTransform.IsNull())
-	{
-		builder.add_UserTransform(offsetUserTransform);
-	}	
+	builder.add_Transform(offsetCompTransform);
+	builder.add_Condition(offsetCompCondition);
 	return builder.Finish();
 }
 
 ObjUser::ObjUser()
 {
+	this->compTransform = nullptr;
+	this->compCondition = nullptr;
 	this->userId = nullptr;
 	this->cUserId = nullptr;
 	this->password = nullptr;
-	this->userTransform = nullptr;
 	totalRttMs = 0;
 	rttCount = 0;
 	avgRttMs = 0;
+	roomId = 0;
 }
 
 ObjUser::ObjUser(wchar_t* const _userId, wchar_t* const _password)
 {
+	this->compTransform = nullptr;
+	this->compCondition = nullptr;
+
 	this->userId = new wchar_t[SIZE_USER_USER_ID];	
 	wcscpy_s(this->userId, SIZE_USER_USER_ID, _userId);
 	
@@ -48,11 +50,11 @@ ObjUser::ObjUser(wchar_t* const _userId, wchar_t* const _password)
 
 	this->password = new wchar_t[SIZE_USER_PASSWORD];
 	wcscpy_s(this->password, SIZE_USER_PASSWORD, _password);
-
-	this->userTransform = nullptr;
+	
 	totalRttMs = 0;
 	rttCount = 0;
 	avgRttMs = 0;
+	roomId = 0;
 }
 
 ObjUser::~ObjUser()
@@ -69,9 +71,13 @@ ObjUser::~ObjUser()
 	{
 		delete[] password;
 	}
-	if (userTransform)
+	if (compTransform)
 	{
-		userTransform.reset();
+		delete compTransform;
+	}
+	if (compCondition)
+	{
+		delete compCondition;
 	}
 }
 
@@ -100,14 +106,24 @@ int64_t ObjUser::GetAvgRttMs() const
 	return avgRttMs;
 }
 
-shared_ptr<CompUserTransform> ObjUser::GetCompUserTransform() const
+CompUserTransform* ObjUser::GetCompTransform() const
 {
-	return userTransform;
+	return compTransform;
 }
 
-void ObjUser::SetCompUserTransform(shared_ptr<CompUserTransform> _userTransform)
+CompUserCondition* ObjUser::GetCompCondition() const
 {
-	this->userTransform = _userTransform;
+	return compCondition;
+}
+
+void ObjUser::SetCompTransform(CompUserTransform * const _compTransform)
+{
+	this->compTransform = _compTransform;
+}
+
+void ObjUser::SetCompCondition(CompUserCondition* const _compCondition)
+{
+	this->compCondition = _compCondition;
 }
 
 void ObjUser::SetRoomId(const int _roomId)

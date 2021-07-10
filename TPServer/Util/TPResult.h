@@ -21,13 +21,11 @@ public:
 	vector<shared_ptr<TPObject>> GetObjectList() const;
 	vector<shared_ptr<TPComponent>> GetCompList() const;
 	Packet GetPacket() const;
-	TPResult& GetNextResult() const;
 
 	void SetFlag(const bool _flag);
 	void SetMsg(const wchar_t* const _message);
 	void SetNumber(const int _number);
 	void SetPacket(const Packet& _packet);
-	void SetNextResult(TPResult* const _nextResult);
 	void AddObject(TPObject* const _object);
 	void AddComp(TPComponent* const _comp);
 
@@ -40,5 +38,4 @@ private:
 	vector<shared_ptr<TPObject>> objectList;
 	vector<shared_ptr<TPComponent>> compList;
 	Packet packet;
-	TPResult* nextResult;
 };

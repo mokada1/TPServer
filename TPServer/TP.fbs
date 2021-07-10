@@ -40,11 +40,17 @@ table TB_CompUserTransform
 	Rotation: ST_Vec3;
 }
 
+table TB_CompUserCondition
+{
+	IsCombatPosture: bool;
+}
+
 // Object
 table TB_ObjUser
 {
 	UserId: string;
-	UserTransform: TB_CompUserTransform;
+	Transform: TB_CompUserTransform;
+	Condition: TB_CompUserCondition;
 }
 
 // Bundle
@@ -61,6 +67,7 @@ table TB_InputAction
 	Location: ST_Vec3;
 	Rotation: ST_Vec3;
 	ComboSectionName: string;
+	IsCombatPosture: bool;
 }
 
 // Request

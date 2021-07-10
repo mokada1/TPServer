@@ -2,6 +2,7 @@
 
 #include "TPObject.h"
 #include "../Component/CompUserTransform.h"
+#include "../Component/CompUserCondition.h"
 
 class ObjUser : public TPObject
 {
@@ -19,19 +20,22 @@ public:
 	wchar_t* GetPassword() const;
 	int GetRoomId() const;
 	int64_t GetAvgRttMs() const;
-	shared_ptr<CompUserTransform> GetCompUserTransform() const;
+	CompUserTransform* GetCompTransform() const;
+	CompUserCondition* GetCompCondition() const;
 
-	void SetCompUserTransform(shared_ptr<CompUserTransform> _userTransform);
+	void SetCompTransform(CompUserTransform * const _compTransform);
+	void SetCompCondition(CompUserCondition* const _compCondition);
 	void SetRoomId(const int _roomId);
 
 	void UpdateRtt(const int64_t _rttMs);
 
 private:
+	CompUserTransform* compTransform;
+	CompUserCondition* compCondition;
+
 	wchar_t* userId;
 	char* cUserId;
 	wchar_t* password;
-	
-	shared_ptr<CompUserTransform> userTransform;
 
 	int roomId;
 

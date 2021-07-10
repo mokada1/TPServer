@@ -122,7 +122,8 @@ Packet PacketGeneratorServer::CreateBcastAction(Session* const owner, const TB_R
 	auto offsetInputAction = CreateTB_InputAction(fbb,
 		inputAction->Location(),
 		inputAction->Rotation(),
-		offsetComboSectionName
+		offsetComboSectionName,
+		inputAction->IsCombatPosture()
 	);
 
 	fbb.Finish(CreateTB_BcastAction(fbb, offsetUserId, offsetOperation, offsetInputAction));
