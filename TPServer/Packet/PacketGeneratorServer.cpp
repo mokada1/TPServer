@@ -107,7 +107,7 @@ Packet PacketGeneratorServer::CreateBcastLocationSync(Session* const owner, cons
 	return CreatePacket(PROTOCOL::BCAST_LOCATION_SYNC, fbb, nullptr, PacketCastType::BROADCAST, packetCastGroup);
 }
 
-Packet PacketGeneratorServer::CreateBcastAction(Session* const owner, const TB_ReqAction& reqInputAction)
+Packet PacketGeneratorServer::CreateBcastAction(Session* const owner, const TB_ReqAction& reqAction)
 {
 	vector<Session*> packetCastGroup;
 	packetCastGroup.emplace_back(owner);
@@ -115,9 +115,9 @@ Packet PacketGeneratorServer::CreateBcastAction(Session* const owner, const TB_R
 	flatbuffers::FlatBufferBuilder fbb;
 
 	auto offsetUserId = fbb.CreateString(owner->GetCUserId());
-	auto offsetOperation = reqInputAction.Operation();
+	auto offsetOperation = reqAction.Operation();
 
-	auto inputAction = reqInputAction.InputAction();
+	auto inputAction = reqAction.InputAction();
 	auto offsetComboSectionName = fbb.CreateString(inputAction->ComboSectionName());
 	auto offsetInputAction = CreateTB_InputAction(fbb,
 		inputAction->Location(),
@@ -142,7 +142,7 @@ Packet PacketGeneratorServer::CreateBcastHit(const char* const userId)
 	return CreatePacket(PROTOCOL::BCAST_HIT, fbb, nullptr, PacketCastType::BROADCAST);
 }
 
-Packet PacketGeneratorServer::CreateBcastRotate(Session* const owner, const TB_ReqRotate& reqRotate)
+Packet PacketGeneratorServer::CreateBcastRotationSync(Session* const owner, const TB_ReqRotationSync& reqRotationSync)
 {
 	vector<Session*> packetCastGroup;
 	packetCastGroup.emplace_back(owner);
@@ -150,9 +150,9 @@ Packet PacketGeneratorServer::CreateBcastRotate(Session* const owner, const TB_R
 	flatbuffers::FlatBufferBuilder fbb;
 
 	auto offsetUserId = fbb.CreateString(owner->GetCUserId());
-	auto offsetRotation = reqRotate.Rotation();
+	auto offsetRotation = reqRotationSync.Rotation();
 
-	fbb.Finish(CreateTB_BcastRotate(fbb, offsetUserId, offsetRotation));
+	fbb.Finish(CreateTB_BcastRotationSync(fbb, offsetUserId, offsetRotation));
 
-	return CreatePacket(PROTOCOL::BCAST_ROTATE, fbb, nullptr, PacketCastType::BROADCAST, packetCastGroup);
+	return CreatePacket(PROTOCOL::BCAST_ROTATION_SYNC, fbb, nullptr, PacketCastType::BROADCAST, packetCastGroup);
 }

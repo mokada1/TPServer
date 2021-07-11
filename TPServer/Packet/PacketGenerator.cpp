@@ -222,7 +222,7 @@ bool PacketGenerator::IsValidHeader(const PROTOCOL protocol)
 	case PROTOCOL::REQ_LOCATION_SYNC:
 	case PROTOCOL::REQ_ACTION:
 	case PROTOCOL::REQ_DAMAGE:
-	case PROTOCOL::REQ_ROTATE:
+	case PROTOCOL::REQ_ROTATION_SYNC:
 		return true;
 	}
 	return false;

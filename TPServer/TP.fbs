@@ -103,7 +103,7 @@ table TB_ReqDamage
 {
 }
 
-table TB_ReqRotate
+table TB_ReqRotationSync
 {
 	Rotation: ST_Vec3;
 }
@@ -161,7 +161,7 @@ table TB_BcastHit
 	UserId: string;
 }
 
-table TB_BcastRotate
+table TB_BcastRotationSync
 {
 	UserId: string;
 	Rotation: ST_Vec3;

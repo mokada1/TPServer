@@ -17,5 +17,5 @@ private:
 	TPResult* ProcReqLocationSync(const Packet& packet);
 	TPResult* ProcReqAction(const Packet& packet);
 	TPResult* ProcReqDamage(const Packet& packet);
-	TPResult* ProcReqRotate(const Packet& packet);
+	TPResult* ProcReqRotationSync(const Packet& packet);
 };

@@ -13,5 +13,5 @@ public:
 	vector<shared_ptr<ObjUser>> GetObjUserListAround(shared_ptr<ObjUser> target);
 
 private:
-	const float DISTANCE_AROUND = 300.f;
+	const float DISTANCE_AROUND = 350.f;
 };

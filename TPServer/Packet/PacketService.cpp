@@ -32,8 +32,8 @@ void PacketService::Process(const Packet& packet)
 	case PROTOCOL::REQ_DAMAGE:
 		result = ProcReqDamage(packet);
 		break;
-	case PROTOCOL::REQ_ROTATE:
-		result = ProcReqRotate(packet);
+	case PROTOCOL::REQ_ROTATION_SYNC:
+		result = ProcReqRotationSync(packet);
 		break;
 	default:
 		break;
@@ -266,12 +266,12 @@ TPResult* PacketService::ProcReqDamage(const Packet& packet)
 	return nullptr;
 }
 
-TPResult* PacketService::ProcReqRotate(const Packet& packet)
+TPResult* PacketService::ProcReqRotationSync(const Packet& packet)
 {
 	auto body = packet.GetBody();
 	auto owner = packet.GetOwner();
 
-	auto req = flatbuffers::GetRoot<TB_ReqRotate>(body);
+	auto req = flatbuffers::GetRoot<TB_ReqRotationSync>(body);
 
 	auto objUser = GameRoomService::GetInstance().GetObjUser(owner->GetUserId());
 	if (!objUser)
@@ -284,8 +284,8 @@ TPResult* PacketService::ProcReqRotate(const Packet& packet)
 	auto compUserTransform = objUser->GetCompTransform();
 	compUserTransform->SetRotation({ rotation->x(), rotation->y(), rotation->z() });
 
-	auto bcastRotatePacket = PacketGeneratorServer::GetInstance().CreateBcastRotate(owner, *req);
-	PacketProcessor::GetInstance().SendPacket(bcastRotatePacket);
+	auto bcastRotationSyncPacket = PacketGeneratorServer::GetInstance().CreateBcastRotationSync(owner, *req);
+	PacketProcessor::GetInstance().SendPacket(bcastRotationSyncPacket);
 
 	return nullptr;
 }

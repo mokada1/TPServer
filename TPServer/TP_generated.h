@@ -41,8 +41,8 @@ struct TB_ReqActionBuilder;
 struct TB_ReqDamage;
 struct TB_ReqDamageBuilder;
 
-struct TB_ReqRotate;
-struct TB_ReqRotateBuilder;
+struct TB_ReqRotationSync;
+struct TB_ReqRotationSyncBuilder;
 
 struct TB_Error;
 struct TB_ErrorBuilder;
@@ -71,8 +71,8 @@ struct TB_BcastActionBuilder;
 struct TB_BcastHit;
 struct TB_BcastHitBuilder;
 
-struct TB_BcastRotate;
-struct TB_BcastRotateBuilder;
+struct TB_BcastRotationSync;
+struct TB_BcastRotationSyncBuilder;
 
 enum OpMove {
   OpMove_None = 0,
@@ -797,8 +797,8 @@ inline flatbuffers::Offset<TB_ReqDamage> CreateTB_ReqDamage(
   return builder_.Finish();
 }
 
-struct TB_ReqRotate FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef TB_ReqRotateBuilder Builder;
+struct TB_ReqRotationSync FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_ReqRotationSyncBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_ROTATION = 4
   };
@@ -812,29 +812,29 @@ struct TB_ReqRotate FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
 };
 
-struct TB_ReqRotateBuilder {
-  typedef TB_ReqRotate Table;
+struct TB_ReqRotationSyncBuilder {
+  typedef TB_ReqRotationSync Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_Rotation(const ST_Vec3 *Rotation) {
-    fbb_.AddStruct(TB_ReqRotate::VT_ROTATION, Rotation);
+    fbb_.AddStruct(TB_ReqRotationSync::VT_ROTATION, Rotation);
   }
-  explicit TB_ReqRotateBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+  explicit TB_ReqRotationSyncBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  TB_ReqRotateBuilder &operator=(const TB_ReqRotateBuilder &);
-  flatbuffers::Offset<TB_ReqRotate> Finish() {
+  TB_ReqRotationSyncBuilder &operator=(const TB_ReqRotationSyncBuilder &);
+  flatbuffers::Offset<TB_ReqRotationSync> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<TB_ReqRotate>(end);
+    auto o = flatbuffers::Offset<TB_ReqRotationSync>(end);
     return o;
   }
 };
 
-inline flatbuffers::Offset<TB_ReqRotate> CreateTB_ReqRotate(
+inline flatbuffers::Offset<TB_ReqRotationSync> CreateTB_ReqRotationSync(
     flatbuffers::FlatBufferBuilder &_fbb,
     const ST_Vec3 *Rotation = 0) {
-  TB_ReqRotateBuilder builder_(_fbb);
+  TB_ReqRotationSyncBuilder builder_(_fbb);
   builder_.add_Rotation(Rotation);
   return builder_.Finish();
 }
@@ -1352,8 +1352,8 @@ inline flatbuffers::Offset<TB_BcastHit> CreateTB_BcastHitDirect(
       UserId__);
 }
 
-struct TB_BcastRotate FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
-  typedef TB_BcastRotateBuilder Builder;
+struct TB_BcastRotationSync FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_BcastRotationSyncBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_USERID = 4,
     VT_ROTATION = 6
@@ -1373,44 +1373,44 @@ struct TB_BcastRotate FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   }
 };
 
-struct TB_BcastRotateBuilder {
-  typedef TB_BcastRotate Table;
+struct TB_BcastRotationSyncBuilder {
+  typedef TB_BcastRotationSync Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
   void add_UserId(flatbuffers::Offset<flatbuffers::String> UserId) {
-    fbb_.AddOffset(TB_BcastRotate::VT_USERID, UserId);
+    fbb_.AddOffset(TB_BcastRotationSync::VT_USERID, UserId);
   }
   void add_Rotation(const ST_Vec3 *Rotation) {
-    fbb_.AddStruct(TB_BcastRotate::VT_ROTATION, Rotation);
+    fbb_.AddStruct(TB_BcastRotationSync::VT_ROTATION, Rotation);
   }
-  explicit TB_BcastRotateBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+  explicit TB_BcastRotationSyncBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  TB_BcastRotateBuilder &operator=(const TB_BcastRotateBuilder &);
-  flatbuffers::Offset<TB_BcastRotate> Finish() {
+  TB_BcastRotationSyncBuilder &operator=(const TB_BcastRotationSyncBuilder &);
+  flatbuffers::Offset<TB_BcastRotationSync> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = flatbuffers::Offset<TB_BcastRotate>(end);
+    auto o = flatbuffers::Offset<TB_BcastRotationSync>(end);
     return o;
   }
 };
 
-inline flatbuffers::Offset<TB_BcastRotate> CreateTB_BcastRotate(
+inline flatbuffers::Offset<TB_BcastRotationSync> CreateTB_BcastRotationSync(
     flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<flatbuffers::String> UserId = 0,
     const ST_Vec3 *Rotation = 0) {
-  TB_BcastRotateBuilder builder_(_fbb);
+  TB_BcastRotationSyncBuilder builder_(_fbb);
   builder_.add_Rotation(Rotation);
   builder_.add_UserId(UserId);
   return builder_.Finish();
 }
 
-inline flatbuffers::Offset<TB_BcastRotate> CreateTB_BcastRotateDirect(
+inline flatbuffers::Offset<TB_BcastRotationSync> CreateTB_BcastRotationSyncDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     const char *UserId = nullptr,
     const ST_Vec3 *Rotation = 0) {
   auto UserId__ = UserId ? _fbb.CreateString(UserId) : 0;
-  return CreateTB_BcastRotate(
+  return CreateTB_BcastRotationSync(
       _fbb,
       UserId__,
       Rotation);
