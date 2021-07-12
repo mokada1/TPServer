@@ -22,6 +22,15 @@ enum OpAction : byte
 	MeleeAttackCombo = 5,
 }
 
+enum AbilityType : byte
+{
+	None = 0,
+	MeleeAttack1 = 1,
+	MeleeAttack2_1 = 2,
+	MeleeAttack2_2 = 3,
+	MeleeAttack3 = 4,
+}
+
 // Struct
 
 struct ST_Vec3
@@ -99,8 +108,11 @@ table TB_ReqAction
 	InputAction: TB_InputAction;
 }
 
-table TB_ReqDamage
+table TB_ReqAbility
 {
+	Ability: AbilityType;
+	Location: ST_Vec3;
+	Rotation: ST_Vec3;
 }
 
 table TB_ReqRotationSync
@@ -158,7 +170,7 @@ table TB_BcastAction
 
 table TB_BcastHit
 {
-	UserId: string;
+	HitIdList: [string];
 }
 
 table TB_BcastRotationSync

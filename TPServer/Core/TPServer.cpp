@@ -101,7 +101,7 @@ void TPServer::Accept()
         memset(&(perIoData->overlapped), 0, sizeof(OVERLAPPED));
         perIoData->wsaBuf.len = MAX_BUFF_SIZE;
         perIoData->wsaBuf.buf = perIoData->buffer;
-        perIoData->operation = OP_ClientToServer;
+        perIoData->operation = OP_CLIENT_TO_SERVER;
         DWORD flags = 0;
 
         if (WSARecv(perHandleData->hClntSock, &(perIoData->wsaBuf), 1, nullptr, &flags, &(perIoData->overlapped), NULL) == SOCKET_ERROR)
@@ -140,7 +140,7 @@ void TPServer::ReadCompletionStatus()
 
 void TPServer::ProcCompletion(const LPPER_HANDLE_DATA perHandleData, const LPPER_IO_DATA perIoData, const size_t recvBytes)
 {
-    if (perIoData->operation == OP_ClientToServer)
+    if (perIoData->operation == OP_CLIENT_TO_SERVER)
     {
         if (recvBytes == 0)
         {
@@ -169,7 +169,7 @@ void TPServer::ProcCompletion(const LPPER_HANDLE_DATA perHandleData, const LPPER
         memset(&(perIoData->overlapped), 0, sizeof(OVERLAPPED));
         perIoData->wsaBuf.len = MAX_BUFF_SIZE;
         perIoData->wsaBuf.buf = perIoData->buffer;
-        perIoData->operation = OP_ClientToServer;
+        perIoData->operation = OP_CLIENT_TO_SERVER;
         DWORD flags = 0;
 
         if (WSARecv(perHandleData->hClntSock, &(perIoData->wsaBuf), 1, nullptr, &flags, &(perIoData->overlapped), NULL) == SOCKET_ERROR)
@@ -181,7 +181,7 @@ void TPServer::ProcCompletion(const LPPER_HANDLE_DATA perHandleData, const LPPER
             }
         }
     }
-    else if (perIoData->operation == OP_ServerToClient)
+    else if (perIoData->operation == OP_SERVER_TO_CLIENT)
     {
         delete perIoData;
     }

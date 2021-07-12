@@ -131,13 +131,19 @@ Packet PacketGeneratorServer::CreateBcastAction(Session* const owner, const TB_R
 	return CreatePacket(PROTOCOL::BCAST_ACTION, fbb, nullptr, PacketCastType::BROADCAST, packetCastGroup);
 }
 
-Packet PacketGeneratorServer::CreateBcastHit(const char* const userId)
+Packet PacketGeneratorServer::CreateBcastHit(const vector<shared_ptr<ObjUser>>& hitList)
 {
 	flatbuffers::FlatBufferBuilder fbb;
 
-	auto offsetUserId = fbb.CreateString(userId);
+	vector<flatbuffers::Offset<flatbuffers::String>> offsetListHitId;
+	for (auto& hit : hitList)
+	{
+		auto offset = fbb.CreateString(hit->GetCUserId());
+		offsetListHitId.push_back(offset);
+	}
+	auto offsetHitIdList = fbb.CreateVector(offsetListHitId);
 
-	fbb.Finish(CreateTB_BcastHit(fbb, offsetUserId));
+	fbb.Finish(CreateTB_BcastHit(fbb, offsetHitIdList));
 
 	return CreatePacket(PROTOCOL::BCAST_HIT, fbb, nullptr, PacketCastType::BROADCAST);
 }

@@ -21,7 +21,12 @@ public:
 	long long TimeSinceEpochSec();
 	const char* EnumToString(PROTOCOL protocol);
 	float Distance(const Vector3 v1, const Vector3 v2);
+	Vector3 RotateByZAxis(const Vector3 location, const float degree);
+	float GetRadian(const float degree);
 };
+
+static const double TPUTIL_PI = 3.14159265359;
+static const double TPUTIL_PI_RADIAN = 180;
 
 #define TPUTIL_MAX(A,B) (A) > (B) ? (A) : (B)
 #define TPUTIL_MIN(A,B) (A) < (B) ? (A) : (B)

@@ -16,6 +16,6 @@ private:
 	TPResult* ProcReqRoundTripTime(const Packet& packet);
 	TPResult* ProcReqLocationSync(const Packet& packet);
 	TPResult* ProcReqAction(const Packet& packet);
-	TPResult* ProcReqDamage(const Packet& packet);
+	TPResult* ProcReqAbility(const Packet& packet);
 	TPResult* ProcReqRotationSync(const Packet& packet);
 };

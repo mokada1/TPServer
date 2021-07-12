@@ -11,8 +11,8 @@ typedef unsigned long DWORD;
 #define SERVER_IP_SIZE 15
 
 #define MAX_OVERLAPPED_ENTRY 32
-#define OP_ServerToClient 1
-#define OP_ClientToServer 2
+#define OP_SERVER_TO_CLIENT 1
+#define OP_CLIENT_TO_SERVER 2
 
 #define SIZE_USER_USER_ID 45
 #define SIZE_USER_PASSWORD 45
@@ -49,5 +49,9 @@ static const char* DISCONNECTED = "Disconnected[%d]: %s";
 static const char* WSARECV_ERROR = "WSARecv() Error:%d";
 static const char* WSASEND_ERROR = "WSASend() Error:%d";
 static const char* WSASTARTUP_ERROR = "WSAStartup() Error!";
-static const char* RECV_PACKET = "[%d]Recv packet:%s";
-static const char* SEND_PACKET = "[%d]Send packet:%s";
+static const char* RECV_PACKET_1 = "Recv packet:%s";
+static const char* SEND_PACKET_1 = "Send packet:%s";
+static const char* RECV_PACKET_2 = "[%d]Recv packet:%s";
+static const char* SEND_PACKET_2 = "[%d]Send packet:%s";
+static const char* TRANSFERRED_BYTES = "Number of bytes transferred:%d";
+static const char* RECEIVED_BYTES = "Number of bytes received:%d";

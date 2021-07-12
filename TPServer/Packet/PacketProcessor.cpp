@@ -19,7 +19,7 @@ void PacketProcessor::Parse(Session* const owner, char* const buffer, const size
 		auto header = packet->GetHeader();
 		auto strHeader = TPUtil::GetInstance().EnumToString(header);
 
-		TPLogger::GetInstance().PrintLog(RECV_PACKET, clntSock, strHeader);
+		TPLogger::GetInstance().PrintLog(RECV_PACKET_2, clntSock, strHeader);
 
 		PacketService::GetInstance().Process(*packet);
 
@@ -61,20 +61,20 @@ void PacketProcessor::SendPacket(const Packet& packet, const SOCKET& clntSock)
 	memset(&(perIoData->overlapped), 0, sizeof(OVERLAPPED));
 	perIoData->wsaBuf.len = static_cast<ULONG>(packet.GetPacketSize());
 	perIoData->wsaBuf.buf = packet.GetBuffer();
-	perIoData->operation = OP_ServerToClient;
+	perIoData->operation = OP_SERVER_TO_CLIENT;
 	if (WSASend(clntSock, &(perIoData->wsaBuf), 1, &sendBytes, 0, &(perIoData->overlapped), NULL) == SOCKET_ERROR)
 	{		
 		auto e = WSAGetLastError();
 		if (e != WSA_IO_PENDING)
 		{
-			TPLogger::GetInstance().PrintLog("WSASend() Error", e);
+			TPLogger::GetInstance().PrintLog(WSASEND_ERROR, e);
 		}
 	}
 
 	auto header = packet.GetHeader();
 	auto strHeader = TPUtil::GetInstance().EnumToString(header);
 
-	TPLogger::GetInstance().PrintLog("[%d]Send packet:%s", clntSock, strHeader);
+	TPLogger::GetInstance().PrintLog(SEND_PACKET_2, clntSock, strHeader);
 }
 
 void PacketProcessor::SendPacketAll(const Packet& packet, bool isIgnoreCastGroup)
@@ -84,7 +84,7 @@ void PacketProcessor::SendPacketAll(const Packet& packet, bool isIgnoreCastGroup
 
 	bool found = false;
 
-	for (auto p : sessionMap)
+	for (auto& p : sessionMap)
 	{
 		found = false;
 		for (auto session : packetCastGroup)

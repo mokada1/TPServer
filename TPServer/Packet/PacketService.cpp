@@ -29,8 +29,8 @@ void PacketService::Process(const Packet& packet)
 	case PROTOCOL::REQ_ACTION:
 		result = ProcReqAction(packet);
 		break;
-	case PROTOCOL::REQ_DAMAGE:
-		result = ProcReqDamage(packet);
+	case PROTOCOL::REQ_ABILITY:
+		result = ProcReqAbility(packet);
 		break;
 	case PROTOCOL::REQ_ROTATION_SYNC:
 		result = ProcReqRotationSync(packet);
@@ -113,6 +113,7 @@ TPResult* PacketService::ProcReqLogin(const Packet& packet)
 	PacketProcessor::GetInstance().SendPacket(bcastEnterGameRoomPacket);
 
 	result->SetPacket(resLoginPacket);
+	result->SetFlag(true);
 	return result;
 }
 
@@ -235,12 +236,12 @@ TPResult* PacketService::ProcReqAction(const Packet& packet)
 	return nullptr;
 }
 
-TPResult* PacketService::ProcReqDamage(const Packet& packet)
+TPResult* PacketService::ProcReqAbility(const Packet& packet)
 {
 	auto body = packet.GetBody();
 	auto owner = packet.GetOwner();
 
-	//auto req = flatbuffers::GetRoot<TB_ReqDamage>(body);
+	auto req = flatbuffers::GetRoot<TB_ReqAbility>(body);
 
 	auto objUser = GameRoomService::GetInstance().GetObjUser(owner->GetUserId());
 	if (!objUser)
@@ -250,19 +251,12 @@ TPResult* PacketService::ProcReqDamage(const Packet& packet)
 		return result;
 	}
 
-	auto hitList = BattleService::GetInstance().GetObjUserListAround(objUser);
-	if (hitList.empty())
-	{
-		return nullptr;
-	}
+	auto compTransform = objUser->GetCompTransform();
+	compTransform->SetLocation({ req->Location()->x(), req->Location()->y(), req->Location()->z() });
+	compTransform->SetRotation({ req->Rotation()->x(), req->Rotation()->y(), req->Rotation()->z() });
 
-	for (auto& hit : hitList)
-	{
-		auto cUserId = hit->GetCUserId();
-		auto bcastHitPacket = PacketGeneratorServer::GetInstance().CreateBcastHit(cUserId);
-		PacketProcessor::GetInstance().SendPacket(bcastHitPacket);
-	}
-
+	BattleService::GetInstance().PlayAbility(objUser, req->Ability());
+	
 	return nullptr;
 }
 

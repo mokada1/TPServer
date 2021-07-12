@@ -17,6 +17,6 @@ public:
 	Packet CreateBcastMove(Session* const owner, const TB_ReqMove& reqMove);
 	Packet CreateBcastLocationSync(Session* const owner, const TB_ReqLocationSync& reqLocationSync);
 	Packet CreateBcastAction(Session* const owner, const TB_ReqAction& reqAction);
-	Packet CreateBcastHit(const char* const userId);
+	Packet CreateBcastHit(const vector<shared_ptr<ObjUser>>& hitList);
 	Packet CreateBcastRotationSync(Session* const owner, const TB_ReqRotationSync& reqRotationSync);
 };
