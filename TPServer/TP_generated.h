@@ -14,6 +14,9 @@ struct TB_CompUserTransformBuilder;
 struct TB_CompUserCondition;
 struct TB_CompUserConditionBuilder;
 
+struct TB_CompUserAttribute;
+struct TB_CompUserAttributeBuilder;
+
 struct TB_ObjUser;
 struct TB_ObjUserBuilder;
 
@@ -273,14 +276,19 @@ inline flatbuffers::Offset<TB_CompUserTransform> CreateTB_CompUserTransform(
 struct TB_CompUserCondition FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef TB_CompUserConditionBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_ISCOMBATPOSTURE = 4
+    VT_ISCOMBATPOSTURE = 4,
+    VT_ISDIED = 6
   };
   bool IsCombatPosture() const {
     return GetField<uint8_t>(VT_ISCOMBATPOSTURE, 0) != 0;
   }
+  bool IsDied() const {
+    return GetField<uint8_t>(VT_ISDIED, 0) != 0;
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint8_t>(verifier, VT_ISCOMBATPOSTURE) &&
+           VerifyField<uint8_t>(verifier, VT_ISDIED) &&
            verifier.EndTable();
   }
 };
@@ -291,6 +299,9 @@ struct TB_CompUserConditionBuilder {
   flatbuffers::uoffset_t start_;
   void add_IsCombatPosture(bool IsCombatPosture) {
     fbb_.AddElement<uint8_t>(TB_CompUserCondition::VT_ISCOMBATPOSTURE, static_cast<uint8_t>(IsCombatPosture), 0);
+  }
+  void add_IsDied(bool IsDied) {
+    fbb_.AddElement<uint8_t>(TB_CompUserCondition::VT_ISDIED, static_cast<uint8_t>(IsDied), 0);
   }
   explicit TB_CompUserConditionBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -306,9 +317,63 @@ struct TB_CompUserConditionBuilder {
 
 inline flatbuffers::Offset<TB_CompUserCondition> CreateTB_CompUserCondition(
     flatbuffers::FlatBufferBuilder &_fbb,
-    bool IsCombatPosture = false) {
+    bool IsCombatPosture = false,
+    bool IsDied = false) {
   TB_CompUserConditionBuilder builder_(_fbb);
+  builder_.add_IsDied(IsDied);
   builder_.add_IsCombatPosture(IsCombatPosture);
+  return builder_.Finish();
+}
+
+struct TB_CompUserAttribute FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
+  typedef TB_CompUserAttributeBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_HP = 4,
+    VT_STR = 6
+  };
+  float Hp() const {
+    return GetField<float>(VT_HP, 0.0f);
+  }
+  float Str() const {
+    return GetField<float>(VT_STR, 0.0f);
+  }
+  bool Verify(flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<float>(verifier, VT_HP) &&
+           VerifyField<float>(verifier, VT_STR) &&
+           verifier.EndTable();
+  }
+};
+
+struct TB_CompUserAttributeBuilder {
+  typedef TB_CompUserAttribute Table;
+  flatbuffers::FlatBufferBuilder &fbb_;
+  flatbuffers::uoffset_t start_;
+  void add_Hp(float Hp) {
+    fbb_.AddElement<float>(TB_CompUserAttribute::VT_HP, Hp, 0.0f);
+  }
+  void add_Str(float Str) {
+    fbb_.AddElement<float>(TB_CompUserAttribute::VT_STR, Str, 0.0f);
+  }
+  explicit TB_CompUserAttributeBuilder(flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  TB_CompUserAttributeBuilder &operator=(const TB_CompUserAttributeBuilder &);
+  flatbuffers::Offset<TB_CompUserAttribute> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = flatbuffers::Offset<TB_CompUserAttribute>(end);
+    return o;
+  }
+};
+
+inline flatbuffers::Offset<TB_CompUserAttribute> CreateTB_CompUserAttribute(
+    flatbuffers::FlatBufferBuilder &_fbb,
+    float Hp = 0.0f,
+    float Str = 0.0f) {
+  TB_CompUserAttributeBuilder builder_(_fbb);
+  builder_.add_Str(Str);
+  builder_.add_Hp(Hp);
   return builder_.Finish();
 }
 
@@ -317,7 +382,8 @@ struct TB_ObjUser FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_USERID = 4,
     VT_TRANSFORM = 6,
-    VT_CONDITION = 8
+    VT_CONDITION = 8,
+    VT_ATTRIBUTE = 10
   };
   const flatbuffers::String *UserId() const {
     return GetPointer<const flatbuffers::String *>(VT_USERID);
@@ -328,6 +394,9 @@ struct TB_ObjUser FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   const TB_CompUserCondition *Condition() const {
     return GetPointer<const TB_CompUserCondition *>(VT_CONDITION);
   }
+  const TB_CompUserAttribute *Attribute() const {
+    return GetPointer<const TB_CompUserAttribute *>(VT_ATTRIBUTE);
+  }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_USERID) &&
@@ -336,6 +405,8 @@ struct TB_ObjUser FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
            verifier.VerifyTable(Transform()) &&
            VerifyOffset(verifier, VT_CONDITION) &&
            verifier.VerifyTable(Condition()) &&
+           VerifyOffset(verifier, VT_ATTRIBUTE) &&
+           verifier.VerifyTable(Attribute()) &&
            verifier.EndTable();
   }
 };
@@ -353,6 +424,9 @@ struct TB_ObjUserBuilder {
   void add_Condition(flatbuffers::Offset<TB_CompUserCondition> Condition) {
     fbb_.AddOffset(TB_ObjUser::VT_CONDITION, Condition);
   }
+  void add_Attribute(flatbuffers::Offset<TB_CompUserAttribute> Attribute) {
+    fbb_.AddOffset(TB_ObjUser::VT_ATTRIBUTE, Attribute);
+  }
   explicit TB_ObjUserBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
@@ -369,8 +443,10 @@ inline flatbuffers::Offset<TB_ObjUser> CreateTB_ObjUser(
     flatbuffers::FlatBufferBuilder &_fbb,
     flatbuffers::Offset<flatbuffers::String> UserId = 0,
     flatbuffers::Offset<TB_CompUserTransform> Transform = 0,
-    flatbuffers::Offset<TB_CompUserCondition> Condition = 0) {
+    flatbuffers::Offset<TB_CompUserCondition> Condition = 0,
+    flatbuffers::Offset<TB_CompUserAttribute> Attribute = 0) {
   TB_ObjUserBuilder builder_(_fbb);
+  builder_.add_Attribute(Attribute);
   builder_.add_Condition(Condition);
   builder_.add_Transform(Transform);
   builder_.add_UserId(UserId);
@@ -381,13 +457,15 @@ inline flatbuffers::Offset<TB_ObjUser> CreateTB_ObjUserDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
     const char *UserId = nullptr,
     flatbuffers::Offset<TB_CompUserTransform> Transform = 0,
-    flatbuffers::Offset<TB_CompUserCondition> Condition = 0) {
+    flatbuffers::Offset<TB_CompUserCondition> Condition = 0,
+    flatbuffers::Offset<TB_CompUserAttribute> Attribute = 0) {
   auto UserId__ = UserId ? _fbb.CreateString(UserId) : 0;
   return CreateTB_ObjUser(
       _fbb,
       UserId__,
       Transform,
-      Condition);
+      Condition,
+      Attribute);
 }
 
 struct TB_InputMove FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
@@ -1374,16 +1452,16 @@ inline flatbuffers::Offset<TB_BcastAction> CreateTB_BcastActionDirect(
 struct TB_BcastHit FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {
   typedef TB_BcastHitBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_HITIDLIST = 4
+    VT_OBJUSERLIST = 4
   };
-  const flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>> *HitIdList() const {
-    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>> *>(VT_HITIDLIST);
+  const flatbuffers::Vector<flatbuffers::Offset<TB_ObjUser>> *ObjUserList() const {
+    return GetPointer<const flatbuffers::Vector<flatbuffers::Offset<TB_ObjUser>> *>(VT_OBJUSERLIST);
   }
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_HITIDLIST) &&
-           verifier.VerifyVector(HitIdList()) &&
-           verifier.VerifyVectorOfStrings(HitIdList()) &&
+           VerifyOffset(verifier, VT_OBJUSERLIST) &&
+           verifier.VerifyVector(ObjUserList()) &&
+           verifier.VerifyVectorOfTables(ObjUserList()) &&
            verifier.EndTable();
   }
 };
@@ -1392,8 +1470,8 @@ struct TB_BcastHitBuilder {
   typedef TB_BcastHit Table;
   flatbuffers::FlatBufferBuilder &fbb_;
   flatbuffers::uoffset_t start_;
-  void add_HitIdList(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>>> HitIdList) {
-    fbb_.AddOffset(TB_BcastHit::VT_HITIDLIST, HitIdList);
+  void add_ObjUserList(flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<TB_ObjUser>>> ObjUserList) {
+    fbb_.AddOffset(TB_BcastHit::VT_OBJUSERLIST, ObjUserList);
   }
   explicit TB_BcastHitBuilder(flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -1409,19 +1487,19 @@ struct TB_BcastHitBuilder {
 
 inline flatbuffers::Offset<TB_BcastHit> CreateTB_BcastHit(
     flatbuffers::FlatBufferBuilder &_fbb,
-    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>>> HitIdList = 0) {
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<TB_ObjUser>>> ObjUserList = 0) {
   TB_BcastHitBuilder builder_(_fbb);
-  builder_.add_HitIdList(HitIdList);
+  builder_.add_ObjUserList(ObjUserList);
   return builder_.Finish();
 }
 
 inline flatbuffers::Offset<TB_BcastHit> CreateTB_BcastHitDirect(
     flatbuffers::FlatBufferBuilder &_fbb,
-    const std::vector<flatbuffers::Offset<flatbuffers::String>> *HitIdList = nullptr) {
-  auto HitIdList__ = HitIdList ? _fbb.CreateVector<flatbuffers::Offset<flatbuffers::String>>(*HitIdList) : 0;
+    const std::vector<flatbuffers::Offset<TB_ObjUser>> *ObjUserList = nullptr) {
+  auto ObjUserList__ = ObjUserList ? _fbb.CreateVector<flatbuffers::Offset<TB_ObjUser>>(*ObjUserList) : 0;
   return CreateTB_BcastHit(
       _fbb,
-      HitIdList__);
+      ObjUserList__);
 }
 
 struct TB_BcastRotationSync FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table {

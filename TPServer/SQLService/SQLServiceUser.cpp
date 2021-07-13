@@ -49,8 +49,10 @@ ObjUser* SQLServiceUser::GetUserObj(const SQLHSTMT& hStmt, const wchar_t* const 
 			{ static_cast<float>(cRotationX), static_cast<float>(cRotationY), static_cast<float>(cRotationZ) }
 		);
 		auto compCondition = new CompUserCondition();
+		auto compAttribute = new CompUserAttribute(50.f, 0.f);
 		objUser->SetCompTransform(compTransform);
 		objUser->SetCompCondition(compCondition);
+		objUser->SetCompAttribute(compAttribute);
 		return objUser;
 	}
 
@@ -147,9 +149,11 @@ ObjUser* SQLServiceUser::InsertUser(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, 
 	}
 
 	auto compCondition = new CompUserCondition();
+	auto compAttribute = new CompUserAttribute(50.f, 0.f);
 
 	objUser->SetCompTransform(compTransform);
 	objUser->SetCompCondition(compCondition);
+	objUser->SetCompAttribute(compAttribute);
 
 	if (SQLEndTran(SQL_HANDLE_DBC, hDbc, SQL_COMMIT) != SQL_SUCCESS)
 	{

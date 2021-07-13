@@ -29,9 +29,9 @@ CompUserTransform::~CompUserTransform()
 
 CompUserTransform::CompUserTransform(const Vector3 _location, const Vector3 _rotation)
 {
-	isValid = true;
-	location = _location;
-	rotation = _rotation;
+	this->isValid = true;
+	this->location = _location;
+	this->rotation = _rotation;
 }
 
 Vector3 CompUserTransform::GetLocation() const

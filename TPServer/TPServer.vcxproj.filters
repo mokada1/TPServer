@@ -97,6 +97,9 @@
     <ClCompile Include="Component\CompUserCondition.cpp">
       <Filter>Component</Filter>
     </ClCompile>
+    <ClCompile Include="Component\CompUserAttribute.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="flatbuffers\reflection_generated.h">
@@ -221,6 +224,9 @@
       <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="Component\CompUserCondition.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\CompUserAttribute.h">
       <Filter>Component</Filter>
     </ClInclude>
   </ItemGroup>

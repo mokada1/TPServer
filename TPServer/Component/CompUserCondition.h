@@ -13,9 +13,12 @@ public:
 	CompUserCondition(const bool _isCombatPosture);
 
 	bool GetIsCombatPosture() const;
+	bool GetIsDied() const;
 	void SetIsCombatPosture(const bool _isCombatPosture);
+	void SetIsDied(const bool _isDied);
 
 private:
 	bool isValid;
 	bool isCombatPosture;
+	bool isDied;
 };

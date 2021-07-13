@@ -135,15 +135,14 @@ Packet PacketGeneratorServer::CreateBcastHit(const vector<shared_ptr<ObjUser>>& 
 {
 	flatbuffers::FlatBufferBuilder fbb;
 
-	vector<flatbuffers::Offset<flatbuffers::String>> offsetListHitId;
+	vector<flatbuffers::Offset<TB_ObjUser>> offsetListObjUser;
 	for (auto& hit : hitList)
 	{
-		auto offset = fbb.CreateString(hit->GetCUserId());
-		offsetListHitId.push_back(offset);
+		offsetListObjUser.push_back(hit->Serialize(fbb));
 	}
-	auto offsetHitIdList = fbb.CreateVector(offsetListHitId);
+	auto offsetObjUserList = fbb.CreateVector(offsetListObjUser);
 
-	fbb.Finish(CreateTB_BcastHit(fbb, offsetHitIdList));
+	fbb.Finish(CreateTB_BcastHit(fbb, offsetObjUserList));
 
 	return CreatePacket(PROTOCOL::BCAST_HIT, fbb, nullptr, PacketCastType::BROADCAST);
 }

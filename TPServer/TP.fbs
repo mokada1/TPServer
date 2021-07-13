@@ -52,6 +52,13 @@ table TB_CompUserTransform
 table TB_CompUserCondition
 {
 	IsCombatPosture: bool;
+	IsDied: bool;
+}
+
+table TB_CompUserAttribute
+{
+	Hp: float;
+	Str: float;
 }
 
 // Object
@@ -60,6 +67,7 @@ table TB_ObjUser
 	UserId: string;
 	Transform: TB_CompUserTransform;
 	Condition: TB_CompUserCondition;
+	Attribute: TB_CompUserAttribute;
 }
 
 // Bundle
@@ -170,7 +178,7 @@ table TB_BcastAction
 
 table TB_BcastHit
 {
-	HitIdList: [string];
+	ObjUserList: [TB_ObjUser];
 }
 
 table TB_BcastRotationSync

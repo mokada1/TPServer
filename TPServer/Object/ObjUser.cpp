@@ -16,11 +16,13 @@ flatbuffers::Offset<TB_ObjUser> ObjUser::Serialize(flatbuffers::FlatBufferBuilde
 	auto offsetUserId = _fbb.CreateString(cUserId);
 	auto offsetCompTransform = compTransform ? compTransform->Serialize(_fbb) : 0;
 	auto offsetCompCondition = compCondition ? compCondition->Serialize(_fbb) : 0;
+	auto offsetCompAttribute = compAttribute ? compAttribute->Serialize(_fbb) : 0;
 
 	TB_ObjUserBuilder builder(_fbb);	
 	builder.add_UserId(offsetUserId);
 	builder.add_Transform(offsetCompTransform);
 	builder.add_Condition(offsetCompCondition);
+	builder.add_Attribute(offsetCompAttribute);
 	return builder.Finish();
 }
 
@@ -28,6 +30,7 @@ ObjUser::ObjUser()
 {
 	this->compTransform = nullptr;
 	this->compCondition = nullptr;
+	this->compAttribute = nullptr;
 	this->userId = nullptr;
 	this->cUserId = nullptr;
 	this->password = nullptr;
@@ -41,6 +44,7 @@ ObjUser::ObjUser(wchar_t* const _userId, wchar_t* const _password)
 {
 	this->compTransform = nullptr;
 	this->compCondition = nullptr;
+	this->compAttribute = nullptr;
 
 	this->userId = new wchar_t[SIZE_USER_USER_ID];	
 	wcscpy_s(this->userId, SIZE_USER_USER_ID, _userId);
@@ -59,26 +63,12 @@ ObjUser::ObjUser(wchar_t* const _userId, wchar_t* const _password)
 
 ObjUser::~ObjUser()
 {
-	if (userId)
-	{
-		delete[] userId;
-	}
-	if (cUserId)
-	{
-		delete[] cUserId;
-	}
-	if (password)
-	{
-		delete[] password;
-	}
-	if (compTransform)
-	{
-		delete compTransform;
-	}
-	if (compCondition)
-	{
-		delete compCondition;
-	}
+	if (userId)	delete[] userId;
+	if (cUserId) delete[] cUserId;	
+	if (password) delete[] password;
+	if (compTransform) delete compTransform;
+	if (compCondition) delete compCondition;
+	if (compAttribute) delete compAttribute;
 }
 
 wchar_t* ObjUser::GetUserId() const
@@ -116,6 +106,11 @@ CompUserCondition* ObjUser::GetCompCondition() const
 	return compCondition;
 }
 
+CompUserAttribute* ObjUser::GetCompAttribute() const
+{
+	return compAttribute;
+}
+
 void ObjUser::SetCompTransform(CompUserTransform * const _compTransform)
 {
 	this->compTransform = _compTransform;
@@ -124,6 +119,11 @@ void ObjUser::SetCompTransform(CompUserTransform * const _compTransform)
 void ObjUser::SetCompCondition(CompUserCondition* const _compCondition)
 {
 	this->compCondition = _compCondition;
+}
+
+void ObjUser::SetCompAttribute(CompUserAttribute* const _compAttribute)
+{
+	this->compAttribute = _compAttribute;
 }
 
 void ObjUser::SetRoomId(const int _roomId)

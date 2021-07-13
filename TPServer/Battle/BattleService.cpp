@@ -26,33 +26,60 @@ void BattleService::PlayAbility(const shared_ptr<ObjUser>& caster, AbilityType a
 
 void BattleService::PlayMeleeAttack1(const shared_ptr<ObjUser>& caster)
 {
-	MeleeAttack(caster, MELEE_ATTACK_1_COLLISION_DIST, MELEE_ATTACK_1_COLLISION_SIZE);
+	MeleeAttack(caster, MELEE_ATTACK_1_COLLISION_DIST, MELEE_ATTACK_1_COLLISION_SIZE, MELEE_ATTACK_1_DAMAGE);
 }
 
 void BattleService::PlayMeleeAttack2_1(const shared_ptr<ObjUser>& caster)
 {
-	MeleeAttack(caster, MELEE_ATTACK_2_1_COLLISION_DIST, MELEE_ATTACK_2_1_COLLISION_SIZE);
+	MeleeAttack(caster, MELEE_ATTACK_2_1_COLLISION_DIST, MELEE_ATTACK_2_1_COLLISION_SIZE, MELEE_ATTACK_2_1_DAMAGE);
 }
 
 void BattleService::PlayMeleeAttack2_2(const shared_ptr<ObjUser>& caster)
 {
-	MeleeAttack(caster, MELEE_ATTACK_2_2_COLLISION_DIST, MELEE_ATTACK_2_2_COLLISION_SIZE);
+	MeleeAttack(caster, MELEE_ATTACK_2_2_COLLISION_DIST, MELEE_ATTACK_2_2_COLLISION_SIZE, MELEE_ATTACK_2_2_DAMAGE);
 }
 
 void BattleService::PlayMeleeAttack3(const shared_ptr<ObjUser>& caster)
 {
-	MeleeAttack(caster, MELEE_ATTACK_3_COLLISION_DIST, MELEE_ATTACK_3_COLLISION_SIZE);
+	MeleeAttack(caster, MELEE_ATTACK_3_COLLISION_DIST, MELEE_ATTACK_3_COLLISION_SIZE, MELEE_ATTACK_3_DAMAGE);
 }
 
-void BattleService::MeleeAttack(const shared_ptr<ObjUser>& caster, const Vector3 collisionDistance, const float collisionSize)
+void BattleService::MeleeAttack(const shared_ptr<ObjUser>& caster, const Vector3 collisionDistance, const float collisionSize, const float damage)
 {
 	auto hitList = Hit(caster, collisionDistance, collisionSize);
 	if (hitList.empty())
 	{
 		return;
 	}
+
+	for (auto& objUser : hitList)
+	{		
+		ApplyDamage(objUser, damage);
+	}
+
 	auto packet = PacketGeneratorServer::GetInstance().CreateBcastHit(hitList);
 	PacketProcessor::GetInstance().SendPacket(packet);
+}
+
+void BattleService::ApplyDamage(const shared_ptr<ObjUser>& target, const float damage)
+{
+	auto compCondition = target->GetCompCondition();
+	if (compCondition->GetIsDied())
+	{
+		return;
+	}
+
+	auto compAttribute = target->GetCompAttribute();
+	auto hp = compAttribute->GetHp();
+	float hpAfterDamage = hp - damage < 0 ? 0 : hp - damage;
+
+	compAttribute->SetHp(hpAfterDamage);
+
+	if (hpAfterDamage <= 0.f)
+	{
+		auto compCondition = target->GetCompCondition();
+		compCondition->SetIsDied(true);
+	}
 }
 
 vector<shared_ptr<ObjUser>> BattleService::Hit(const shared_ptr<ObjUser>& caster, const Vector3 collisionDistance, const float collisionSize)
@@ -79,6 +106,13 @@ vector<shared_ptr<ObjUser>> BattleService::Hit(const shared_ptr<ObjUser>& caster
 	for (auto& p : objUserMap)
 	{
 		auto objUser = p.second;
+		auto compCondition = objUser->GetCompCondition();
+
+		if (compCondition->GetIsDied())
+		{
+			continue;
+		}
+
 		if (wcscmp(userIdCaster, objUser->GetUserId()) == 0)
 		{
 			continue;

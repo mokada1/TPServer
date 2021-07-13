@@ -3,6 +3,7 @@
 #include "TPObject.h"
 #include "../Component/CompUserTransform.h"
 #include "../Component/CompUserCondition.h"
+#include "../Component/CompUserAttribute.h"
 
 class ObjUser : public TPObject
 {
@@ -22,9 +23,11 @@ public:
 	int64_t GetAvgRttMs() const;
 	CompUserTransform* GetCompTransform() const;
 	CompUserCondition* GetCompCondition() const;
+	CompUserAttribute* GetCompAttribute() const;
 
 	void SetCompTransform(CompUserTransform * const _compTransform);
 	void SetCompCondition(CompUserCondition* const _compCondition);
+	void SetCompAttribute(CompUserAttribute* const _compAttribute);
 	void SetRoomId(const int _roomId);
 
 	void UpdateRtt(const int64_t _rttMs);
@@ -32,6 +35,7 @@ public:
 private:
 	CompUserTransform* compTransform;
 	CompUserCondition* compCondition;
+	CompUserAttribute* compAttribute;
 
 	wchar_t* userId;
 	char* cUserId;
