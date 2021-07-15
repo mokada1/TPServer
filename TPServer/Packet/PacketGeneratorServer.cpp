@@ -29,6 +29,10 @@ Packet PacketGeneratorServer::CreateResLogin(Session* const owner, const GameRoo
 		for (auto& data : objUserMap)
 		{
 			auto obj = data.second;
+			if (obj->GetCompCondition()->GetIsDied())
+			{
+				continue;
+			}
 			auto offset = obj->Serialize(fbb);
 			offsetListObjUser.push_back(offset);
 		}
