@@ -1,4 +1,6 @@
 #include "TPUtil.h"
+#include "../timezone/date/tz.h"
+
 #include <stdio.h>
 #include <Windows.h>
 #include <chrono>
@@ -7,6 +9,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace date;
 
 using chrono::duration_cast;
 using chrono::milliseconds;
@@ -44,7 +47,9 @@ void TPUtil::MultiByteToWChar(wchar_t* buffer, size_t bufferSize, const char* co
 }
 
 long long TPUtil::TimeSinceEpochMs()
-{
+{		
+	/*auto t = make_zoned(TIME_ZONE_EUROPE_LONDON, system_clock::now());
+	return duration_cast<milliseconds>(t.get_local_time().time_since_epoch()).count();*/
 	return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 

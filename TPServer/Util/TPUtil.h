@@ -27,6 +27,7 @@ public:
 
 static const double TPUTIL_PI = 3.14159265359;
 static const double TPUTIL_PI_RADIAN = 180;
+static const char* TIME_ZONE_EUROPE_LONDON = "Europe/London";
 
 #define TPUTIL_MAX(A,B) (A) > (B) ? (A) : (B)
 #define TPUTIL_MIN(A,B) (A) < (B) ? (A) : (B)

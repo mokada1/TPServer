@@ -137,8 +137,8 @@ TPResult* PacketService::ProcReqRoundTripTime(const Packet& packet)
 	auto req = flatbuffers::GetRoot<TB_ReqRoundTripTime>(body);
 	const auto reqCurrentTimeMs = req->CurrentTimeMs();
 	const auto currentTimeMs = TPUtil::GetInstance().TimeSinceEpochMs();
-	const auto rttMs = TPUTIL_MAX(currentTimeMs - reqCurrentTimeMs, 0);
-	
+	const auto rttMs = currentTimeMs - reqCurrentTimeMs;
+
 	auto result = new TPResult();
 
 	// 왕복 시간이 너무 큰 값이면 무시(1초 기준)

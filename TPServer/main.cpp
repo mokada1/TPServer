@@ -3,7 +3,7 @@
 
 int main(int argc, char** argv)
 {
-    setlocale(LC_ALL, "KOREAN");
+    setlocale(LC_ALL, "KOREAN");  
     TPServer::GetInstance().Play();
     return 0;
 }

@@ -117,6 +117,7 @@
     <ClCompile Include="session\Session.cpp" />
     <ClCompile Include="session\SessionPool.cpp" />
     <ClCompile Include="sqlservice\SQLServiceUser.cpp" />
+    <ClCompile Include="timezone\tz.cpp" />
     <ClCompile Include="util\TPLogger.cpp" />
     <ClCompile Include="util\TPResult.cpp" />
     <ClCompile Include="util\TPUtil.cpp" />
@@ -157,6 +158,9 @@
     <ClInclude Include="session\Session.h" />
     <ClInclude Include="session\SessionPool.h" />
     <ClInclude Include="sqlservice\SQLServiceUser.h" />
+    <ClInclude Include="timezone\date\date.h" />
+    <ClInclude Include="timezone\date\tz.h" />
+    <ClInclude Include="timezone\date\tz_private.h" />
     <ClInclude Include="TP_generated.h" />
     <ClInclude Include="util\Enums.h" />
     <ClInclude Include="util\TPDefine.h" />

@@ -34,6 +34,12 @@
     <Filter Include="Battle">
       <UniqueIdentifier>{77aa5dc2-64db-4b42-b805-b9a626f928e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="timezone">
+      <UniqueIdentifier>{eeba600e-a50e-4fde-8651-87ccf126a098}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="timezone\date">
+      <UniqueIdentifier>{9b83d791-9deb-4807-96b5-6eceae3057a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="component\CompUserTransform.cpp">
@@ -99,6 +105,9 @@
     </ClCompile>
     <ClCompile Include="Component\CompUserAttribute.cpp">
       <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="timezone\tz.cpp">
+      <Filter>timezone</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -228,6 +237,15 @@
     </ClInclude>
     <ClInclude Include="Component\CompUserAttribute.h">
       <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="timezone\date\date.h">
+      <Filter>timezone\date</Filter>
+    </ClInclude>
+    <ClInclude Include="timezone\date\tz.h">
+      <Filter>timezone\date</Filter>
+    </ClInclude>
+    <ClInclude Include="timezone\date\tz_private.h">
+      <Filter>timezone\date</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
