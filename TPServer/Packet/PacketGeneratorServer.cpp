@@ -44,11 +44,11 @@ Packet PacketGeneratorServer::CreateResLogin(Session* const owner, const GameRoo
 	return CreatePacket(PROTOCOL::RES_LOGIN, fbb, owner);
 }
 
-Packet PacketGeneratorServer::CreateResRoundTripTime(Session* const owner, const GameRoom& gameRoom)
+Packet PacketGeneratorServer::CreateResRoundTripTime(Session* const owner, const int64_t avgRttMs)
 {
 	const auto currentTimeMs = TPUtil::GetInstance().TimeSinceEpochMs();
 	flatbuffers::FlatBufferBuilder fbb;
-	fbb.Finish(CreateTB_ResRoundTripTime(fbb, currentTimeMs, gameRoom.GetAvgRttMs()));
+	fbb.Finish(CreateTB_ResRoundTripTime(fbb, currentTimeMs, avgRttMs));
 	return CreatePacket(PROTOCOL::RES_ROUND_TRIP_TIME, fbb, owner);
 }
 

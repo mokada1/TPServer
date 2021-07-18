@@ -141,7 +141,6 @@ TPResult* PacketService::ProcReqRoundTripTime(const Packet& packet)
 
 	auto result = new TPResult();
 
-	// 왕복 시간이 너무 큰 값이면 무시(1초 기준)
 	if (rttMs > MAX_RTT_MS)
 	{
 		result->SetFlag(false);
@@ -167,7 +166,7 @@ TPResult* PacketService::ProcReqRoundTripTime(const Packet& packet)
 	}
 	gameRoom->UpdateRtt();
 
-	auto resRoundTripTimePacket = PacketGeneratorServer::GetInstance().CreateResRoundTripTime(owner, *gameRoom);
+	auto resRoundTripTimePacket = PacketGeneratorServer::GetInstance().CreateResRoundTripTime(owner, objUser->GetAvgRttMs());
 	result->SetPacket(resRoundTripTimePacket);
 	result->SetFlag(true);
 	return result;

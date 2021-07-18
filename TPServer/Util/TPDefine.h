@@ -18,7 +18,7 @@ typedef unsigned long DWORD;
 #define SIZE_USER_PASSWORD 45
 
 #define MAX_RTT_COUNT 10
-#define MAX_RTT_MS 1000
+#define MAX_RTT_MS 10000
 
 static const wchar_t* FAIL_DBCONNECT_OR_ALLOC_HANDLE = L"디비 연결 또는 준비 작업 실패";
 static const wchar_t* CORRECT_PASSWORD = L"패스워드 일치";
