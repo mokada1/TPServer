@@ -47,15 +47,14 @@ void TPUtil::MultiByteToWChar(wchar_t* buffer, size_t bufferSize, const char* co
 }
 
 long long TPUtil::TimeSinceEpochMs()
-{		
-	/*auto t = make_zoned(TIME_ZONE_EUROPE_LONDON, system_clock::now());
-	return duration_cast<milliseconds>(t.get_local_time().time_since_epoch()).count();*/
+{
 	return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 
-long long TPUtil::TimeSinceEpochSec()
-{
-	return duration_cast<seconds>(system_clock::now().time_since_epoch()).count();
+long long TPUtil::TimeSinceEpochMs(const char* const timeZone)
+{		
+	auto t = make_zoned(timeZone, system_clock::now());
+	return duration_cast<milliseconds>(t.get_local_time().time_since_epoch()).count();
 }
 
 const char* TPUtil::EnumToString(PROTOCOL protocol)

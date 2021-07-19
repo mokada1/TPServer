@@ -18,7 +18,7 @@ public:
 	void WCharToMultiByte(char* buffer, size_t bufferSize, const wchar_t* const source);
 	void MultiByteToWChar(wchar_t* buffer, size_t bufferSize, const char* const source);
 	long long TimeSinceEpochMs();
-	long long TimeSinceEpochSec();
+	long long TimeSinceEpochMs(const char* const timeZone);
 	const char* EnumToString(PROTOCOL protocol);
 	float Distance(const Vector3 v1, const Vector3 v2);
 	Vector3 RotateByZAxis(const Vector3 location, const float degree);
@@ -27,7 +27,7 @@ public:
 
 static const double TPUTIL_PI = 3.14159265359;
 static const double TPUTIL_PI_RADIAN = 180;
-static const char* TIME_ZONE_EUROPE_LONDON = "Europe/London";
+static const char* TIME_ZONE_ASIA_SEOUL = "Asia/Seoul";
 
 #define TPUTIL_MAX(A,B) (A) > (B) ? (A) : (B)
 #define TPUTIL_MIN(A,B) (A) < (B) ? (A) : (B)
