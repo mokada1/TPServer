@@ -18,7 +18,8 @@ typedef unsigned long DWORD;
 #define SIZE_USER_PASSWORD 45
 
 #define MAX_RTT_COUNT 10
-#define MAX_RTT_MS 10000
+#define MAX_RTT_MS 1000
+#define MAX_RTT_MS_C2S 100000
 
 static const wchar_t* FAIL_DBCONNECT_OR_ALLOC_HANDLE = L"디비 연결 또는 준비 작업 실패";
 static const wchar_t* CORRECT_PASSWORD = L"패스워드 일치";
@@ -36,7 +37,7 @@ static const wchar_t* DUPLICATE_LOGIN = L"중복 로그인";
 static const wchar_t* SERVER_STARTED = L"서버가 시작되었습니다.";
 static const wchar_t* NOT_FOUND_SESSION = L"세션 조회 실패";
 static const wchar_t* REQ_LOGIN = L"로그인 요청: id[%S] pw[%S]";
-static const wchar_t* EXCEED_MAX_RTT_MS = L"최대 RTT 왕복 시간 초과";
+static const wchar_t* EXCEED_MAX_RTT_MS = L"최대 RTT 초과";
 static const wchar_t* FAIL_GET_OBJ_USER = L"방 내 유저 조회 실패";
 static const wchar_t* FAIL_GET_GAME_ROOM = L"방 조회 실패";
 static const wchar_t* NOT_FOUND_HIT_LIST = L"피격 대상을 찾지 못함";

@@ -137,11 +137,11 @@ TPResult* PacketService::ProcReqRoundTripTime(const Packet& packet)
 	auto req = flatbuffers::GetRoot<TB_ReqRoundTripTime>(body);
 	const auto reqCurrentTimeMs = req->CurrentTimeMs();
 	const auto currentTimeMs = TPUtil::GetInstance().TimeSinceEpochMs();
-	const auto rttMs = currentTimeMs - reqCurrentTimeMs;
+	const auto rttMsC2S = currentTimeMs - reqCurrentTimeMs;
 
 	auto result = new TPResult();
 
-	if (rttMs > MAX_RTT_MS)
+	if (rttMsC2S > MAX_RTT_MS_C2S)
 	{
 		result->SetFlag(false);
 		result->SetMsg(EXCEED_MAX_RTT_MS);
@@ -155,7 +155,7 @@ TPResult* PacketService::ProcReqRoundTripTime(const Packet& packet)
 		result->SetMsg(FAIL_GET_OBJ_USER);
 		return result;
 	}
-	objUser->UpdateRtt(rttMs);
+	objUser->UpdateRtt(rttMsC2S);
 
 	auto gameRoom = GameRoomService::GetInstance().GetGameRoom(objUser->GetRoomId());
 	if (!gameRoom)
