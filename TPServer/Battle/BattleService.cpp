@@ -70,15 +70,22 @@ void BattleService::ApplyDamage(const shared_ptr<ObjUser>& target, const float d
 	}
 
 	auto compAttribute = target->GetCompAttribute();
-	auto hp = compAttribute->GetHp();
-	float hpAfterDamage = hp - damage < 0 ? 0 : hp - damage;
 
-	compAttribute->SetHp(hpAfterDamage);
+	float hp = 0.f;
+	float hpAfterDamage = 0.f;	
+	do
+	{
+		hp = compAttribute->GetHp();
+		hpAfterDamage = hp - damage < 0 ? 0 : hp - damage;
+	} while (!compAttribute->SetHp(hp, hpAfterDamage));
 
 	if (hpAfterDamage <= 0.f)
 	{
 		auto compCondition = target->GetCompCondition();
-		compCondition->SetIsDied(true);
+		if (!compCondition->GetIsDied())
+		{
+			compCondition->SetIsDied(true);
+		}		
 	}
 }
 

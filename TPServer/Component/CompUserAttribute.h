@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TPComponent.h"
+#include <atomic>
 
 class CompUserAttribute : public TPComponent
 {
@@ -15,11 +16,11 @@ public:
 	float GetHp() const;
 	float GetStr() const;
 
-	void SetHp(const float _hp);
+	bool SetHp(float& oldData, const float newData);
 	void SetStr(const float _str);
 
 private:
 	bool isValid;
-	float hp;
+	std::atomic<float> hp;
 	float str;
 };

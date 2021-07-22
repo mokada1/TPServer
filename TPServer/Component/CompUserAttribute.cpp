@@ -15,6 +15,7 @@ flatbuffers::Offset<TB_CompUserAttribute> CompUserAttribute::Serialize(flatbuffe
 
 CompUserAttribute::CompUserAttribute()
 {
+	isValid = false;
 	hp = 0.f;
 	str = 0.f;
 }
@@ -32,7 +33,7 @@ CompUserAttribute::CompUserAttribute(const float _hp, const float _str)
 
 float CompUserAttribute::GetHp() const
 {
-	return hp;
+	return hp.load();
 }
 
 float CompUserAttribute::GetStr() const
@@ -40,9 +41,9 @@ float CompUserAttribute::GetStr() const
 	return str;
 }
 
-void CompUserAttribute::SetHp(const float _hp)
+bool CompUserAttribute::SetHp(float& oldData, const float newData)
 {
-	this->hp = _hp;
+	return hp.compare_exchange_weak(oldData, newData);
 }
 
 void CompUserAttribute::SetStr(const float _str)
