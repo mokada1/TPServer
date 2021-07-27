@@ -22,7 +22,7 @@ public:
 private:
 	DBService() {}
 
-	SQLHDBC hDbc;
+	SQLHDBC hDbc = nullptr;
 
 	bool DBConnect();
 	SQLHSTMT DBStart();
