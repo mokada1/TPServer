@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TSingleton.h"
+#include "Unconstructible.h"
 #include "../Packet/Protocol.h"
 
 struct Vector3
@@ -10,9 +10,15 @@ struct Vector3
 	float z;
 };
 
-class TPUtil : public TSingleton<TPUtil>
+class TPUtil : public Unconstructible
 {
 public:
+	static TPUtil& GetInstance()
+	{
+		static TPUtil* _instance = new TPUtil();
+		return *_instance;
+	}
+
 	void CharToWChar(wchar_t* buffer, size_t bufferSize, const char* source);
 	void WCharToChar(char* buffer, size_t bufferSize, const wchar_t* source);
 	void WCharToMultiByte(char* buffer, size_t bufferSize, const wchar_t* const source);
@@ -23,6 +29,9 @@ public:
 	float Distance(const Vector3 v1, const Vector3 v2);
 	Vector3 RotateByZAxis(const Vector3 location, const float degree);
 	float GetRadian(const float degree);
+
+private:
+	TPUtil() {}
 };
 
 static const double TPUTIL_PI = 3.14159265359;

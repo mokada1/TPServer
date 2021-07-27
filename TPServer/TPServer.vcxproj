@@ -167,8 +167,7 @@
     <ClInclude Include="util\TPLogger.h" />
     <ClInclude Include="util\TPResult.h" />
     <ClInclude Include="util\TPUtil.h" />
-    <ClInclude Include="util\TSingleton.h" />
-    <ClInclude Include="util\Uncopyable.h" />
+    <ClInclude Include="Util\Unconstructible.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TP.fbs" />

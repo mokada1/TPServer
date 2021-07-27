@@ -1,12 +1,18 @@
 #pragma once
 
-#include "TSingleton.h"
+#include "Unconstructible.h"
 
 #include <stdio.h>
 
-class TPLogger : public TSingleton<TPLogger>
+class TPLogger : public Unconstructible
 {
 public:
+	static TPLogger& GetInstance()
+	{
+		static TPLogger* _instance = new TPLogger();
+		return *_instance;
+	}
+
 	void PrintLog(const char* const format)
 	{
 		puts(format);
@@ -35,4 +41,7 @@ public:
 		_putws(buffer);
 		delete[] buffer;
 	}
+
+private:
+	TPLogger() {}
 };

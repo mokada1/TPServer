@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Util/TSingleton.h"
+#include "../Util/Unconstructible.h"
 #include <windows.h>
 
 #include <sql.h>
@@ -8,12 +8,20 @@
 
 class TPResult;
 
-class DBService : public TSingleton<DBService>
+class DBService : public Unconstructible
 {
 public:
+	static DBService& GetInstance()
+	{
+		static DBService* _instance = new DBService();
+		return *_instance;
+	}
+
 	TPResult* LoginUser(const wchar_t* const userId, const wchar_t* const password);
 
 private:
+	DBService() {}
+
 	SQLHDBC hDbc;
 
 	bool DBConnect();

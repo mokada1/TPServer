@@ -1,14 +1,20 @@
 #pragma once
 
-#include "../Util/TSingleton.h"
+#include "../Util/Unconstructible.h"
 #include "../Object/ObjUser.h"
 #include <windows.h>
 #include <sql.h>
 #include <sqlext.h>
 
-class SQLServiceUser : public TSingleton<SQLServiceUser>
+class SQLServiceUser : public Unconstructible
 {
 public:
+	static SQLServiceUser& GetInstance()
+	{
+		static SQLServiceUser* _instance = new SQLServiceUser();
+		return *_instance;
+	}
+
 	ObjUser* GetUserObj(const SQLHSTMT& hStmt, const wchar_t* const userId);
 	ObjUser* GetUserObjOnly(const SQLHSTMT& hStmt, const wchar_t* const userId);	
 	CompUserTransform* GetUserTransform(const SQLHSTMT& hStmt, const wchar_t* const userId);
@@ -16,6 +22,8 @@ public:
 	ObjUser* InsertUser(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const wchar_t* const password);
 
 private:
+	SQLServiceUser() {}
+
 	ObjUser* InsertUserOnly(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const wchar_t* const password);
 	CompUserTransform* InsertUserTransform(const SQLHDBC& hDbc, const SQLHSTMT& hStmt, const wchar_t* const userId, const Vector3 location, const Vector3 rotation);
 };

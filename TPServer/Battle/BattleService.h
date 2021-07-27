@@ -1,18 +1,26 @@
 #pragma once
 
-#include "../Util/TSingleton.h"
+#include "../Util/Unconstructible.h"
 #include "../Object/ObjUser.h"
 
 #include <vector>
 
 using namespace std;
 
-class BattleService : public TSingleton<BattleService>
+class BattleService : public Unconstructible
 {
 public:
+	static BattleService& GetInstance()
+	{
+		static BattleService* _instance = new BattleService();
+		return *_instance;
+	}
+
 	void PlayAbility(const shared_ptr<ObjUser>& caster, AbilityType abilityType);
 
 private:
+	BattleService() {}
+
 	void PlayMeleeAttack1(const shared_ptr<ObjUser>& caster);
 	void PlayMeleeAttack2_1(const shared_ptr<ObjUser>& caster);
 	void PlayMeleeAttack2_2(const shared_ptr<ObjUser>& caster);

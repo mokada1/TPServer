@@ -1,15 +1,21 @@
 #pragma once
 
-#include "../Util/TSingleton.h"
+#include "../Util/Unconstructible.h"
 #include "Session.h"
 #include <map>
 #include <cstdint>
 
 using namespace std;
 
-class SessionPool : public TSingleton<SessionPool>
+class SessionPool : public Unconstructible
 {
 public:
+	static SessionPool& GetInstance()
+	{
+		static SessionPool* _instance = new SessionPool();
+		return *_instance;
+	}
+
 	Session* GetSession(const SOCKET clntSock) const;
 	Session* GetSession(const wchar_t* _userId) const;
 	map<SOCKET, Session*> GetSessionMap() const;
@@ -18,5 +24,7 @@ public:
 	void Destroy();
 
 private:
+	SessionPool() {}
+
 	map<SOCKET, Session*> sessionMap;
 };
