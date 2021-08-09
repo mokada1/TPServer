@@ -329,10 +329,14 @@ struct TB_CompUserAttribute FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table
   typedef TB_CompUserAttributeBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_HP = 4,
-    VT_STR = 6
+    VT_MAXHP = 6,
+    VT_STR = 8
   };
   float Hp() const {
     return GetField<float>(VT_HP, 0.0f);
+  }
+  float MaxHp() const {
+    return GetField<float>(VT_MAXHP, 0.0f);
   }
   float Str() const {
     return GetField<float>(VT_STR, 0.0f);
@@ -340,6 +344,7 @@ struct TB_CompUserAttribute FLATBUFFERS_FINAL_CLASS : private flatbuffers::Table
   bool Verify(flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<float>(verifier, VT_HP) &&
+           VerifyField<float>(verifier, VT_MAXHP) &&
            VerifyField<float>(verifier, VT_STR) &&
            verifier.EndTable();
   }
@@ -351,6 +356,9 @@ struct TB_CompUserAttributeBuilder {
   flatbuffers::uoffset_t start_;
   void add_Hp(float Hp) {
     fbb_.AddElement<float>(TB_CompUserAttribute::VT_HP, Hp, 0.0f);
+  }
+  void add_MaxHp(float MaxHp) {
+    fbb_.AddElement<float>(TB_CompUserAttribute::VT_MAXHP, MaxHp, 0.0f);
   }
   void add_Str(float Str) {
     fbb_.AddElement<float>(TB_CompUserAttribute::VT_STR, Str, 0.0f);
@@ -370,9 +378,11 @@ struct TB_CompUserAttributeBuilder {
 inline flatbuffers::Offset<TB_CompUserAttribute> CreateTB_CompUserAttribute(
     flatbuffers::FlatBufferBuilder &_fbb,
     float Hp = 0.0f,
+    float MaxHp = 0.0f,
     float Str = 0.0f) {
   TB_CompUserAttributeBuilder builder_(_fbb);
   builder_.add_Str(Str);
+  builder_.add_MaxHp(MaxHp);
   builder_.add_Hp(Hp);
   return builder_.Finish();
 }

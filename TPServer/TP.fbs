@@ -58,6 +58,7 @@ table TB_CompUserCondition
 table TB_CompUserAttribute
 {
 	Hp: float;
+	MaxHp: float;
 	Str: float;
 }
 
