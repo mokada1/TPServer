@@ -2,6 +2,7 @@
 
 #include "../Util/Unconstructible.h"
 #include <windows.h>
+#include <functional>
 
 #include <sql.h>
 #include <sqlext.h>
@@ -17,6 +18,7 @@ public:
 		return *_instance;
 	}
 
+	TPResult* Process(std::function<void(const SQLHSTMT&, TPResult*)> func);
 	TPResult* LoginUser(const wchar_t* const userId, const wchar_t* const password);
 
 private:

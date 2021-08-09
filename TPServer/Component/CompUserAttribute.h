@@ -17,9 +17,10 @@ public:
 	float GetMaxHp() const;
 	float GetStr() const;
 
-	bool SetHp(float& oldData, const float newData);
 	void SetMaxHp(const float _maxHp);
 	void SetStr(const float _str);
+
+	void ApplyDamage(const float damage);
 
 private:
 	bool isValid;

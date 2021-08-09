@@ -42,7 +42,7 @@ void DBService::DBEnd(const SQLHSTMT& hStmt)
 	DBServer::GetInstance().DBDisconnect();
 }
 
-TPResult* DBService::LoginUser(const wchar_t* const userId, const wchar_t* const password)
+TPResult* DBService::Process(std::function<void(const SQLHSTMT&, TPResult*)> func)
 {
 	auto result = new TPResult();
 
@@ -53,33 +53,41 @@ TPResult* DBService::LoginUser(const wchar_t* const userId, const wchar_t* const
 		return result;
 	}
 
-	auto objUser = SQLServiceUser::GetInstance().GetUserObj(hStmt, userId);
-	if (objUser)
-	{
-		if (wcscmp(password, objUser->GetPassword()) == 0)
-		{
-			result->AddObject(objUser);
-			result->SetFlag(true);			
-		}
-		else
-		{
-			result->SetMsg(INCORRECT_PASSWORD);
-		}
-	}
-	else
-	{
-		objUser = SQLServiceUser::GetInstance().InsertUser(hDbc, hStmt, userId, password);
-		if (objUser)
-		{			
-			result->AddObject(objUser);
-			result->SetFlag(true);
-		}
-		else
-		{
-			result->SetMsg(FAIL_REGISTER_USER);
-		}
-	}
-	
+	func(hStmt, result);
+
 	DBEnd(hStmt);
 	return result;
+}
+
+TPResult* DBService::LoginUser(const wchar_t* const userId, const wchar_t* const password)
+{
+	auto func = [&](const SQLHSTMT& hStmt, TPResult* result) {
+		auto objUser = SQLServiceUser::GetInstance().GetUserObj(hStmt, userId);
+		if (objUser)
+		{
+			if (wcscmp(password, objUser->GetPassword()) == 0)
+			{
+				result->AddObject(objUser);
+				result->SetFlag(true);
+			}
+			else
+			{
+				result->SetMsg(INCORRECT_PASSWORD);
+			}
+		}
+		else
+		{
+			objUser = SQLServiceUser::GetInstance().InsertUser(hDbc, hStmt, userId, password);
+			if (objUser)
+			{
+				result->AddObject(objUser);
+				result->SetFlag(true);
+			}
+			else
+			{
+				result->SetMsg(FAIL_REGISTER_USER);
+			}
+		}
+	};
+	return Process(func);
 }

@@ -30,3 +30,4 @@ private:
 
 static const Vector3 DEFAULT_USER_LOCATION = { -1340.f, 40.f, 230.f };
 static const Vector3 DEFAULT_USER_ROTATION = { 0.f, 0.f, 0.f };
+static const float DEFAULT_USER_HP = 50.f;

@@ -49,11 +49,6 @@ float CompUserAttribute::GetStr() const
 	return str;
 }
 
-bool CompUserAttribute::SetHp(float& oldData, const float newData)
-{
-	return hp.compare_exchange_weak(oldData, newData);
-}
-
 void CompUserAttribute::SetMaxHp(const float _maxHp)
 {
 	this->maxHp = _maxHp;
@@ -62,4 +57,15 @@ void CompUserAttribute::SetMaxHp(const float _maxHp)
 void CompUserAttribute::SetStr(const float _str)
 {
 	this->str = _str;
+}
+
+void CompUserAttribute::ApplyDamage(const float damage)
+{
+	float oldHp = 0.f;
+	float hpAfterDamage = 0.f;
+	do
+	{
+		oldHp = GetHp();
+		hpAfterDamage = oldHp - damage < 0 ? 0 : oldHp - damage;
+	} while (!hp.compare_exchange_weak(oldHp, hpAfterDamage));
 }
