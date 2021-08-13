@@ -244,6 +244,9 @@
     <ClInclude Include="Util\Unconstructible.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="Util\TPDefinePrivate.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="TP.fbs" />

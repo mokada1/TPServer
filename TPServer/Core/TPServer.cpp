@@ -3,6 +3,7 @@
 #include "../Packet/PacketProcessor.h"
 #include "../Session/SessionPool.h"
 #include "../Util/TPLogger.h"
+#include "../Util/TPDefinePrivate.h"
 
 #include <WS2tcpip.h>
 

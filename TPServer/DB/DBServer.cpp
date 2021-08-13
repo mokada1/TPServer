@@ -1,5 +1,6 @@
 #include "DBServer.h"
 #include "../Util/TPLogger.h"
+#include "../Util/TPDefinePrivate.h"
 
 bool DBServer::GetIsConnected()
 {

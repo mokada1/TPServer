@@ -164,6 +164,7 @@
     <ClInclude Include="TP_generated.h" />
     <ClInclude Include="util\Enums.h" />
     <ClInclude Include="util\TPDefine.h" />
+    <ClInclude Include="Util\TPDefinePrivate.h" />
     <ClInclude Include="util\TPLogger.h" />
     <ClInclude Include="util\TPResult.h" />
     <ClInclude Include="util\TPUtil.h" />
