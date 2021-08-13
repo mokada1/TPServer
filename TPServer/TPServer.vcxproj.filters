@@ -159,9 +159,6 @@
     <ClInclude Include="component\CompUserTransform.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="core\TPServer.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="db\DBService.h">
       <Filter>DB</Filter>
     </ClInclude>
@@ -246,6 +243,9 @@
     </ClInclude>
     <ClInclude Include="Util\TPDefinePrivate.h">
       <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\TPServer.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
